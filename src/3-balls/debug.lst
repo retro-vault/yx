@@ -1,0 +1,1412 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.0 #7066 (Jun 14 2012) (Linux)
+                              4 ; This file was generated Tue Nov 27 20:21:21 2012
+                              5 ;--------------------------------------------------------
+                              6 	.module debug
+                              7 	.optsdcc -mz80
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _dbg_eventdump
+                             13 	.globl _dbg_timerdump
+                             14 	.globl _y
+                             15 	.globl _x
+                             16 	.globl _dbg_cls
+                             17 	.globl _dbg_putc_xy
+                             18 	.globl _dbg_scroll
+                             19 	.globl _dbg_say
+                             20 	.globl _dbg_wtox
+                             21 	.globl _dbg_memdump
+                             22 	.globl _dbg_taskdump
+                             23 ;--------------------------------------------------------
+                             24 ; special function registers
+                             25 ;--------------------------------------------------------
+                             26 ;--------------------------------------------------------
+                             27 ;  ram data
+                             28 ;--------------------------------------------------------
+                             29 	.area _DATA
+   0000                      30 _x::
+   0000                      31 	.ds 1
+   0001                      32 _y::
+   0001                      33 	.ds 1
+                             34 ;--------------------------------------------------------
+                             35 ; overlayable items in  ram 
+                             36 ;--------------------------------------------------------
+                             37 	.area _OVERLAY
+                             38 ;--------------------------------------------------------
+                             39 ; external initialized ram data
+                             40 ;--------------------------------------------------------
+                             41 ;--------------------------------------------------------
+                             42 ; global & static initialisations
+                             43 ;--------------------------------------------------------
+                             44 	.area _HOME
+                             45 	.area _GSINIT
+                             46 	.area _GSFINAL
+                             47 	.area _GSINIT
+                             48 ;debug.c:9: byte x=0;
+   0000 FD 21r00s00          49 	ld	iy,#_x
+   0004 FD 36 00 00          50 	ld	0 (iy),#0x00
+                             51 ;debug.c:10: byte y=23;
+   0008 FD 21r01s00          52 	ld	iy,#_y
+   000C FD 36 00 17          53 	ld	0 (iy),#0x17
+                             54 ;--------------------------------------------------------
+                             55 ; Home
+                             56 ;--------------------------------------------------------
+                             57 	.area _HOME
+                             58 	.area _HOME
+                             59 ;--------------------------------------------------------
+                             60 ; code
+                             61 ;--------------------------------------------------------
+                             62 	.area _CODE
+                             63 ;debug.c:15: void dbg_cls() __naked {
+                             64 ;	---------------------------------
+                             65 ; Function dbg_cls
+                             66 ; ---------------------------------
+   0000                      67 _dbg_cls_start::
+   0000                      68 _dbg_cls:
+                             69 ;debug.c:35: __endasm;
+                             70 ;;	first clear contents of vmemory
+   0000 21 00 40             71 	ld	hl,#0x4000 ; vmemory
+   0003 01 00 18             72 	ld	bc,#0x1800 ; vmem size
+   0006 75                   73 	ld	(hl),l ; l = 0
+   0007 54                   74 	ld	d,h
+   0008 1E 01                75 	ld	e,#1
+   000A ED B0                76 	ldir	; clear screen
+                             77 ;;	now the attributes
+   000C 36 38                78 	ld	(hl),#0b00111000
+   000E 01 FF 02             79 	ld	bc,#0x02ff ; size of attr
+   0011 ED B0                80 	ldir
+                             81 ;;	and the border
+   0013 3E 07                82 	ld	a,#0b00000111 ; gray border
+   0015 D3 FE                83 	out	(0xfe),a ; set border
+   0017 C9                   84 	ret
+   0018                      85 _dbg_cls_end::
+                             86 ;debug.c:43: void dbg_putc_xy(byte c, byte x, byte y) __naked {
+                             87 ;	---------------------------------
+                             88 ; Function dbg_putc_xy
+                             89 ; ---------------------------------
+   0018                      90 _dbg_putc_xy_start::
+   0018                      91 _dbg_putc_xy:
+                             92 ;debug.c:116: __endasm;	
+   0018 FD 21 00 00          93 	ld	iy,#0x0000
+   001C FD 39                94 	add	iy,sp
+                             95 ;;	convert y to hires
+   001E FD 46 03             96 	ld	b,3(iy) ; get x coordinate into b
+   0021 FD 4E 04             97 	ld	c,4(iy) ; get y coordinate into a
+   0024 CB 21                98 	sla	c
+   0026 CB 21                99 	sla	c
+   0028 CB 21               100 	sla	c ; c=c*8 (hires y coordinate 0..191)
+                            101 ;;	calculate character inside font
+   002A FD 7E 02            102 	ld	a,2(iy) ; get character
+   002D D6 20               103 	sub	#32 ; a = a-32
+   002F 26 00               104 	ld	h,#0x00 ; h=0
+   0031 6F                  105 	ld	l,a ; hl=a
+   0032 29                  106 	add	hl,hl ; hl=hl*2
+   0033 29                  107 	add	hl,hl ; hl=hl*4
+   0034 29                  108 	add	hl,hl ; hl=hl*8
+   0035 11r00s00            109 	ld	de,#sysfont8x8 ; font address
+   0038 19                  110 	add	hl,de ; hl=character address
+   0039 EB                  111 	ex	de,hl ; into de
+                            112 ;;	calculate row memory address
+   003A 79                  113 	ld	a,c ; get y
+   003B E6 07               114 	and	#0x07 ; leave only bits 0-2
+   003D 67                  115 	ld	h,a ; to high
+   003E 79                  116 	ld	a,c ; y back to acc.
+   003F E6 38               117 	and	#0x38 ; bits 3-5 need to be
+   0041 17                  118 	rla	; shifted left
+   0042 17                  119 	rla	; twice
+   0043 6F                  120 	ld	l,a ; and placed into l
+   0044 79                  121 	ld	a,c ; y back to acc.
+   0045 E6 C0               122 	and	#0xc0 ; bits 6-7
+   0047 1F                  123 	rra	; shifted...
+   0048 1F                  124 	rra	; ...three...
+   0049 1F                  125 	rra	; ...times
+   004A B4                  126 	or	h ; ored into high
+   004B F6 40               127 	or	#0x40 ; or video memory address to h
+   004D 67                  128 	ld	h,a ; hl = row addr
+                            129 ;;	add x offset
+   004E 7D                  130 	ld	a,l
+   004F 80                  131 	add	b ; add x to l
+   0050 30 01               132 	jr	nc,nocarry ; no carry
+   0052 24                  133 	inc	h
+   0053                     134 	nocarry:
+   0053 6F                  135 	ld	l,a
+                            136 ;;	and now loop it
+   0054 06 08               137 	ld	b,#8 ; eight lines
+   0056                     138 	loop:
+   0056 1A                  139 	ld	a,(de) ; get character byte
+   0057 13                  140 	inc	de ; next byte
+   0058 77                  141 	ld	(hl),a ; transfer to screen
+                            142 ;;	next line
+   0059 24                  143 	inc	h
+   005A 7C                  144 	ld	a,h
+   005B E6 07               145 	and	#7
+   005D 20 0A               146 	jr	nz,next_line
+   005F 7D                  147 	ld	a,l
+   0060 C6 20               148 	add	a,#32
+   0062 6F                  149 	ld	l,a
+   0063 38 04               150 	jr	c, next_line
+   0065 7C                  151 	ld	a,h
+   0066 D6 08               152 	sub	#8
+   0068 67                  153 	ld	h,a
+   0069                     154 	next_line:
+   0069 10 EB               155 	djnz	loop
+   006B C9                  156 	ret
+   006C                     157 _dbg_putc_xy_end::
+                            158 ;debug.c:122: void dbg_scroll() __naked {
+                            159 ;	---------------------------------
+                            160 ; Function dbg_scroll
+                            161 ; ---------------------------------
+   006C                     162 _dbg_scroll_start::
+   006C                     163 _dbg_scroll:
+                            164 ;debug.c:168: __endasm;
+   006C 06 08               165 	ld	b,#8 ; 8 lines
+   006E                     166 	scroll_up:
+   006E C5                  167 	push	bc ; store
+   006F F5                  168 	push	af
+   0070 3E C0               169 	ld	a,#192 ; lines to move
+   0072 11 00 40            170 	ld	de,#0x4000 ; start here
+   0075                     171 	loopscroll:
+   0075 D5                  172 	push	de ; store de
+   0076 F5                  173 	push	af
+                            174 ;;	calculate next line de=next_line(de)
+   0077 14                  175 	inc	d
+   0078 7A                  176 	ld	a,d
+   0079 E6 07               177 	and	#7
+   007B 20 0A               178 	jr	nz,nl_done
+   007D 7B                  179 	ld	a,e
+   007E C6 20               180 	add	a,#32
+   0080 5F                  181 	ld	e,a
+   0081 38 04               182 	jr	c,nl_done
+   0083 7A                  183 	ld	a,d
+   0084 D6 08               184 	sub	#8
+   0086 57                  185 	ld	d,a
+   0087                     186 	nl_done:
+   0087 F1                  187 	pop	af
+   0088 EB                  188 	ex	de,hl ; de to hl
+   0089 D1                  189 	pop	de ; previous line to de
+   008A 01 20 00            190 	ld	bc,#32 ; 32 bytes to move
+   008D E5                  191 	push	hl ; store new line
+   008E ED B0               192 	ldir	; move one line
+   0090 D1                  193 	pop	de ; restore new line to de
+   0091 3D                  194 	dec	a ; reduce line count
+   0092 28 02               195 	jr	z,endscroll ; is it zero?
+   0094 18 DF               196 	jr	loopscroll
+   0096                     197 	endscroll:
+   0096 F1                  198 	pop	af
+   0097 21 E0 57            199 	ld	hl,#0x57e0 ; last line address
+   009A 06 20               200 	ld	b,#32
+   009C                     201 	clear_line:
+   009C 36 00               202 	ld	(hl),#0
+   009E 23                  203 	inc	hl
+   009F 10 FB               204 	djnz	clear_line
+   00A1 C1                  205 	pop	bc
+   00A2 10 CA               206 	djnz	scroll_up
+   00A4 C9                  207 	ret
+   00A5                     208 _dbg_scroll_end::
+                            209 ;debug.c:174: void dbg_say(string msg) {
+                            210 ;	---------------------------------
+                            211 ; Function dbg_say
+                            212 ; ---------------------------------
+   00A5                     213 _dbg_say_start::
+   00A5                     214 _dbg_say:
+   00A5 DD E5               215 	push	ix
+   00A7 DD 21 00 00         216 	ld	ix,#0
+   00AB DD 39               217 	add	ix,sp
+                            218 ;debug.c:175: while(*msg) { 
+   00AD DD 5E 04            219 	ld	e,4 (ix)
+   00B0 DD 56 05            220 	ld	d,5 (ix)
+   00B3                     221 00108$:
+   00B3 1A                  222 	ld	a,(de)
+                            223 ;debug.c:176: switch(*msg) {
+   00B4 47                  224 	ld	b,a
+   00B5 B7                  225 	or	a,a
+   00B6 28 5A               226 	jr	Z,00111$
+   00B8 D6 0A               227 	sub	a, #0x0A
+   00BA 20 0E               228 	jr	NZ,00102$
+                            229 ;debug.c:178: x=0;
+   00BC 21r00s00            230 	ld	hl,#_x + 0
+   00BF 36 00               231 	ld	(hl), #0x00
+                            232 ;debug.c:179: y++;
+   00C1 FD 21r01s00         233 	ld	iy,#_y
+   00C5 FD 34 00            234 	inc	0 (iy)
+                            235 ;debug.c:180: break;
+   00C8 18 1B               236 	jr	00103$
+                            237 ;debug.c:181: default:
+   00CA                     238 00102$:
+                            239 ;debug.c:182: dbg_putc_xy(*msg, x++, y);		
+   00CA FD 21r00s00         240 	ld	iy,#_x
+   00CE FD 4E 00            241 	ld	c,0 (iy)
+   00D1 FD 34 00            242 	inc	0 (iy)
+   00D4 D5                  243 	push	de
+   00D5 3Ar01s00            244 	ld	a,(_y)
+   00D8 F5                  245 	push	af
+   00D9 33                  246 	inc	sp
+   00DA 79                  247 	ld	a,c
+   00DB F5                  248 	push	af
+   00DC 33                  249 	inc	sp
+   00DD C5                  250 	push	bc
+   00DE 33                  251 	inc	sp
+   00DF CDr18s00            252 	call	_dbg_putc_xy
+   00E2 F1                  253 	pop	af
+   00E3 33                  254 	inc	sp
+   00E4 D1                  255 	pop	de
+                            256 ;debug.c:183: }
+   00E5                     257 00103$:
+                            258 ;debug.c:184: if (x>31) {
+   00E5 3E 1F               259 	ld	a,#0x1F
+   00E7 FD 21r00s00         260 	ld	iy,#_x
+   00EB FD 96 00            261 	sub	a, 0 (iy)
+   00EE 30 0B               262 	jr	NC,00105$
+                            263 ;debug.c:185: x=0;
+   00F0 FD 36 00 00         264 	ld	0 (iy),#0x00
+                            265 ;debug.c:186: y++;
+   00F4 FD 21r01s00         266 	ld	iy,#_y
+   00F8 FD 34 00            267 	inc	0 (iy)
+   00FB                     268 00105$:
+                            269 ;debug.c:188: if (y>23) {
+   00FB 3E 17               270 	ld	a,#0x17
+   00FD FD 21r01s00         271 	ld	iy,#_y
+   0101 FD 96 00            272 	sub	a, 0 (iy)
+   0104 30 09               273 	jr	NC,00107$
+                            274 ;debug.c:189: y=23;
+   0106 FD 36 00 17         275 	ld	0 (iy),#0x17
+                            276 ;debug.c:190: dbg_scroll();
+   010A D5                  277 	push	de
+   010B CDr6Cs00            278 	call	_dbg_scroll
+   010E D1                  279 	pop	de
+   010F                     280 00107$:
+                            281 ;debug.c:192: msg++;	
+   010F 13                  282 	inc	de
+   0110 18 A1               283 	jr	00108$
+   0112                     284 00111$:
+   0112 DD E1               285 	pop	ix
+   0114 C9                  286 	ret
+   0115                     287 _dbg_say_end::
+                            288 ;debug.c:197: void dbg_wtox(word w, string destination) {
+                            289 ;	---------------------------------
+                            290 ; Function dbg_wtox
+                            291 ; ---------------------------------
+   0115                     292 _dbg_wtox_start::
+   0115                     293 _dbg_wtox:
+   0115 DD E5               294 	push	ix
+   0117 DD 21 00 00         295 	ld	ix,#0
+   011B DD 39               296 	add	ix,sp
+   011D 21 EA FF            297 	ld	hl,#-22
+   0120 39                  298 	add	hl,sp
+   0121 F9                  299 	ld	sp,hl
+                            300 ;debug.c:201: byte hex[16]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+   0122 21 04 00            301 	ld	hl,#0x0004
+   0125 39                  302 	add	hl,sp
+   0126 4D                  303 	ld	c,l
+   0127 44                  304 	ld	b,h
+   0128 36 30               305 	ld	(hl),#0x30
+   012A 69                  306 	ld	l,c
+   012B 60                  307 	ld	h,b
+   012C 23                  308 	inc	hl
+   012D 36 31               309 	ld	(hl),#0x31
+   012F 69                  310 	ld	l,c
+   0130 60                  311 	ld	h,b
+   0131 23                  312 	inc	hl
+   0132 23                  313 	inc	hl
+   0133 36 32               314 	ld	(hl),#0x32
+   0135 69                  315 	ld	l,c
+   0136 60                  316 	ld	h,b
+   0137 23                  317 	inc	hl
+   0138 23                  318 	inc	hl
+   0139 23                  319 	inc	hl
+   013A 36 33               320 	ld	(hl),#0x33
+   013C 21 04 00            321 	ld	hl,#0x0004
+   013F 09                  322 	add	hl,bc
+   0140 36 34               323 	ld	(hl),#0x34
+   0142 21 05 00            324 	ld	hl,#0x0005
+   0145 09                  325 	add	hl,bc
+   0146 36 35               326 	ld	(hl),#0x35
+   0148 21 06 00            327 	ld	hl,#0x0006
+   014B 09                  328 	add	hl,bc
+   014C 36 36               329 	ld	(hl),#0x36
+   014E 21 07 00            330 	ld	hl,#0x0007
+   0151 09                  331 	add	hl,bc
+   0152 36 37               332 	ld	(hl),#0x37
+   0154 21 08 00            333 	ld	hl,#0x0008
+   0157 09                  334 	add	hl,bc
+   0158 36 38               335 	ld	(hl),#0x38
+   015A 21 09 00            336 	ld	hl,#0x0009
+   015D 09                  337 	add	hl,bc
+   015E 36 39               338 	ld	(hl),#0x39
+   0160 21 0A 00            339 	ld	hl,#0x000A
+   0163 09                  340 	add	hl,bc
+   0164 36 41               341 	ld	(hl),#0x41
+   0166 21 0B 00            342 	ld	hl,#0x000B
+   0169 09                  343 	add	hl,bc
+   016A 36 42               344 	ld	(hl),#0x42
+   016C 21 0C 00            345 	ld	hl,#0x000C
+   016F 09                  346 	add	hl,bc
+   0170 36 43               347 	ld	(hl),#0x43
+   0172 21 0D 00            348 	ld	hl,#0x000D
+   0175 09                  349 	add	hl,bc
+   0176 36 44               350 	ld	(hl),#0x44
+   0178 21 0E 00            351 	ld	hl,#0x000E
+   017B 09                  352 	add	hl,bc
+   017C 36 45               353 	ld	(hl),#0x45
+   017E 21 0F 00            354 	ld	hl,#0x000F
+   0181 09                  355 	add	hl,bc
+   0182 36 46               356 	ld	(hl),#0x46
+                            357 ;debug.c:203: p=(byte *)&w;
+   0184 21 1A 00            358 	ld	hl,#0x001A
+   0187 39                  359 	add	hl,sp
+   0188 DD 75 FE            360 	ld	-2 (ix),l
+   018B DD 74 FF            361 	ld	-1 (ix),h
+                            362 ;debug.c:205: for(i = 0; i < 2; i++)	{
+   018E 11 00 00            363 	ld	de,#0x0000
+   0191                     364 00101$:
+   0191 7B                  365 	ld	a,e
+   0192 D6 02               366 	sub	a, #0x02
+   0194 7A                  367 	ld	a,d
+   0195 DE 00               368 	sbc	a, #0x00
+   0197 E2r9Cs01            369 	jp	PO, 00110$
+   019A EE 80               370 	xor	a, #0x80
+   019C                     371 00110$:
+   019C F2r19s02            372 	jp	P,00104$
+                            373 ;debug.c:206: destination[i*2] = hex[((p[1-i] >> 4) & 0x0F)];
+   019F DD 73 EC            374 	ld	-20 (ix),e
+   01A2 DD 72 ED            375 	ld	-19 (ix),d
+   01A5 DD CB EC 26         376 	sla	-20 (ix)
+   01A9 DD CB ED 16         377 	rl	-19 (ix)
+   01AD E5                  378 	push	hl
+   01AE DD 6E 06            379 	ld	l,6 (ix)
+   01B1 DD 66 07            380 	ld	h,7 (ix)
+   01B4 E5                  381 	push	hl
+   01B5 FD E1               382 	pop	iy
+   01B7 E1                  383 	pop	hl
+   01B8 C5                  384 	push	bc
+   01B9 DD 4E EC            385 	ld	c,-20 (ix)
+   01BC DD 46 ED            386 	ld	b,-19 (ix)
+   01BF FD 09               387 	add	iy, bc
+   01C1 C1                  388 	pop	bc
+   01C2 3E 01               389 	ld	a,#0x01
+   01C4 93                  390 	sub	a, e
+   01C5 DD 77 EA            391 	ld	-22 (ix),a
+   01C8 3E 00               392 	ld	a,#0x00
+   01CA 9A                  393 	sbc	a, d
+   01CB DD 77 EB            394 	ld	-21 (ix),a
+   01CE DD 7E FE            395 	ld	a,-2 (ix)
+   01D1 DD 86 EA            396 	add	a, -22 (ix)
+   01D4 6F                  397 	ld	l,a
+   01D5 DD 7E FF            398 	ld	a,-1 (ix)
+   01D8 DD 8E EB            399 	adc	a, -21 (ix)
+   01DB 67                  400 	ld	h,a
+   01DC 7E                  401 	ld	a,(hl)
+   01DD DD 77 EA            402 	ld	-22 (ix), a
+   01E0 CB 3F               403 	srl	a
+   01E2 CB 3F               404 	srl	a
+   01E4 CB 3F               405 	srl	a
+   01E6 CB 3F               406 	srl	a
+   01E8 E6 0F               407 	and	a, #0x0F
+   01EA 6F                  408 	ld	l, a
+   01EB 26 00               409 	ld	h,#0x00
+   01ED 09                  410 	add	hl,bc
+   01EE 7E                  411 	ld	a,(hl)
+   01EF FD 77 00            412 	ld	0 (iy), a
+                            413 ;debug.c:207: destination[(i*2) + 1] = hex[(p[1-i]) & 0x0F];
+   01F2 E5                  414 	push	hl
+   01F3 DD 6E EC            415 	ld	l,-20 (ix)
+   01F6 DD 66 ED            416 	ld	h,-19 (ix)
+   01F9 23                  417 	inc	hl
+   01FA E5                  418 	push	hl
+   01FB FD E1               419 	pop	iy
+   01FD E1                  420 	pop	hl
+   01FE C5                  421 	push	bc
+   01FF DD 4E 06            422 	ld	c,6 (ix)
+   0202 DD 46 07            423 	ld	b,7 (ix)
+   0205 FD 09               424 	add	iy, bc
+   0207 C1                  425 	pop	bc
+   0208 DD 7E EA            426 	ld	a,-22 (ix)
+   020B E6 0F               427 	and	a, #0x0F
+   020D 6F                  428 	ld	l, a
+   020E 26 00               429 	ld	h,#0x00
+   0210 09                  430 	add	hl,bc
+   0211 7E                  431 	ld	a,(hl)
+   0212 FD 77 00            432 	ld	0 (iy), a
+                            433 ;debug.c:205: for(i = 0; i < 2; i++)	{
+   0215 13                  434 	inc	de
+   0216 C3r91s01            435 	jp	00101$
+   0219                     436 00104$:
+                            437 ;debug.c:209: destination[i*2]=0;
+   0219 CB 23               438 	sla	e
+   021B CB 12               439 	rl	d
+   021D 7B                  440 	ld	a,e
+   021E DD 86 06            441 	add	a, 6 (ix)
+   0221 5F                  442 	ld	e,a
+   0222 7A                  443 	ld	a,d
+   0223 DD 8E 07            444 	adc	a, 7 (ix)
+   0226 57                  445 	ld	d,a
+   0227 3E 00               446 	ld	a,#0x00
+   0229 12                  447 	ld	(de),a
+   022A DD F9               448 	ld	sp,ix
+   022C DD E1               449 	pop	ix
+   022E C9                  450 	ret
+   022F                     451 _dbg_wtox_end::
+                            452 ;debug.c:212: void dbg_memdump() {
+                            453 ;	---------------------------------
+                            454 ; Function dbg_memdump
+                            455 ; ---------------------------------
+   022F                     456 _dbg_memdump_start::
+   022F                     457 _dbg_memdump:
+   022F DD E5               458 	push	ix
+   0231 DD 21 00 00         459 	ld	ix,#0
+   0235 DD 39               460 	add	ix,sp
+   0237 21 E4 FF            461 	ld	hl,#-28
+   023A 39                  462 	add	hl,sp
+   023B F9                  463 	ld	sp,hl
+                            464 ;debug.c:217: buff[0]=0;
+   023C 21 16 00            465 	ld	hl,#0x0016
+   023F 39                  466 	add	hl,sp
+   0240 EB                  467 	ex	de,hl
+   0241 3E 00               468 	ld	a,#0x00
+   0243 12                  469 	ld	(de),a
+                            470 ;debug.c:219: dbg_say("MEMORY DUMP:\n");
+   0244 21r40s04            471 	ld	hl,#__str_0
+   0247 D5                  472 	push	de
+   0248 E5                  473 	push	hl
+   0249 CDrA5s00            474 	call	_dbg_say
+   024C F1                  475 	pop	af
+   024D D1                  476 	pop	de
+                            477 ;debug.c:221: dbg_say("first last break\n");
+   024E 21r4Es04            478 	ld	hl,#__str_1
+   0251 D5                  479 	push	de
+   0252 E5                  480 	push	hl
+   0253 CDrA5s00            481 	call	_dbg_say
+   0256 F1                  482 	pop	af
+   0257 D1                  483 	pop	de
+                            484 ;debug.c:222: dbg_say("===== ==== =====\n");
+   0258 21r60s04            485 	ld	hl,#__str_2
+   025B D5                  486 	push	de
+   025C E5                  487 	push	hl
+   025D CDrA5s00            488 	call	_dbg_say
+   0260 F1                  489 	pop	af
+   0261 D1                  490 	pop	de
+                            491 ;debug.c:223: dbg_wtox((word)mem_first,buff);
+   0262 4B                  492 	ld	c,e
+   0263 42                  493 	ld	b,d
+   0264 FD 2Ar00s00         494 	ld	iy,(_mem_first)
+   0268 D5                  495 	push	de
+   0269 C5                  496 	push	bc
+   026A FD E5               497 	push	iy
+   026C CDr15s01            498 	call	_dbg_wtox
+   026F F1                  499 	pop	af
+   0270 F1                  500 	pop	af
+   0271 D1                  501 	pop	de
+                            502 ;debug.c:224: dbg_say(" "); dbg_say(buff); dbg_say(" ");
+   0272 21r72s04            503 	ld	hl,#__str_3
+   0275 D5                  504 	push	de
+   0276 E5                  505 	push	hl
+   0277 CDrA5s00            506 	call	_dbg_say
+   027A F1                  507 	pop	af
+   027B D1                  508 	pop	de
+   027C 6B                  509 	ld	l,e
+   027D 62                  510 	ld	h,d
+   027E D5                  511 	push	de
+   027F E5                  512 	push	hl
+   0280 CDrA5s00            513 	call	_dbg_say
+   0283 F1                  514 	pop	af
+   0284 D1                  515 	pop	de
+   0285 21r72s04            516 	ld	hl,#__str_3
+   0288 D5                  517 	push	de
+   0289 E5                  518 	push	hl
+   028A CDrA5s00            519 	call	_dbg_say
+   028D F1                  520 	pop	af
+   028E D1                  521 	pop	de
+                            522 ;debug.c:225: dbg_wtox((word)mem_last,buff);
+   028F 4B                  523 	ld	c,e
+   0290 42                  524 	ld	b,d
+   0291 FD 2Ar00s00         525 	ld	iy,(_mem_last)
+   0295 D5                  526 	push	de
+   0296 C5                  527 	push	bc
+   0297 FD E5               528 	push	iy
+   0299 CDr15s01            529 	call	_dbg_wtox
+   029C F1                  530 	pop	af
+   029D F1                  531 	pop	af
+   029E D1                  532 	pop	de
+                            533 ;debug.c:226: dbg_say(buff); dbg_say(" ");
+   029F 6B                  534 	ld	l,e
+   02A0 62                  535 	ld	h,d
+   02A1 D5                  536 	push	de
+   02A2 E5                  537 	push	hl
+   02A3 CDrA5s00            538 	call	_dbg_say
+   02A6 F1                  539 	pop	af
+   02A7 D1                  540 	pop	de
+   02A8 21r72s04            541 	ld	hl,#__str_3
+   02AB D5                  542 	push	de
+   02AC E5                  543 	push	hl
+   02AD CDrA5s00            544 	call	_dbg_say
+   02B0 F1                  545 	pop	af
+   02B1 D1                  546 	pop	de
+                            547 ;debug.c:227: dbg_wtox((word)brk_addr,buff);
+   02B2 6B                  548 	ld	l,e
+   02B3 62                  549 	ld	h,d
+   02B4 D5                  550 	push	de
+   02B5 E5                  551 	push	hl
+   02B6 2Ar00s00            552 	ld	hl,(_brk_addr)
+   02B9 E5                  553 	push	hl
+   02BA CDr15s01            554 	call	_dbg_wtox
+   02BD F1                  555 	pop	af
+   02BE F1                  556 	pop	af
+   02BF D1                  557 	pop	de
+                            558 ;debug.c:228: dbg_say(" "); dbg_say(buff); dbg_say("\n");
+   02C0 21r72s04            559 	ld	hl,#__str_3
+   02C3 D5                  560 	push	de
+   02C4 E5                  561 	push	hl
+   02C5 CDrA5s00            562 	call	_dbg_say
+   02C8 F1                  563 	pop	af
+   02C9 D1                  564 	pop	de
+   02CA 6B                  565 	ld	l,e
+   02CB 62                  566 	ld	h,d
+   02CC D5                  567 	push	de
+   02CD E5                  568 	push	hl
+   02CE CDrA5s00            569 	call	_dbg_say
+   02D1 F1                  570 	pop	af
+   02D2 D1                  571 	pop	de
+   02D3 21r74s04            572 	ld	hl,#__str_4
+   02D6 D5                  573 	push	de
+   02D7 E5                  574 	push	hl
+   02D8 CDrA5s00            575 	call	_dbg_say
+   02DB F1                  576 	pop	af
+   02DC D1                  577 	pop	de
+                            578 ;debug.c:231: dbg_say("block owner size next prev\n");
+   02DD 21r76s04            579 	ld	hl,#__str_5
+   02E0 D5                  580 	push	de
+   02E1 E5                  581 	push	hl
+   02E2 CDrA5s00            582 	call	_dbg_say
+   02E5 F1                  583 	pop	af
+   02E6 D1                  584 	pop	de
+                            585 ;debug.c:232: dbg_say("===== ===== ==== ==== ====\n");
+   02E7 21r92s04            586 	ld	hl,#__str_6
+   02EA D5                  587 	push	de
+   02EB E5                  588 	push	hl
+   02EC CDrA5s00            589 	call	_dbg_say
+   02EF F1                  590 	pop	af
+   02F0 D1                  591 	pop	de
+                            592 ;debug.c:234: b=mem_first;
+   02F1 ED 4Br00s00         593 	ld	bc,(_mem_first)
+                            594 ;debug.c:235: while (b) {
+   02F5 DD 73 F8            595 	ld	-8 (ix),e
+   02F8 DD 72 F9            596 	ld	-7 (ix),d
+   02FB DD 73 F6            597 	ld	-10 (ix),e
+   02FE DD 72 F7            598 	ld	-9 (ix),d
+   0301 DD 73 F4            599 	ld	-12 (ix),e
+   0304 DD 72 F5            600 	ld	-11 (ix),d
+   0307 DD 73 F2            601 	ld	-14 (ix),e
+   030A DD 72 F3            602 	ld	-13 (ix),d
+   030D DD 73 F0            603 	ld	-16 (ix),e
+   0310 DD 72 F1            604 	ld	-15 (ix),d
+   0313 DD 73 EE            605 	ld	-18 (ix),e
+   0316 DD 72 EF            606 	ld	-17 (ix),d
+   0319 DD 73 EC            607 	ld	-20 (ix),e
+   031C DD 72 ED            608 	ld	-19 (ix),d
+   031F DD 73 EA            609 	ld	-22 (ix),e
+   0322 DD 72 EB            610 	ld	-21 (ix),d
+   0325 DD 73 E8            611 	ld	-24 (ix),e
+   0328 DD 72 E9            612 	ld	-23 (ix),d
+   032B DD 73 E6            613 	ld	-26 (ix),e
+   032E DD 72 E7            614 	ld	-25 (ix),d
+   0331                     615 00101$:
+   0331 78                  616 	ld	a,b
+   0332 B1                  617 	or	a,c
+   0333 CAr3Bs04            618 	jp	Z,00104$
+                            619 ;debug.c:237: dbg_wtox((word)b,buff);
+   0336 DD 6E F8            620 	ld	l,-8 (ix)
+   0339 DD 66 F9            621 	ld	h,-7 (ix)
+   033C 59                  622 	ld	e,c
+   033D 50                  623 	ld	d,b
+   033E C5                  624 	push	bc
+   033F E5                  625 	push	hl
+   0340 D5                  626 	push	de
+   0341 CDr15s01            627 	call	_dbg_wtox
+   0344 F1                  628 	pop	af
+   0345 F1                  629 	pop	af
+   0346 C1                  630 	pop	bc
+                            631 ;debug.c:238: dbg_say(" "); dbg_say(buff); dbg_say(" ");
+   0347 21r72s04            632 	ld	hl,#__str_3
+   034A C5                  633 	push	bc
+   034B E5                  634 	push	hl
+   034C CDrA5s00            635 	call	_dbg_say
+   034F F1                  636 	pop	af
+   0350 C1                  637 	pop	bc
+   0351 DD 6E F6            638 	ld	l,-10 (ix)
+   0354 DD 66 F7            639 	ld	h,-9 (ix)
+   0357 C5                  640 	push	bc
+   0358 E5                  641 	push	hl
+   0359 CDrA5s00            642 	call	_dbg_say
+   035C F1                  643 	pop	af
+   035D C1                  644 	pop	bc
+   035E 21r72s04            645 	ld	hl,#__str_3
+   0361 C5                  646 	push	bc
+   0362 E5                  647 	push	hl
+   0363 CDrA5s00            648 	call	_dbg_say
+   0366 F1                  649 	pop	af
+   0367 C1                  650 	pop	bc
+                            651 ;debug.c:239: dbg_wtox((word)b->owner,buff);
+   0368 DD 5E F4            652 	ld	e,-12 (ix)
+   036B DD 56 F5            653 	ld	d,-11 (ix)
+   036E D5                  654 	push	de
+   036F FD E1               655 	pop	iy
+   0371 69                  656 	ld	l,c
+   0372 60                  657 	ld	h,b
+   0373 5E                  658 	ld	e,(hl)
+   0374 23                  659 	inc	hl
+   0375 56                  660 	ld	d,(hl)
+   0376 C5                  661 	push	bc
+   0377 FD E5               662 	push	iy
+   0379 D5                  663 	push	de
+   037A CDr15s01            664 	call	_dbg_wtox
+   037D F1                  665 	pop	af
+   037E F1                  666 	pop	af
+   037F C1                  667 	pop	bc
+                            668 ;debug.c:240: dbg_say(" "); dbg_say(buff); dbg_say(" ");
+   0380 21r72s04            669 	ld	hl,#__str_3
+   0383 C5                  670 	push	bc
+   0384 E5                  671 	push	hl
+   0385 CDrA5s00            672 	call	_dbg_say
+   0388 F1                  673 	pop	af
+   0389 C1                  674 	pop	bc
+   038A DD 6E F2            675 	ld	l,-14 (ix)
+   038D DD 66 F3            676 	ld	h,-13 (ix)
+   0390 C5                  677 	push	bc
+   0391 E5                  678 	push	hl
+   0392 CDrA5s00            679 	call	_dbg_say
+   0395 F1                  680 	pop	af
+   0396 C1                  681 	pop	bc
+   0397 21r72s04            682 	ld	hl,#__str_3
+   039A C5                  683 	push	bc
+   039B E5                  684 	push	hl
+   039C CDrA5s00            685 	call	_dbg_say
+   039F F1                  686 	pop	af
+   03A0 C1                  687 	pop	bc
+                            688 ;debug.c:241: dbg_wtox(b->size,buff);
+   03A1 DD 5E F0            689 	ld	e,-16 (ix)
+   03A4 DD 56 F1            690 	ld	d,-15 (ix)
+   03A7 D5                  691 	push	de
+   03A8 FD E1               692 	pop	iy
+   03AA 69                  693 	ld	l,c
+   03AB 60                  694 	ld	h,b
+   03AC 23                  695 	inc	hl
+   03AD 23                  696 	inc	hl
+   03AE 5E                  697 	ld	e,(hl)
+   03AF 23                  698 	inc	hl
+   03B0 56                  699 	ld	d,(hl)
+   03B1 C5                  700 	push	bc
+   03B2 FD E5               701 	push	iy
+   03B4 D5                  702 	push	de
+   03B5 CDr15s01            703 	call	_dbg_wtox
+   03B8 F1                  704 	pop	af
+   03B9 F1                  705 	pop	af
+   03BA C1                  706 	pop	bc
+                            707 ;debug.c:242: dbg_say(buff); dbg_say(" ");
+   03BB DD 6E EE            708 	ld	l,-18 (ix)
+   03BE DD 66 EF            709 	ld	h,-17 (ix)
+   03C1 C5                  710 	push	bc
+   03C2 E5                  711 	push	hl
+   03C3 CDrA5s00            712 	call	_dbg_say
+   03C6 F1                  713 	pop	af
+   03C7 C1                  714 	pop	bc
+   03C8 21r72s04            715 	ld	hl,#__str_3
+   03CB C5                  716 	push	bc
+   03CC E5                  717 	push	hl
+   03CD CDrA5s00            718 	call	_dbg_say
+   03D0 F1                  719 	pop	af
+   03D1 C1                  720 	pop	bc
+                            721 ;debug.c:243: dbg_wtox((word)b->next,buff);
+   03D2 DD 5E EC            722 	ld	e,-20 (ix)
+   03D5 DD 56 ED            723 	ld	d,-19 (ix)
+   03D8 D5                  724 	push	de
+   03D9 FD E1               725 	pop	iy
+   03DB 21 04 00            726 	ld	hl,#0x0004
+   03DE 09                  727 	add	hl,bc
+   03DF DD 75 E4            728 	ld	-28 (ix),l
+   03E2 DD 74 E5            729 	ld	-27 (ix),h
+   03E5 5E                  730 	ld	e,(hl)
+   03E6 23                  731 	inc	hl
+   03E7 56                  732 	ld	d,(hl)
+   03E8 C5                  733 	push	bc
+   03E9 FD E5               734 	push	iy
+   03EB D5                  735 	push	de
+   03EC CDr15s01            736 	call	_dbg_wtox
+   03EF F1                  737 	pop	af
+   03F0 F1                  738 	pop	af
+   03F1 C1                  739 	pop	bc
+                            740 ;debug.c:244: dbg_say(buff); dbg_say(" ");
+   03F2 DD 6E EA            741 	ld	l,-22 (ix)
+   03F5 DD 66 EB            742 	ld	h,-21 (ix)
+   03F8 C5                  743 	push	bc
+   03F9 E5                  744 	push	hl
+   03FA CDrA5s00            745 	call	_dbg_say
+   03FD F1                  746 	pop	af
+   03FE C1                  747 	pop	bc
+   03FF 21r72s04            748 	ld	hl,#__str_3
+   0402 C5                  749 	push	bc
+   0403 E5                  750 	push	hl
+   0404 CDrA5s00            751 	call	_dbg_say
+   0407 F1                  752 	pop	af
+   0408 C1                  753 	pop	bc
+                            754 ;debug.c:245: dbg_wtox((word)b->prev,buff);
+   0409 DD 5E E8            755 	ld	e,-24 (ix)
+   040C DD 56 E9            756 	ld	d,-23 (ix)
+   040F 21 06 00            757 	ld	hl,#0x0006
+   0412 09                  758 	add	hl,bc
+   0413 4E                  759 	ld	c,(hl)
+   0414 23                  760 	inc	hl
+   0415 46                  761 	ld	b,(hl)
+   0416 D5                  762 	push	de
+   0417 C5                  763 	push	bc
+   0418 CDr15s01            764 	call	_dbg_wtox
+   041B F1                  765 	pop	af
+   041C F1                  766 	pop	af
+                            767 ;debug.c:246: dbg_say(buff); dbg_say("\n");
+   041D DD 6E E6            768 	ld	l,-26 (ix)
+   0420 DD 66 E7            769 	ld	h,-25 (ix)
+   0423 E5                  770 	push	hl
+   0424 CDrA5s00            771 	call	_dbg_say
+   0427 21r74s04            772 	ld	hl, #__str_4
+   042A E3                  773 	ex	(sp),hl
+   042B CDrA5s00            774 	call	_dbg_say
+   042E F1                  775 	pop	af
+                            776 ;debug.c:247: b=b->next;
+   042F DD 6E E4            777 	ld	l,-28 (ix)
+   0432 DD 66 E5            778 	ld	h,-27 (ix)
+   0435 4E                  779 	ld	c,(hl)
+   0436 23                  780 	inc	hl
+   0437 46                  781 	ld	b,(hl)
+   0438 C3r31s03            782 	jp	00101$
+   043B                     783 00104$:
+   043B DD F9               784 	ld	sp,ix
+   043D DD E1               785 	pop	ix
+   043F C9                  786 	ret
+   0440                     787 _dbg_memdump_end::
+   0440                     788 __str_0:
+   0440 4D 45 4D 4F 52 59   789 	.ascii "MEMORY DUMP:"
+        20 44 55 4D 50 3A
+   044C 0A                  790 	.db 0x0A
+   044D 00                  791 	.db 0x00
+   044E                     792 __str_1:
+   044E 66 69 72 73 74 20   793 	.ascii "first last break"
+        6C 61 73 74 20 62
+        72 65 61 6B
+   045E 0A                  794 	.db 0x0A
+   045F 00                  795 	.db 0x00
+   0460                     796 __str_2:
+   0460 3D 3D 3D 3D 3D 20   797 	.ascii "===== ==== ====="
+        3D 3D 3D 3D 20 3D
+        3D 3D 3D 3D
+   0470 0A                  798 	.db 0x0A
+   0471 00                  799 	.db 0x00
+   0472                     800 __str_3:
+   0472 20                  801 	.ascii " "
+   0473 00                  802 	.db 0x00
+   0474                     803 __str_4:
+   0474 0A                  804 	.db 0x0A
+   0475 00                  805 	.db 0x00
+   0476                     806 __str_5:
+   0476 62 6C 6F 63 6B 20   807 	.ascii "block owner size next prev"
+        6F 77 6E 65 72 20
+        73 69 7A 65 20 6E
+        65 78 74 20 70 72
+        65 76
+   0490 0A                  808 	.db 0x0A
+   0491 00                  809 	.db 0x00
+   0492                     810 __str_6:
+   0492 3D 3D 3D 3D 3D 20   811 	.ascii "===== ===== ==== ==== ===="
+        3D 3D 3D 3D 3D 20
+        3D 3D 3D 3D 20 3D
+        3D 3D 3D 20 3D 3D
+        3D 3D
+   04AC 0A                  812 	.db 0x0A
+   04AD 00                  813 	.db 0x00
+                            814 ;debug.c:252: void dbg_taskdump() {
+                            815 ;	---------------------------------
+                            816 ; Function dbg_taskdump
+                            817 ; ---------------------------------
+   04AE                     818 _dbg_taskdump_start::
+   04AE                     819 _dbg_taskdump:
+   04AE DD E5               820 	push	ix
+   04B0 DD 21 00 00         821 	ld	ix,#0
+   04B4 DD 39               822 	add	ix,sp
+   04B6 21 EC FF            823 	ld	hl,#-20
+   04B9 39                  824 	add	hl,sp
+   04BA F9                  825 	ld	sp,hl
+                            826 ;debug.c:256: buff[0]=0;
+   04BB 21 0E 00            827 	ld	hl,#0x000E
+   04BE 39                  828 	add	hl,sp
+   04BF EB                  829 	ex	de,hl
+   04C0 3E 00               830 	ld	a,#0x00
+   04C2 12                  831 	ld	(de),a
+                            832 ;debug.c:258: dbg_say("TASKS:\n");
+   04C3 21rD4s05            833 	ld	hl,#__str_7
+   04C6 D5                  834 	push	de
+   04C7 E5                  835 	push	hl
+   04C8 CDrA5s00            836 	call	_dbg_say
+   04CB F1                  837 	pop	af
+   04CC D1                  838 	pop	de
+                            839 ;debug.c:259: dbg_say("task next stck state \n");
+   04CD 21rDCs05            840 	ld	hl,#__str_8
+   04D0 D5                  841 	push	de
+   04D1 E5                  842 	push	hl
+   04D2 CDrA5s00            843 	call	_dbg_say
+   04D5 F1                  844 	pop	af
+   04D6 D1                  845 	pop	de
+                            846 ;debug.c:260: dbg_say("==== ==== ==== ======= \n");
+   04D7 21rF3s05            847 	ld	hl,#__str_9
+   04DA D5                  848 	push	de
+   04DB E5                  849 	push	hl
+   04DC CDrA5s00            850 	call	_dbg_say
+   04DF F1                  851 	pop	af
+   04E0 D1                  852 	pop	de
+                            853 ;debug.c:262: t=tsk_first_running;
+   04E1 FD 21r00s00         854 	ld	iy,#_tsk_first_running
+   04E5 FD 7E 00            855 	ld	a,0 (iy)
+   04E8 DD 77 F8            856 	ld	-8 (ix),a
+   04EB FD 7E 01            857 	ld	a,1 (iy)
+   04EE DD 77 F9            858 	ld	-7 (ix),a
+                            859 ;debug.c:263: while (t) {
+   04F1 DD 73 F6            860 	ld	-10 (ix),e
+   04F4 DD 72 F7            861 	ld	-9 (ix),d
+   04F7 DD 73 F4            862 	ld	-12 (ix),e
+   04FA DD 72 F5            863 	ld	-11 (ix),d
+   04FD DD 73 F2            864 	ld	-14 (ix),e
+   0500 DD 72 F3            865 	ld	-13 (ix),d
+   0503 DD 73 F0            866 	ld	-16 (ix),e
+   0506 DD 72 F1            867 	ld	-15 (ix),d
+   0509 DD 73 EE            868 	ld	-18 (ix),e
+   050C DD 72 EF            869 	ld	-17 (ix),d
+   050F DD 73 EC            870 	ld	-20 (ix),e
+   0512 DD 72 ED            871 	ld	-19 (ix),d
+   0515                     872 00104$:
+   0515 DD 7E F9            873 	ld	a,-7 (ix)
+   0518 DD B6 F8            874 	or	a,-8 (ix)
+   051B CArCFs05            875 	jp	Z,00107$
+                            876 ;debug.c:265: dbg_wtox((word)t,buff);
+   051E DD 6E F6            877 	ld	l,-10 (ix)
+   0521 DD 66 F7            878 	ld	h,-9 (ix)
+   0524 DD 5E F8            879 	ld	e,-8 (ix)
+   0527 DD 56 F9            880 	ld	d,-7 (ix)
+   052A E5                  881 	push	hl
+   052B D5                  882 	push	de
+   052C CDr15s01            883 	call	_dbg_wtox
+   052F F1                  884 	pop	af
+   0530 F1                  885 	pop	af
+                            886 ;debug.c:266: dbg_say(buff); dbg_say(" ");
+   0531 DD 6E F4            887 	ld	l,-12 (ix)
+   0534 DD 66 F5            888 	ld	h,-11 (ix)
+   0537 E5                  889 	push	hl
+   0538 CDrA5s00            890 	call	_dbg_say
+   053B 21r0Cs06            891 	ld	hl, #__str_10
+   053E E3                  892 	ex	(sp),hl
+   053F CDrA5s00            893 	call	_dbg_say
+   0542 F1                  894 	pop	af
+                            895 ;debug.c:267: dbg_wtox((word)t->next,buff);
+   0543 DD 4E F2            896 	ld	c,-14 (ix)
+   0546 DD 46 F3            897 	ld	b,-13 (ix)
+   0549 DD 6E F8            898 	ld	l,-8 (ix)
+   054C DD 66 F9            899 	ld	h,-7 (ix)
+   054F 5E                  900 	ld	e,(hl)
+   0550 23                  901 	inc	hl
+   0551 56                  902 	ld	d,(hl)
+   0552 C5                  903 	push	bc
+   0553 D5                  904 	push	de
+   0554 CDr15s01            905 	call	_dbg_wtox
+   0557 F1                  906 	pop	af
+   0558 F1                  907 	pop	af
+                            908 ;debug.c:268: dbg_say(buff); dbg_say(" ");
+   0559 DD 6E F0            909 	ld	l,-16 (ix)
+   055C DD 66 F1            910 	ld	h,-15 (ix)
+   055F E5                  911 	push	hl
+   0560 CDrA5s00            912 	call	_dbg_say
+   0563 21r0Cs06            913 	ld	hl, #__str_10
+   0566 E3                  914 	ex	(sp),hl
+   0567 CDrA5s00            915 	call	_dbg_say
+   056A F1                  916 	pop	af
+                            917 ;debug.c:269: dbg_wtox((word)t->sp,buff);
+   056B DD 4E EE            918 	ld	c,-18 (ix)
+   056E DD 46 EF            919 	ld	b,-17 (ix)
+   0571 DD 7E F8            920 	ld	a,-8 (ix)
+   0574 C6 04               921 	add	a, #0x04
+   0576 6F                  922 	ld	l,a
+   0577 DD 7E F9            923 	ld	a,-7 (ix)
+   057A CE 00               924 	adc	a, #0x00
+   057C 67                  925 	ld	h,a
+   057D 5E                  926 	ld	e,(hl)
+   057E 23                  927 	inc	hl
+   057F 56                  928 	ld	d,(hl)
+   0580 C5                  929 	push	bc
+   0581 D5                  930 	push	de
+   0582 CDr15s01            931 	call	_dbg_wtox
+   0585 F1                  932 	pop	af
+   0586 F1                  933 	pop	af
+                            934 ;debug.c:270: dbg_say(buff); dbg_say(" ");
+   0587 DD 6E EC            935 	ld	l,-20 (ix)
+   058A DD 66 ED            936 	ld	h,-19 (ix)
+   058D E5                  937 	push	hl
+   058E CDrA5s00            938 	call	_dbg_say
+   0591 21r0Cs06            939 	ld	hl, #__str_10
+   0594 E3                  940 	ex	(sp),hl
+   0595 CDrA5s00            941 	call	_dbg_say
+   0598 F1                  942 	pop	af
+                            943 ;debug.c:271: if (t->state == TASK_STATE_RUNNING)
+   0599 FD 21 09 00         944 	ld	iy,#0x0009
+   059D DD 5E F8            945 	ld	e,-8 (ix)
+   05A0 DD 56 F9            946 	ld	d,-7 (ix)
+   05A3 FD 19               947 	add	iy, de
+   05A5 FD 7E 00            948 	ld	a, 0 (iy)
+   05A8 B7                  949 	or	a, a
+   05A9 20 0A               950 	jr	NZ,00102$
+                            951 ;debug.c:272: dbg_say("running\n");
+   05AB 21r0Es06            952 	ld	hl,#__str_11
+   05AE E5                  953 	push	hl
+   05AF CDrA5s00            954 	call	_dbg_say
+   05B2 F1                  955 	pop	af
+   05B3 18 08               956 	jr	00103$
+   05B5                     957 00102$:
+                            958 ;debug.c:274: dbg_say("waiting\n");
+   05B5 21r17s06            959 	ld	hl,#__str_12
+   05B8 E5                  960 	push	hl
+   05B9 CDrA5s00            961 	call	_dbg_say
+   05BC F1                  962 	pop	af
+   05BD                     963 00103$:
+                            964 ;debug.c:276: t=t->next;
+   05BD DD 6E F8            965 	ld	l,-8 (ix)
+   05C0 DD 66 F9            966 	ld	h,-7 (ix)
+   05C3 7E                  967 	ld	a,(hl)
+   05C4 DD 77 F8            968 	ld	-8 (ix),a
+   05C7 23                  969 	inc	hl
+   05C8 7E                  970 	ld	a,(hl)
+   05C9 DD 77 F9            971 	ld	-7 (ix),a
+   05CC C3r15s05            972 	jp	00104$
+   05CF                     973 00107$:
+   05CF DD F9               974 	ld	sp,ix
+   05D1 DD E1               975 	pop	ix
+   05D3 C9                  976 	ret
+   05D4                     977 _dbg_taskdump_end::
+   05D4                     978 __str_7:
+   05D4 54 41 53 4B 53 3A   979 	.ascii "TASKS:"
+   05DA 0A                  980 	.db 0x0A
+   05DB 00                  981 	.db 0x00
+   05DC                     982 __str_8:
+   05DC 74 61 73 6B 20 6E   983 	.ascii "task next stck state "
+        65 78 74 20 73 74
+        63 6B 20 73 74 61
+        74 65 20
+   05F1 0A                  984 	.db 0x0A
+   05F2 00                  985 	.db 0x00
+   05F3                     986 __str_9:
+   05F3 3D 3D 3D 3D 20 3D   987 	.ascii "==== ==== ==== ======= "
+        3D 3D 3D 20 3D 3D
+        3D 3D 20 3D 3D 3D
+        3D 3D 3D 3D 20
+   060A 0A                  988 	.db 0x0A
+   060B 00                  989 	.db 0x00
+   060C                     990 __str_10:
+   060C 20                  991 	.ascii " "
+   060D 00                  992 	.db 0x00
+   060E                     993 __str_11:
+   060E 72 75 6E 6E 69 6E   994 	.ascii "running"
+        67
+   0615 0A                  995 	.db 0x0A
+   0616 00                  996 	.db 0x00
+   0617                     997 __str_12:
+   0617 77 61 69 74 69 6E   998 	.ascii "waiting"
+        67
+   061E 0A                  999 	.db 0x0A
+   061F 00                 1000 	.db 0x00
+                           1001 ;debug.c:280: void dbg_timerdump() {
+                           1002 ;	---------------------------------
+                           1003 ; Function dbg_timerdump
+                           1004 ; ---------------------------------
+   0620                    1005 _dbg_timerdump_start::
+   0620                    1006 _dbg_timerdump:
+   0620 DD E5              1007 	push	ix
+   0622 DD 21 00 00        1008 	ld	ix,#0
+   0626 DD 39              1009 	add	ix,sp
+   0628 21 EA FF           1010 	ld	hl,#-22
+   062B 39                 1011 	add	hl,sp
+   062C F9                 1012 	ld	sp,hl
+                           1013 ;debug.c:284: buff[0]=0;
+   062D 21 10 00           1014 	ld	hl,#0x0010
+   0630 39                 1015 	add	hl,sp
+   0631 4D                 1016 	ld	c,l
+   0632 44                 1017 	ld	b,h
+   0633 36 00              1018 	ld	(hl),#0x00
+                           1019 ;debug.c:286: dbg_say("TIMERS:\n");
+   0635 21r5As07           1020 	ld	hl,#__str_13
+   0638 C5                 1021 	push	bc
+   0639 E5                 1022 	push	hl
+   063A CDrA5s00           1023 	call	_dbg_say
+   063D F1                 1024 	pop	af
+   063E C1                 1025 	pop	bc
+                           1026 ;debug.c:287: dbg_say("timer tick tc   next\n");
+   063F 21r63s07           1027 	ld	hl,#__str_14
+   0642 C5                 1028 	push	bc
+   0643 E5                 1029 	push	hl
+   0644 CDrA5s00           1030 	call	_dbg_say
+   0647 F1                 1031 	pop	af
+   0648 C1                 1032 	pop	bc
+                           1033 ;debug.c:288: dbg_say("===== ==== ==== ====\n");
+   0649 21r79s07           1034 	ld	hl,#__str_15
+   064C C5                 1035 	push	bc
+   064D E5                 1036 	push	hl
+   064E CDrA5s00           1037 	call	_dbg_say
+   0651 F1                 1038 	pop	af
+   0652 C1                 1039 	pop	bc
+                           1040 ;debug.c:290: tmr=tmr_first;
+   0653 ED 5Br00s00        1041 	ld	de,(_tmr_first)
+                           1042 ;debug.c:291: while (tmr) {
+   0657 DD 71 F8           1043 	ld	-8 (ix),c
+   065A DD 70 F9           1044 	ld	-7 (ix),b
+   065D DD 71 F6           1045 	ld	-10 (ix),c
+   0660 DD 70 F7           1046 	ld	-9 (ix),b
+   0663 DD 71 F4           1047 	ld	-12 (ix),c
+   0666 DD 70 F5           1048 	ld	-11 (ix),b
+   0669 DD 71 F2           1049 	ld	-14 (ix),c
+   066C DD 70 F3           1050 	ld	-13 (ix),b
+   066F DD 71 F0           1051 	ld	-16 (ix),c
+   0672 DD 70 F1           1052 	ld	-15 (ix),b
+   0675 DD 71 EE           1053 	ld	-18 (ix),c
+   0678 DD 70 EF           1054 	ld	-17 (ix),b
+   067B DD 71 EC           1055 	ld	-20 (ix),c
+   067E DD 70 ED           1056 	ld	-19 (ix),b
+   0681 DD 71 EA           1057 	ld	-22 (ix),c
+   0684 DD 70 EB           1058 	ld	-21 (ix),b
+   0687                    1059 00101$:
+   0687 7A                 1060 	ld	a,d
+   0688 B3                 1061 	or	a,e
+   0689 CAr55s07           1062 	jp	Z,00104$
+                           1063 ;debug.c:293: dbg_wtox((word)tmr,buff);
+   068C DD 6E F8           1064 	ld	l,-8 (ix)
+   068F DD 66 F9           1065 	ld	h,-7 (ix)
+   0692 4B                 1066 	ld	c,e
+   0693 42                 1067 	ld	b,d
+   0694 D5                 1068 	push	de
+   0695 E5                 1069 	push	hl
+   0696 C5                 1070 	push	bc
+   0697 CDr15s01           1071 	call	_dbg_wtox
+   069A F1                 1072 	pop	af
+   069B F1                 1073 	pop	af
+   069C D1                 1074 	pop	de
+                           1075 ;debug.c:294: dbg_say(" "); dbg_say(buff); dbg_say(" ");
+   069D 21r8Fs07           1076 	ld	hl,#__str_16
+   06A0 D5                 1077 	push	de
+   06A1 E5                 1078 	push	hl
+   06A2 CDrA5s00           1079 	call	_dbg_say
+   06A5 F1                 1080 	pop	af
+   06A6 D1                 1081 	pop	de
+   06A7 DD 6E F6           1082 	ld	l,-10 (ix)
+   06AA DD 66 F7           1083 	ld	h,-9 (ix)
+   06AD D5                 1084 	push	de
+   06AE E5                 1085 	push	hl
+   06AF CDrA5s00           1086 	call	_dbg_say
+   06B2 F1                 1087 	pop	af
+   06B3 D1                 1088 	pop	de
+   06B4 21r8Fs07           1089 	ld	hl,#__str_16
+   06B7 D5                 1090 	push	de
+   06B8 E5                 1091 	push	hl
+   06B9 CDrA5s00           1092 	call	_dbg_say
+   06BC F1                 1093 	pop	af
+   06BD D1                 1094 	pop	de
+                           1095 ;debug.c:295: dbg_wtox((word)tmr->ticks,buff);
+   06BE DD 4E F4           1096 	ld	c,-12 (ix)
+   06C1 DD 46 F5           1097 	ld	b,-11 (ix)
+   06C4 C5                 1098 	push	bc
+   06C5 FD E1              1099 	pop	iy
+   06C7 21 06 00           1100 	ld	hl,#0x0006
+   06CA 19                 1101 	add	hl,de
+   06CB 4E                 1102 	ld	c,(hl)
+   06CC 23                 1103 	inc	hl
+   06CD 46                 1104 	ld	b,(hl)
+   06CE D5                 1105 	push	de
+   06CF FD E5              1106 	push	iy
+   06D1 C5                 1107 	push	bc
+   06D2 CDr15s01           1108 	call	_dbg_wtox
+   06D5 F1                 1109 	pop	af
+   06D6 F1                 1110 	pop	af
+   06D7 D1                 1111 	pop	de
+                           1112 ;debug.c:296: dbg_say(buff); dbg_say(" ");
+   06D8 DD 6E F2           1113 	ld	l,-14 (ix)
+   06DB DD 66 F3           1114 	ld	h,-13 (ix)
+   06DE D5                 1115 	push	de
+   06DF E5                 1116 	push	hl
+   06E0 CDrA5s00           1117 	call	_dbg_say
+   06E3 F1                 1118 	pop	af
+   06E4 D1                 1119 	pop	de
+   06E5 21r8Fs07           1120 	ld	hl,#__str_16
+   06E8 D5                 1121 	push	de
+   06E9 E5                 1122 	push	hl
+   06EA CDrA5s00           1123 	call	_dbg_say
+   06ED F1                 1124 	pop	af
+   06EE D1                 1125 	pop	de
+                           1126 ;debug.c:297: dbg_wtox((word)tmr->_tick_count,buff);
+   06EF DD 4E F0           1127 	ld	c,-16 (ix)
+   06F2 DD 46 F1           1128 	ld	b,-15 (ix)
+   06F5 C5                 1129 	push	bc
+   06F6 FD E1              1130 	pop	iy
+   06F8 21 08 00           1131 	ld	hl,#0x0008
+   06FB 19                 1132 	add	hl,de
+   06FC 4E                 1133 	ld	c,(hl)
+   06FD 23                 1134 	inc	hl
+   06FE 46                 1135 	ld	b,(hl)
+   06FF D5                 1136 	push	de
+   0700 FD E5              1137 	push	iy
+   0702 C5                 1138 	push	bc
+   0703 CDr15s01           1139 	call	_dbg_wtox
+   0706 F1                 1140 	pop	af
+   0707 F1                 1141 	pop	af
+   0708 D1                 1142 	pop	de
+                           1143 ;debug.c:298: dbg_say(buff); dbg_say(" ");
+   0709 DD 6E EE           1144 	ld	l,-18 (ix)
+   070C DD 66 EF           1145 	ld	h,-17 (ix)
+   070F D5                 1146 	push	de
+   0710 E5                 1147 	push	hl
+   0711 CDrA5s00           1148 	call	_dbg_say
+   0714 F1                 1149 	pop	af
+   0715 D1                 1150 	pop	de
+   0716 21r8Fs07           1151 	ld	hl,#__str_16
+   0719 D5                 1152 	push	de
+   071A E5                 1153 	push	hl
+   071B CDrA5s00           1154 	call	_dbg_say
+   071E F1                 1155 	pop	af
+   071F D1                 1156 	pop	de
+                           1157 ;debug.c:299: dbg_wtox((word)tmr->next,buff);
+   0720 DD 4E EC           1158 	ld	c,-20 (ix)
+   0723 DD 46 ED           1159 	ld	b,-19 (ix)
+   0726 C5                 1160 	push	bc
+   0727 FD E1              1161 	pop	iy
+   0729 6B                 1162 	ld	l,e
+   072A 62                 1163 	ld	h,d
+   072B 4E                 1164 	ld	c,(hl)
+   072C 23                 1165 	inc	hl
+   072D 46                 1166 	ld	b,(hl)
+   072E D5                 1167 	push	de
+   072F FD E5              1168 	push	iy
+   0731 C5                 1169 	push	bc
+   0732 CDr15s01           1170 	call	_dbg_wtox
+   0735 F1                 1171 	pop	af
+   0736 F1                 1172 	pop	af
+   0737 D1                 1173 	pop	de
+                           1174 ;debug.c:300: dbg_say(buff); dbg_say("\n");
+   0738 DD 6E EA           1175 	ld	l,-22 (ix)
+   073B DD 66 EB           1176 	ld	h,-21 (ix)
+   073E D5                 1177 	push	de
+   073F E5                 1178 	push	hl
+   0740 CDrA5s00           1179 	call	_dbg_say
+   0743 F1                 1180 	pop	af
+   0744 D1                 1181 	pop	de
+   0745 21r91s07           1182 	ld	hl,#__str_17
+   0748 D5                 1183 	push	de
+   0749 E5                 1184 	push	hl
+   074A CDrA5s00           1185 	call	_dbg_say
+   074D F1                 1186 	pop	af
+                           1187 ;debug.c:302: tmr=tmr->next;
+   074E E1                 1188 	pop	hl
+   074F 5E                 1189 	ld	e,(hl)
+   0750 23                 1190 	inc	hl
+   0751 56                 1191 	ld	d,(hl)
+   0752 C3r87s06           1192 	jp	00101$
+   0755                    1193 00104$:
+   0755 DD F9              1194 	ld	sp,ix
+   0757 DD E1              1195 	pop	ix
+   0759 C9                 1196 	ret
+   075A                    1197 _dbg_timerdump_end::
+   075A                    1198 __str_13:
+   075A 54 49 4D 45 52 53  1199 	.ascii "TIMERS:"
+        3A
+   0761 0A                 1200 	.db 0x0A
+   0762 00                 1201 	.db 0x00
+   0763                    1202 __str_14:
+   0763 74 69 6D 65 72 20  1203 	.ascii "timer tick tc   next"
+        74 69 63 6B 20 74
+        63 20 20 20 6E 65
+        78 74
+   0777 0A                 1204 	.db 0x0A
+   0778 00                 1205 	.db 0x00
+   0779                    1206 __str_15:
+   0779 3D 3D 3D 3D 3D 20  1207 	.ascii "===== ==== ==== ===="
+        3D 3D 3D 3D 20 3D
+        3D 3D 3D 20 3D 3D
+        3D 3D
+   078D 0A                 1208 	.db 0x0A
+   078E 00                 1209 	.db 0x00
+   078F                    1210 __str_16:
+   078F 20                 1211 	.ascii " "
+   0790 00                 1212 	.db 0x00
+   0791                    1213 __str_17:
+   0791 0A                 1214 	.db 0x0A
+   0792 00                 1215 	.db 0x00
+                           1216 ;debug.c:306: void dbg_eventdump() {
+                           1217 ;	---------------------------------
+                           1218 ; Function dbg_eventdump
+                           1219 ; ---------------------------------
+   0793                    1220 _dbg_eventdump_start::
+   0793                    1221 _dbg_eventdump:
+   0793 DD E5              1222 	push	ix
+   0795 DD 21 00 00        1223 	ld	ix,#0
+   0799 DD 39              1224 	add	ix,sp
+   079B 21 F0 FF           1225 	ld	hl,#-16
+   079E 39                 1226 	add	hl,sp
+   079F F9                 1227 	ld	sp,hl
+                           1228 ;debug.c:310: buff[0]=0;
+   07A0 21 0A 00           1229 	ld	hl,#0x000A
+   07A3 39                 1230 	add	hl,sp
+   07A4 EB                 1231 	ex	de,hl
+   07A5 3E 00              1232 	ld	a,#0x00
+   07A7 12                 1233 	ld	(de),a
+                           1234 ;debug.c:312: dbg_say("EVENTS:\n");
+   07A8 21r87s08           1235 	ld	hl,#__str_18
+   07AB D5                 1236 	push	de
+   07AC E5                 1237 	push	hl
+   07AD CDrA5s00           1238 	call	_dbg_say
+   07B0 F1                 1239 	pop	af
+   07B1 D1                 1240 	pop	de
+                           1241 ;debug.c:313: dbg_say("event next state\n");
+   07B2 21r90s08           1242 	ld	hl,#__str_19
+   07B5 D5                 1243 	push	de
+   07B6 E5                 1244 	push	hl
+   07B7 CDrA5s00           1245 	call	_dbg_say
+   07BA F1                 1246 	pop	af
+   07BB D1                 1247 	pop	de
+                           1248 ;debug.c:314: dbg_say("===== ==== =====\n");
+   07BC 21rA2s08           1249 	ld	hl,#__str_20
+   07BF D5                 1250 	push	de
+   07C0 E5                 1251 	push	hl
+   07C1 CDrA5s00           1252 	call	_dbg_say
+   07C4 F1                 1253 	pop	af
+   07C5 D1                 1254 	pop	de
+                           1255 ;debug.c:316: e=evt_first;
+   07C6 FD 21r00s00        1256 	ld	iy,#_evt_first
+   07CA FD 7E 00           1257 	ld	a,0 (iy)
+   07CD DD 77 F8           1258 	ld	-8 (ix),a
+   07D0 FD 7E 01           1259 	ld	a,1 (iy)
+   07D3 DD 77 F9           1260 	ld	-7 (ix),a
+                           1261 ;debug.c:317: while (e) {
+   07D6 DD 73 F6           1262 	ld	-10 (ix),e
+   07D9 DD 72 F7           1263 	ld	-9 (ix),d
+   07DC DD 73 F4           1264 	ld	-12 (ix),e
+   07DF DD 72 F5           1265 	ld	-11 (ix),d
+   07E2 DD 73 F2           1266 	ld	-14 (ix),e
+   07E5 DD 72 F3           1267 	ld	-13 (ix),d
+   07E8 DD 73 F0           1268 	ld	-16 (ix),e
+   07EB DD 72 F1           1269 	ld	-15 (ix),d
+   07EE                    1270 00104$:
+   07EE DD 7E F9           1271 	ld	a,-7 (ix)
+   07F1 DD B6 F8           1272 	or	a,-8 (ix)
+   07F4 CAr82s08           1273 	jp	Z,00107$
+                           1274 ;debug.c:319: dbg_wtox((word)e,buff);
+   07F7 DD 6E F6           1275 	ld	l,-10 (ix)
+   07FA DD 66 F7           1276 	ld	h,-9 (ix)
+   07FD DD 5E F8           1277 	ld	e,-8 (ix)
+   0800 DD 56 F9           1278 	ld	d,-7 (ix)
+   0803 E5                 1279 	push	hl
+   0804 D5                 1280 	push	de
+   0805 CDr15s01           1281 	call	_dbg_wtox
+   0808 F1                 1282 	pop	af
+                           1283 ;debug.c:320: dbg_say(" "); dbg_say(buff); dbg_say(" ");
+   0809 21rB4s08           1284 	ld	hl, #__str_21
+   080C E3                 1285 	ex	(sp),hl
+   080D CDrA5s00           1286 	call	_dbg_say
+   0810 F1                 1287 	pop	af
+   0811 DD 6E F4           1288 	ld	l,-12 (ix)
+   0814 DD 66 F5           1289 	ld	h,-11 (ix)
+   0817 E5                 1290 	push	hl
+   0818 CDrA5s00           1291 	call	_dbg_say
+   081B 21rB4s08           1292 	ld	hl, #__str_21
+   081E E3                 1293 	ex	(sp),hl
+   081F CDrA5s00           1294 	call	_dbg_say
+   0822 F1                 1295 	pop	af
+                           1296 ;debug.c:321: dbg_wtox((word)e->next,buff);
+   0823 DD 4E F2           1297 	ld	c,-14 (ix)
+   0826 DD 46 F3           1298 	ld	b,-13 (ix)
+   0829 DD 6E F8           1299 	ld	l,-8 (ix)
+   082C DD 66 F9           1300 	ld	h,-7 (ix)
+   082F 5E                 1301 	ld	e,(hl)
+   0830 23                 1302 	inc	hl
+   0831 56                 1303 	ld	d,(hl)
+   0832 C5                 1304 	push	bc
+   0833 D5                 1305 	push	de
+   0834 CDr15s01           1306 	call	_dbg_wtox
+   0837 F1                 1307 	pop	af
+   0838 F1                 1308 	pop	af
+                           1309 ;debug.c:322: dbg_say(buff); dbg_say(" ");
+   0839 DD 6E F0           1310 	ld	l,-16 (ix)
+   083C DD 66 F1           1311 	ld	h,-15 (ix)
+   083F E5                 1312 	push	hl
+   0840 CDrA5s00           1313 	call	_dbg_say
+   0843 21rB4s08           1314 	ld	hl, #__str_21
+   0846 E3                 1315 	ex	(sp),hl
+   0847 CDrA5s00           1316 	call	_dbg_say
+   084A F1                 1317 	pop	af
+                           1318 ;debug.c:323: if (e->state==signaled)
+   084B FD 21 04 00        1319 	ld	iy,#0x0004
+   084F DD 5E F8           1320 	ld	e,-8 (ix)
+   0852 DD 56 F9           1321 	ld	d,-7 (ix)
+   0855 FD 19              1322 	add	iy, de
+   0857 FD 7E 00           1323 	ld	a, 0 (iy)
+   085A D6 01              1324 	sub	a, #0x01
+   085C 20 0A              1325 	jr	NZ,00102$
+                           1326 ;debug.c:324: dbg_say("signaled\n");
+   085E 21rB6s08           1327 	ld	hl,#__str_22
+   0861 E5                 1328 	push	hl
+   0862 CDrA5s00           1329 	call	_dbg_say
+   0865 F1                 1330 	pop	af
+   0866 18 08              1331 	jr	00103$
+   0868                    1332 00102$:
+                           1333 ;debug.c:326: dbg_say("nonsignaled\n");		
+   0868 21rC0s08           1334 	ld	hl,#__str_23
+   086B E5                 1335 	push	hl
+   086C CDrA5s00           1336 	call	_dbg_say
+   086F F1                 1337 	pop	af
+   0870                    1338 00103$:
+                           1339 ;debug.c:328: e = e->next;
+   0870 DD 6E F8           1340 	ld	l,-8 (ix)
+   0873 DD 66 F9           1341 	ld	h,-7 (ix)
+   0876 7E                 1342 	ld	a,(hl)
+   0877 DD 77 F8           1343 	ld	-8 (ix),a
+   087A 23                 1344 	inc	hl
+   087B 7E                 1345 	ld	a,(hl)
+   087C DD 77 F9           1346 	ld	-7 (ix),a
+   087F C3rEEs07           1347 	jp	00104$
+   0882                    1348 00107$:
+   0882 DD F9              1349 	ld	sp,ix
+   0884 DD E1              1350 	pop	ix
+   0886 C9                 1351 	ret
+   0887                    1352 _dbg_eventdump_end::
+   0887                    1353 __str_18:
+   0887 45 56 45 4E 54 53  1354 	.ascii "EVENTS:"
+        3A
+   088E 0A                 1355 	.db 0x0A
+   088F 00                 1356 	.db 0x00
+   0890                    1357 __str_19:
+   0890 65 76 65 6E 74 20  1358 	.ascii "event next state"
+        6E 65 78 74 20 73
+        74 61 74 65
+   08A0 0A                 1359 	.db 0x0A
+   08A1 00                 1360 	.db 0x00
+   08A2                    1361 __str_20:
+   08A2 3D 3D 3D 3D 3D 20  1362 	.ascii "===== ==== ====="
+        3D 3D 3D 3D 20 3D
+        3D 3D 3D 3D
+   08B2 0A                 1363 	.db 0x0A
+   08B3 00                 1364 	.db 0x00
+   08B4                    1365 __str_21:
+   08B4 20                 1366 	.ascii " "
+   08B5 00                 1367 	.db 0x00
+   08B6                    1368 __str_22:
+   08B6 73 69 67 6E 61 6C  1369 	.ascii "signaled"
+        65 64
+   08BE 0A                 1370 	.db 0x0A
+   08BF 00                 1371 	.db 0x00
+   08C0                    1372 __str_23:
+   08C0 6E 6F 6E 73 69 67  1373 	.ascii "nonsignaled"
+        6E 61 6C 65 64
+   08CB 0A                 1374 	.db 0x0A
+   08CC 00                 1375 	.db 0x00
+                           1376 	.area _CODE
+                           1377 	.area _CABS

@@ -1,0 +1,32 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 1.
+
+Symbol Table
+
+    .__.ABS.                                                    =  0000 G
+    _di                                                            **** GX
+    _ei                                                            **** GX
+  0 _evt_create                                                    0000 GR
+  0 _evt_create_end                                                002F GR
+  0 _evt_create_start                                              0000 GR
+  0 _evt_destroy                                                   002F GR
+  0 _evt_destroy_end                                               0059 GR
+  0 _evt_destroy_start                                             002F GR
+  1 _evt_first                                                     0000 GR
+  0 _evt_set                                                       0059 GR
+  0 _evt_set_end                                                   009D GR
+  0 _evt_set_start                                                 0059 GR
+    _lst_delete                                                    **** GX
+    _lst_find                                                      **** GX
+    _lst_insert                                                    **** GX
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 2.
+
+Area Table
+
+   0 _CODE                                      size   9D   flags 0
+   1 _DATA                                      size    2   flags 0
+   2 _OVERLAY                                   size    0   flags 0
+   3 _HOME                                      size    0   flags 0
+   4 _GSINIT                                    size    C   flags 0
+   5 _GSFINAL                                   size    0   flags 0
+   6 _CABS                                      size    0   flags 0

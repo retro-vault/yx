@@ -1,0 +1,524 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.0 #7066 (Jun 14 2012) (Linux)
+                              4 ; This file was generated Tue Nov 27 20:33:01 2012
+                              5 ;--------------------------------------------------------
+                              6 	.module task
+                              7 	.optsdcc -mz80
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _di
+                             13 	.globl _ei
+                             14 	.globl _tmr_chain
+                             15 	.globl _mem_allocate
+                             16 	.globl _lst_delete
+                             17 	.globl _lst_insert
+                             18 	.globl _tsk_first_waiting
+                             19 	.globl _tsk_first_running
+                             20 	.globl _tsk_current
+                             21 	.globl _tsk_create
+                             22 	.globl _tsk_wait4events
+                             23 	.globl _tsk_roundrobin
+                             24 	.globl _tsk_switch
+                             25 ;--------------------------------------------------------
+                             26 ; special function registers
+                             27 ;--------------------------------------------------------
+                             28 ;--------------------------------------------------------
+                             29 ;  ram data
+                             30 ;--------------------------------------------------------
+                             31 	.area _DATA
+   0000                      32 _tsk_current::
+   0000                      33 	.ds 2
+   0002                      34 _tsk_first_running::
+   0002                      35 	.ds 2
+   0004                      36 _tsk_first_waiting::
+   0004                      37 	.ds 2
+                             38 ;--------------------------------------------------------
+                             39 ; overlayable items in  ram 
+                             40 ;--------------------------------------------------------
+                             41 	.area _OVERLAY
+                             42 ;--------------------------------------------------------
+                             43 ; external initialized ram data
+                             44 ;--------------------------------------------------------
+                             45 ;--------------------------------------------------------
+                             46 ; global & static initialisations
+                             47 ;--------------------------------------------------------
+                             48 	.area _HOME
+                             49 	.area _GSINIT
+                             50 	.area _GSFINAL
+                             51 	.area _GSINIT
+                             52 ;task.c:10: task_t *tsk_current=NULL;
+   0000 FD 21r00s00          53 	ld	iy,#_tsk_current
+   0004 FD 36 00 00          54 	ld	0 (iy),#0x00
+   0008 FD 36 01 00          55 	ld	1 (iy),#0x00
+                             56 ;task.c:13: task_t *tsk_first_running=NULL;
+   000C FD 21r02s00          57 	ld	iy,#_tsk_first_running
+   0010 FD 36 00 00          58 	ld	0 (iy),#0x00
+   0014 FD 36 01 00          59 	ld	1 (iy),#0x00
+                             60 ;task.c:14: task_t *tsk_first_waiting=NULL;
+   0018 FD 21r04s00          61 	ld	iy,#_tsk_first_waiting
+   001C FD 36 00 00          62 	ld	0 (iy),#0x00
+   0020 FD 36 01 00          63 	ld	1 (iy),#0x00
+                             64 ;--------------------------------------------------------
+                             65 ; Home
+                             66 ;--------------------------------------------------------
+                             67 	.area _HOME
+                             68 	.area _HOME
+                             69 ;--------------------------------------------------------
+                             70 ; code
+                             71 ;--------------------------------------------------------
+                             72 	.area _CODE
+                             73 ;task.c:24: task_t * tsk_create(void (*entry_point)(), uint16_t heap_size, uint16_t stack_size) {
+                             74 ;	---------------------------------
+                             75 ; Function tsk_create
+                             76 ; ---------------------------------
+   0000                      77 _tsk_create_start::
+   0000                      78 _tsk_create:
+   0000 DD E5                79 	push	ix
+   0002 DD 21 00 00          80 	ld	ix,#0
+   0006 DD 39                81 	add	ix,sp
+   0008 F5                   82 	push	af
+                             83 ;task.c:30: t=(task_t *)lst_insert((list_header_t **)&tsk_first_running, sizeof(task_t), KERNEL);
+   0009 11r02s00             84 	ld	de,#_tsk_first_running
+   000C 21 00 01             85 	ld	hl,#0x0100
+   000F E5                   86 	push	hl
+   0010 21 0C 00             87 	ld	hl,#0x000C
+   0013 E5                   88 	push	hl
+   0014 D5                   89 	push	de
+   0015 CDr00s00             90 	call	_lst_insert
+   0018 F1                   91 	pop	af
+   0019 F1                   92 	pop	af
+   001A F1                   93 	pop	af
+   001B 4D                   94 	ld	c,l
+   001C 44                   95 	ld	b,h
+                             96 ;task.c:31: if (!t) {
+   001D 78                   97 	ld	a,b
+   001E B1                   98 	or	a,c
+   001F 20 0B                99 	jr	NZ,00105$
+                            100 ;task.c:32: last_error=RESULT_NO_MEMORY_LEFT;
+   0021 21r00s00            101 	ld	hl,#_last_error + 0
+   0024 36 02               102 	ld	(hl), #0x02
+                            103 ;task.c:33: t=NULL;
+   0026 01 00 00            104 	ld	bc,#0x0000
+   0029 C3rB0s00            105 	jp	00106$
+   002C                     106 00105$:
+                            107 ;task.c:35: stack=mem_allocate(stack_size,(word)t); 
+   002C 69                  108 	ld	l,c
+   002D 60                  109 	ld	h,b
+   002E C5                  110 	push	bc
+   002F E5                  111 	push	hl
+   0030 DD 6E 08            112 	ld	l,8 (ix)
+   0033 DD 66 09            113 	ld	h,9 (ix)
+   0036 E5                  114 	push	hl
+   0037 CDr00s00            115 	call	_mem_allocate
+   003A F1                  116 	pop	af
+   003B F1                  117 	pop	af
+   003C C1                  118 	pop	bc
+   003D EB                  119 	ex	de,hl
+                            120 ;task.c:36: if (!stack) {
+   003E 7A                  121 	ld	a,d
+   003F B3                  122 	or	a,e
+   0040 20 19               123 	jr	NZ,00102$
+                            124 ;task.c:37: lst_delete((list_header_t **)&tsk_first_running, (list_header_t *)t, 1); /* was allocated so free it. */
+   0042 11r02s00            125 	ld	de,#_tsk_first_running
+   0045 3E 01               126 	ld	a,#0x01
+   0047 F5                  127 	push	af
+   0048 33                  128 	inc	sp
+   0049 C5                  129 	push	bc
+   004A D5                  130 	push	de
+   004B CDr00s00            131 	call	_lst_delete
+   004E F1                  132 	pop	af
+   004F F1                  133 	pop	af
+   0050 33                  134 	inc	sp
+                            135 ;task.c:38: last_error=RESULT_NO_MEMORY_LEFT;
+   0051 21r00s00            136 	ld	hl,#_last_error + 0
+   0054 36 02               137 	ld	(hl), #0x02
+                            138 ;task.c:39: t=NULL;
+   0056 01 00 00            139 	ld	bc,#0x0000
+   0059 18 55               140 	jr	00106$
+   005B                     141 00102$:
+                            142 ;task.c:41: t->wait=NULL;
+   005B 21 06 00            143 	ld	hl,#0x0006
+   005E 09                  144 	add	hl,bc
+   005F AF                  145 	xor	a, a
+   0060 77                  146 	ld	(hl), a
+   0061 23                  147 	inc	hl
+   0062 77                  148 	ld	(hl), a
+                            149 ;task.c:42: t->state=TASK_STATE_RUNNING;
+   0063 21 09 00            150 	ld	hl,#0x0009
+   0066 09                  151 	add	hl,bc
+   0067 36 00               152 	ld	(hl),#0x00
+                            153 ;task.c:43: t->heap_size=heap_size;
+   0069 21 0A 00            154 	ld	hl,#0x000A
+   006C 09                  155 	add	hl,bc
+   006D DD 7E 06            156 	ld	a,6 (ix)
+   0070 77                  157 	ld	(hl),a
+   0071 23                  158 	inc	hl
+   0072 DD 7E 07            159 	ld	a,7 (ix)
+   0075 77                  160 	ld	(hl),a
+                            161 ;task.c:46: t->sp=(word)stack + stack_size - CONTEXT_SIZE;
+   0076 FD 21 04 00         162 	ld	iy,#0x0004
+   007A FD 09               163 	add	iy, bc
+   007C 7B                  164 	ld	a,e
+   007D DD 86 08            165 	add	a, 8 (ix)
+   0080 5F                  166 	ld	e,a
+   0081 7A                  167 	ld	a,d
+   0082 DD 8E 09            168 	adc	a, 9 (ix)
+   0085 57                  169 	ld	d,a
+   0086 7B                  170 	ld	a,e
+   0087 C6 EA               171 	add	a,#0xEA
+   0089 DD 77 FE            172 	ld	-2 (ix),a
+   008C 7A                  173 	ld	a,d
+   008D CE FF               174 	adc	a,#0xFF
+   008F DD 77 FF            175 	ld	-1 (ix),a
+   0092 DD 7E FE            176 	ld	a,-2 (ix)
+   0095 FD 77 00            177 	ld	0 (iy),a
+   0098 DD 7E FF            178 	ld	a,-1 (ix)
+   009B FD 77 01            179 	ld	1 (iy),a
+                            180 ;task.c:49: ret_addr=t->sp + CONTEXT_SIZE - 2;
+   009E 21 FE FF            181 	ld	hl,#0xFFFFFFFE
+   00A1 19                  182 	add	hl,de
+                            183 ;task.c:50: (*ret_addr)=(word)entry_point;	
+   00A2 DD 56 04            184 	ld	d,4 (ix)
+   00A5 DD 5E 05            185 	ld	e,5 (ix)
+   00A8 72                  186 	ld	(hl),d
+   00A9 23                  187 	inc	hl
+   00AA 73                  188 	ld	(hl),e
+                            189 ;task.c:52: last_error=RESULT_SUCCESS; 
+   00AB 21r00s00            190 	ld	hl,#_last_error + 0
+   00AE 36 00               191 	ld	(hl), #0x00
+   00B0                     192 00106$:
+                            193 ;task.c:55: return t;
+   00B0 69                  194 	ld	l,c
+   00B1 60                  195 	ld	h,b
+   00B2 DD F9               196 	ld	sp,ix
+   00B4 DD E1               197 	pop	ix
+   00B6 C9                  198 	ret
+   00B7                     199 _tsk_create_end::
+                            200 ;task.c:61: result tsk_wait4events(event_t **e, byte num_events) {
+                            201 ;	---------------------------------
+                            202 ; Function tsk_wait4events
+                            203 ; ---------------------------------
+   00B7                     204 _tsk_wait4events_start::
+   00B7                     205 _tsk_wait4events:
+   00B7 DD E5               206 	push	ix
+   00B9 DD 21 00 00         207 	ld	ix,#0
+   00BD DD 39               208 	add	ix,sp
+                            209 ;task.c:64: di();
+   00BF CDr00s00            210 	call	_di
+                            211 ;task.c:67: tsk_current->wait=e;
+   00C2 2Ar00s00            212 	ld	hl,(_tsk_current)
+   00C5 01 06 00            213 	ld	bc,#0x0006
+   00C8 09                  214 	add	hl,bc
+   00C9 DD 7E 04            215 	ld	a,4 (ix)
+   00CC 77                  216 	ld	(hl),a
+   00CD 23                  217 	inc	hl
+   00CE DD 7E 05            218 	ld	a,5 (ix)
+   00D1 77                  219 	ld	(hl),a
+                            220 ;task.c:68: tsk_current->num_events=num_events;
+   00D2 2Ar00s00            221 	ld	hl,(_tsk_current)
+   00D5 01 08 00            222 	ld	bc,#0x0008
+   00D8 09                  223 	add	hl,bc
+   00D9 DD 7E 06            224 	ld	a,6 (ix)
+   00DC 77                  225 	ld	(hl),a
+                            226 ;task.c:69: tsk_current->state = TASK_STATE_WAITING;
+   00DD 2Ar00s00            227 	ld	hl,(_tsk_current)
+   00E0 01 09 00            228 	ld	bc,#0x0009
+   00E3 09                  229 	add	hl,bc
+   00E4 36 01               230 	ld	(hl),#0x01
+                            231 ;task.c:72: lst_delete((list_header_t **)&tsk_first_running, (list_header_t *)tsk_current, 0);
+   00E6 ED 4Br00s00         232 	ld	bc,(_tsk_current)
+   00EA 11r02s00            233 	ld	de,#_tsk_first_running
+   00ED 3E 00               234 	ld	a,#0x00
+   00EF F5                  235 	push	af
+   00F0 33                  236 	inc	sp
+   00F1 C5                  237 	push	bc
+   00F2 D5                  238 	push	de
+   00F3 CDr00s00            239 	call	_lst_delete
+   00F6 F1                  240 	pop	af
+   00F7 F1                  241 	pop	af
+   00F8 33                  242 	inc	sp
+                            243 ;task.c:73: tsk_current->next=tsk_first_waiting;
+   00F9 2Ar00s00            244 	ld	hl,(_tsk_current)
+   00FC FD 21r04s00         245 	ld	iy,#_tsk_first_waiting
+   0100 FD 7E 00            246 	ld	a,0 (iy)
+   0103 77                  247 	ld	(hl),a
+   0104 23                  248 	inc	hl
+   0105 FD 7E 01            249 	ld	a,1 (iy)
+   0108 77                  250 	ld	(hl),a
+                            251 ;task.c:74: tsk_first_waiting=tsk_current;
+   0109 3Ar00s00            252 	ld	a,(#_tsk_current + 0)
+   010C 32r04s00            253 	ld	(#_tsk_first_waiting + 0),a
+   010F 3Ar01s00            254 	ld	a,(#_tsk_current + 1)
+   0112 32r05s00            255 	ld	(#_tsk_first_waiting + 1),a
+                            256 ;task.c:77: tsk_switch();
+   0115 CDr3Fs02            257 	call	_tsk_switch
+                            258 ;task.c:80: ei();
+   0118 CDr00s00            259 	call	_ei
+                            260 ;task.c:82: return last_error=RESULT_SUCCESS;
+   011B 21r00s00            261 	ld	hl,#_last_error + 0
+   011E 36 00               262 	ld	(hl), #0x00
+   0120 2E 00               263 	ld	l,#0x00
+   0122 DD E1               264 	pop	ix
+   0124 C9                  265 	ret
+   0125                     266 _tsk_wait4events_end::
+                            267 ;task.c:90: void tsk_roundrobin() {
+                            268 ;	---------------------------------
+                            269 ; Function tsk_roundrobin
+                            270 ; ---------------------------------
+   0125                     271 _tsk_roundrobin_start::
+   0125                     272 _tsk_roundrobin:
+   0125 DD E5               273 	push	ix
+   0127 DD 21 00 00         274 	ld	ix,#0
+   012B DD 39               275 	add	ix,sp
+   012D 21 FB FF            276 	ld	hl,#-5
+   0130 39                  277 	add	hl,sp
+   0131 F9                  278 	ld	sp,hl
+                            279 ;task.c:97: curr=tsk_first_waiting;
+   0132 FD 21r04s00         280 	ld	iy,#_tsk_first_waiting
+   0136 FD 7E 00            281 	ld	a,0 (iy)
+   0139 DD 77 FD            282 	ld	-3 (ix),a
+   013C FD 7E 01            283 	ld	a,1 (iy)
+   013F DD 77 FE            284 	ld	-2 (ix),a
+                            285 ;task.c:98: while (curr) {
+   0142                     286 00105$:
+   0142 DD 7E FE            287 	ld	a,-2 (ix)
+   0145 DD B6 FD            288 	or	a,-3 (ix)
+   0148 CArEFs01            289 	jp	Z,00107$
+                            290 ;task.c:99: found=NULL;
+   014B 01 00 00            291 	ld	bc,#0x0000
+                            292 ;task.c:100: for (n=0;n < curr->num_events && !found;n++)
+   014E DD 7E FD            293 	ld	a,-3 (ix)
+   0151 C6 06               294 	add	a, #0x06
+   0153 6F                  295 	ld	l,a
+   0154 DD 7E FE            296 	ld	a,-2 (ix)
+   0157 CE 00               297 	adc	a, #0x00
+   0159 67                  298 	ld	h,a
+   015A 5E                  299 	ld	e,(hl)
+   015B 23                  300 	inc	hl
+   015C 56                  301 	ld	d,(hl)
+   015D DD 7E FD            302 	ld	a,-3 (ix)
+   0160 C6 08               303 	add	a, #0x08
+   0162 DD 77 FB            304 	ld	-5 (ix),a
+   0165 DD 7E FE            305 	ld	a,-2 (ix)
+   0168 CE 00               306 	adc	a, #0x00
+   016A DD 77 FC            307 	ld	-4 (ix),a
+   016D DD 36 FF 00         308 	ld	-1 (ix),#0x00
+   0171                     309 00116$:
+   0171 DD 6E FB            310 	ld	l,-5 (ix)
+   0174 DD 66 FC            311 	ld	h,-4 (ix)
+   0177 DD 7E FF            312 	ld	a,-1 (ix)
+   017A 96                  313 	sub	a,(hl)
+   017B 30 23               314 	jr	NC,00119$
+   017D 78                  315 	ld	a,b
+   017E B1                  316 	or	a,c
+   017F 20 1F               317 	jr	NZ,00119$
+                            318 ;task.c:101: if (((curr->wait)[n])->state==signaled)
+   0181 DD 6E FF            319 	ld	l,-1 (ix)
+   0184 26 00               320 	ld	h,#0x00
+   0186 29                  321 	add	hl, hl
+   0187 19                  322 	add	hl,de
+   0188 7E                  323 	ld	a,(hl)
+   0189 23                  324 	inc	hl
+   018A 66                  325 	ld	h,(hl)
+   018B 6F                  326 	ld	l,a
+   018C 23                  327 	inc	hl
+   018D 23                  328 	inc	hl
+   018E 23                  329 	inc	hl
+   018F 23                  330 	inc	hl
+   0190 7E                  331 	ld	a,(hl)
+   0191 D6 01               332 	sub	a, #0x01
+   0193 20 06               333 	jr	NZ,00118$
+                            334 ;task.c:102: found=curr;
+   0195 DD 4E FD            335 	ld	c,-3 (ix)
+   0198 DD 46 FE            336 	ld	b,-2 (ix)
+   019B                     337 00118$:
+                            338 ;task.c:100: for (n=0;n < curr->num_events && !found;n++)
+   019B DD 34 FF            339 	inc	-1 (ix)
+   019E 18 D1               340 	jr	00116$
+   01A0                     341 00119$:
+                            342 ;task.c:103: curr=curr->next;
+   01A0 DD 6E FD            343 	ld	l,-3 (ix)
+   01A3 DD 66 FE            344 	ld	h,-2 (ix)
+   01A6 7E                  345 	ld	a,(hl)
+   01A7 DD 77 FD            346 	ld	-3 (ix),a
+   01AA 23                  347 	inc	hl
+   01AB 7E                  348 	ld	a,(hl)
+   01AC DD 77 FE            349 	ld	-2 (ix),a
+                            350 ;task.c:105: if (found) { /* move to running list */
+   01AF 78                  351 	ld	a,b
+   01B0 B1                  352 	or	a,c
+   01B1 CAr42s01            353 	jp	Z,00105$
+                            354 ;task.c:106: lst_delete((list_header_t **)&tsk_first_waiting, (list_header_t *)found, 0);
+   01B4 DD 71 FB            355 	ld	-5 (ix),c
+   01B7 DD 70 FC            356 	ld	-4 (ix),b
+   01BA 11r04s00            357 	ld	de,#_tsk_first_waiting
+   01BD C5                  358 	push	bc
+   01BE 3E 00               359 	ld	a,#0x00
+   01C0 F5                  360 	push	af
+   01C1 33                  361 	inc	sp
+   01C2 DD 6E FB            362 	ld	l,-5 (ix)
+   01C5 DD 66 FC            363 	ld	h,-4 (ix)
+   01C8 E5                  364 	push	hl
+   01C9 D5                  365 	push	de
+   01CA CDr00s00            366 	call	_lst_delete
+   01CD F1                  367 	pop	af
+   01CE F1                  368 	pop	af
+   01CF 33                  369 	inc	sp
+   01D0 C1                  370 	pop	bc
+                            371 ;task.c:107: found->next=tsk_first_running;
+   01D1 69                  372 	ld	l,c
+   01D2 60                  373 	ld	h,b
+   01D3 FD 21r02s00         374 	ld	iy,#_tsk_first_running
+   01D7 FD 7E 00            375 	ld	a,0 (iy)
+   01DA 77                  376 	ld	(hl),a
+   01DB 23                  377 	inc	hl
+   01DC FD 7E 01            378 	ld	a,1 (iy)
+   01DF 77                  379 	ld	(hl),a
+                            380 ;task.c:108: found->state = TASK_STATE_RUNNING;
+   01E0 21 09 00            381 	ld	hl,#0x0009
+   01E3 09                  382 	add	hl,bc
+   01E4 36 00               383 	ld	(hl),#0x00
+                            384 ;task.c:109: tsk_first_running=found;
+   01E6 FD 71 00            385 	ld	0 (iy),c
+   01E9 FD 70 01            386 	ld	1 (iy),b
+   01EC C3r42s01            387 	jp	00105$
+   01EF                     388 00107$:
+                            389 ;task.c:114: if (tsk_first_running==NULL) return; /* no running tasks yet */
+   01EF FD 21r02s00         390 	ld	iy,#_tsk_first_running
+   01F3 FD 7E 01            391 	ld	a,1 (iy)
+   01F6 FD B6 00            392 	or	a,0 (iy)
+   01F9 28 3F               393 	jr	Z,00120$
+                            394 ;task.c:117: if (tsk_current==NULL || 
+   01FB FD 21r00s00         395 	ld	iy,#_tsk_current
+   01FF FD 7E 01            396 	ld	a,1 (iy)
+   0202 FD B6 00            397 	or	a,0 (iy)
+   0205 28 15               398 	jr	Z,00110$
+                            399 ;task.c:118: tsk_current->state==TASK_STATE_WAITING || 
+   0207 2Ar00s00            400 	ld	hl,(_tsk_current)
+   020A 01 09 00            401 	ld	bc,#0x0009
+   020D 09                  402 	add	hl,bc
+   020E 7E                  403 	ld	a,(hl)
+   020F D6 01               404 	sub	a, #0x01
+   0211 28 09               405 	jr	Z,00110$
+                            406 ;task.c:119: tsk_current->next==NULL) 
+   0213 2Ar00s00            407 	ld	hl,(_tsk_current)
+   0216 56                  408 	ld	d,(hl)
+   0217 23                  409 	inc	hl
+   0218 7E                  410 	ld	a, (hl)
+   0219 B2                  411 	or	a,d
+   021A 20 0E               412 	jr	NZ,00111$
+   021C                     413 00110$:
+                            414 ;task.c:120: tsk_current=tsk_first_running;
+   021C 3Ar02s00            415 	ld	a,(#_tsk_first_running + 0)
+   021F 32r00s00            416 	ld	(#_tsk_current + 0),a
+   0222 3Ar03s00            417 	ld	a,(#_tsk_first_running + 1)
+   0225 32r01s00            418 	ld	(#_tsk_current + 1),a
+   0228 18 10               419 	jr	00120$
+   022A                     420 00111$:
+                            421 ;task.c:122: tsk_current=tsk_current->next;
+   022A 2Ar00s00            422 	ld	hl,(_tsk_current)
+   022D 7E                  423 	ld	a,(hl)
+   022E FD 21r00s00         424 	ld	iy,#_tsk_current
+   0232 FD 77 00            425 	ld	0 (iy),a
+   0235 23                  426 	inc	hl
+   0236 7E                  427 	ld	a,(hl)
+   0237 FD 77 01            428 	ld	1 (iy),a
+   023A                     429 00120$:
+   023A DD F9               430 	ld	sp,ix
+   023C DD E1               431 	pop	ix
+   023E C9                  432 	ret
+   023F                     433 _tsk_roundrobin_end::
+                            434 ;task.c:129: void tsk_switch() __naked {
+                            435 ;	---------------------------------
+                            436 ; Function tsk_switch
+                            437 ; ---------------------------------
+   023F                     438 _tsk_switch_start::
+   023F                     439 _tsk_switch:
+                            440 ;task.c:181: __endasm;
+                            441 ;;	store registers
+   023F F5                  442 	push	af
+   0240 C5                  443 	push	bc
+   0241 D5                  444 	push	de
+   0242 E5                  445 	push	hl
+   0243 DD E5               446 	push	ix
+   0245 FD E5               447 	push	iy
+                            448 ;;	store alternative registers
+   0247 08                  449 	ex	af,af'
+   0248 D9                  450 	exx
+   0249 F5                  451 	push	af
+   024A C5                  452 	push	bc
+   024B D5                  453 	push	de
+   024C E5                  454 	push	hl
+                            455 ;;	store stack pointer
+   024D FD 21r00s00         456 	ld	iy,#_tsk_current ; address of tsk_current to iy
+   0251 FD 6E 00            457 	ld	l,(iy) ; value of tsk_current to hl
+   0254 FD 66 01            458 	ld	h,1(iy)
+   0257 7D                  459 	ld	a,l ; is tsk_current==(word)0?
+   0258 B4                  460 	or	h
+   0259 28 0F               461 	jr	z,no_tsk_current ; no tsk_current, don't store sp
+   025B EB                  462 	ex	de,hl ; store value of tsk_current to de
+   025C 21 00 00            463 	ld	hl,#0 ; value of sp to hl
+   025F 39                  464 	add	hl,sp
+   0260 EB                  465 	ex	de,hl ; de=sp, hl=value of tsk_current
+   0261 23                  466 	inc	hl ; mote to 4th word of task_t structure
+   0262 23                  467 	inc	hl
+   0263 23                  468 	inc	hl
+   0264 23                  469 	inc	hl
+   0265 73                  470 	ld	(hl),e ; store sp there
+   0266 23                  471 	inc	hl
+   0267 72                  472 	ld	(hl),d
+   0268 18 0B               473 	jr	has_tsk_current
+                            474 ;;	there is no current task
+                            475 ;;	clean stack and return
+   026A                     476 	no_tsk_current:
+   026A 21 00 00            477 	ld	hl,#0
+   026D 39                  478 	add	hl,sp
+   026E 16 00               479 	ld	d,#0
+   0270 1E 14               480 	ld	e,#20
+   0272 ED 52               481 	sbc	hl,de
+   0274 F9                  482 	ld	sp,hl
+   0275                     483 	has_tsk_current:
+                            484 ;task.c:183: tmr_chain(); /* call timer hooks (mostly device drivers) */
+   0275 CDr00s00            485 	call	_tmr_chain
+                            486 ;task.c:184: tsk_roundrobin(); /* round robin to next task */
+   0278 CDr25s01            487 	call	_tsk_roundrobin
+                            488 ;task.c:228: __endasm;
+                            489 ;;	restore stack pointer
+   027B FD 21r00s00         490 	ld	iy,#_tsk_current
+   027F FD 6E 00            491 	ld	l,(iy)
+   0282 FD 66 01            492 	ld	h,1(iy)
+   0285 7C                  493 	ld	a,h
+   0286 B5                  494 	or	l ; tsk_current==(word)0?
+   0287 28 17               495 	jr	z,end_switch
+   0289 23                  496 	inc	hl
+   028A 23                  497 	inc	hl
+   028B 23                  498 	inc	hl
+   028C 23                  499 	inc	hl
+   028D 5E                  500 	ld	e,(hl)
+   028E 23                  501 	inc	hl
+   028F 56                  502 	ld	d,(hl)
+   0290 EB                  503 	ex	de,hl
+   0291 F9                  504 	ld	sp,hl
+                            505 ;;	restore alternate registers
+   0292 E1                  506 	pop	hl
+   0293 D1                  507 	pop	de
+   0294 C1                  508 	pop	bc
+   0295 F1                  509 	pop	af
+                            510 ;;	restore registers
+   0296 08                  511 	ex	af,af'
+   0297 D9                  512 	exx
+   0298 FD E1               513 	pop	iy
+   029A DD E1               514 	pop	ix
+   029C E1                  515 	pop	hl
+   029D D1                  516 	pop	de
+   029E C1                  517 	pop	bc
+   029F F1                  518 	pop	af
+   02A0                     519 	end_switch:
+   02A0 FB                  520 	ei
+   02A1 ED 4D               521 	reti
+   02A3                     522 _tsk_switch_end::
+                            523 	.area _CODE
+                            524 	.area _CABS

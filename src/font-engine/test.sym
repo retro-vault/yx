@@ -1,0 +1,124 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 1.
+
+Symbol Table
+
+    .__.ABS.                                                    =  0000 G
+    __mulint_rrx_s                                                 **** GX
+  0 __str_0                                                        0233 R
+  0 __str_1                                                        024E R
+  0 __str_2                                                        0266 R
+  0 __str_3                                                        027F R
+  0 __str_4                                                        029F R
+  0 __str_5                                                        02B8 R
+  0 __str_6                                                        02D1 R
+  0 __str_7                                                        02EE R
+    _c60s_font                                                     **** GX
+    _c64_font                                                      **** GX
+    _chicago_font                                                  **** GX
+    _cour_new_font                                                 **** GX
+  1 _delta_g                                                       0008 GR
+  0 _directg_aligned_glyph_16x16                                   09B8 GR
+  0 _directg_aligned_glyph_16x16_end                               0A1F GR
+  0 _directg_aligned_glyph_16x16_start                             09B8 GR
+  0 _directg_realize                                               0890 GR
+  0 _directg_realize_end                                           08E1 GR
+  0 _directg_realize_start                                         0890 GR
+  0 _directg_render_masked_glyph_16x16                             0A1F GR
+  0 _directg_render_masked_glyph_16x16_end                         0A90 GR
+  0 _directg_render_masked_glyph_16x16_start                       0A1F GR
+  0 _directg_vmem_addr                                             0931 GR
+  0 _directg_vmem_addr_end                                         095B GR
+  0 _directg_vmem_addr_start                                       0931 GR
+  0 _directg_vmem_nextrow_addr                                     095B GR
+  0 _directg_vmem_nextrow_addr_end                                 0978 GR
+  0 _directg_vmem_nextrow_addr_start                               095B GR
+    _envy_font                                                     **** GX
+    _fnt_get_font_info                                             **** GX
+  0 _g_clip_margins                                                034C GR
+  0 _g_clip_margins_end                                            03EA GR
+  0 _g_clip_margins_start                                          034C GR
+  0 _g_draw_clipped_glyph                                          0572 GR
+  0 _g_draw_clipped_glyph_end                                      0820 GR
+  0 _g_draw_clipped_glyph_start                                    0572 GR
+  0 _g_draw_text                                                   03EA GR
+  0 _g_draw_text_end                                               0572 GR
+  0 _g_draw_text_start                                             03EA GR
+  0 _g_init                                                        0820 GR
+  0 _g_init_end                                                    0890 GR
+  0 _g_init_start                                                  0820 GR
+  0 _g_translate_coordinates                                       030A GR
+  0 _g_translate_coordinates_end                                   034C GR
+  0 _g_translate_coordinates_start                                 030A GR
+  1 _last_error                                                    000A GR
+    _liquid_font                                                   **** GX
+  0 _main                                                          0000 GR
+  0 _main_end                                                      0233 GR
+  0 _main_start                                                    0000 GR
+  0 _mem_copy                                                      08E1 GR
+  0 _mem_copy_end                                                  08FC GR
+  0 _mem_copy_start                                                08E1 GR
+  0 _mem_set                                                       0914 GR
+  0 _mem_set_end                                                   0931 GR
+  0 _mem_set_start                                                 0914 GR
+    _ocra_font                                                     **** GX
+  1 _screen                                                        0000 GR
+  1 _screen_rect                                                   0004 GR
+  1 _shadow_screen                                                 0002 GR
+  0 _shift_buffer_right                                            0978 GR
+  0 _shift_buffer_right_end                                        09B8 GR
+  0 _shift_buffer_right_start                                      0978 GR
+    _sinserif_font                                                 **** GX
+  0 _string_length                                                 08FC GR
+  0 _string_length_end                                             0914 GR
+  0 _string_length_start                                           08FC GR
+  0 bottom_ok                                                      09CF R
+  0 cm_bottom                                                      03A8 R
+  0 cm_done_mask                                                   03E0 R
+  0 cm_end                                                         03E7 R
+  0 cm_left                                                        0385 R
+  0 cm_lmask                                                       03C9 R
+  0 cm_lmask_loop                                                  03DA R
+  0 cm_masks                                                       03B4 R
+  0 cm_no_clipping                                                 03E5 R
+  0 cm_right                                                       039C R
+  0 cm_rmask_loop                                                  03C4 R
+  0 cm_top                                                         0390 R
+  0 directg_vmem_addr_raw                                          093D GR
+  0 directg_vmem_nextrow_addr_raw                                  0967 GR
+  0 g_clip_margins_raw                                             0375 GR
+  0 len_loop                                                       099C R
+  0 mask_loop                                                      0994 R
+  0 mem_set_raw                                                    0929 GR
+  0 nextrow_done                                                   0977 R
+  0 no_ex                                                          09E9 R
+  0 no_ex_2                                                        0A18 R
+  0 no_mask                                                        099A R
+  0 not_put_1                                                      09FF R
+  0 not_put_2                                                      0A0E R
+  0 pag_done                                                       0A1E R
+  0 pag_line_ok                                                    0A10 R
+  0 pag_loop                                                       09E0 R
+  0 pag_no_second                                                  0A03 R
+    rct_intersect_raw                                              **** GX
+  0 real_y_loop                                                    08CB R
+  0 rmg_bott_ok                                                    0A36 R
+  0 rmg_done                                                       0A8F R
+  0 rmg_dont_shift                                                 0A6F R
+  0 rmg_loop                                                       0A4D R
+  0 rmg_no_second                                                  0A89 R
+  0 rmg_shift                                                      0A62 R
+  0 shift_loop                                                     09A2 R
+  0 sl_end                                                         0912 R
+  0 sl_loop                                                        090B R
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 2.
+
+Area Table
+
+   0 _CODE                                      size  A90   flags 0
+   1 _DATA                                      size    B   flags 0
+   2 _OVERLAY                                   size    0   flags 0
+   3 _HOME                                      size    0   flags 0
+   4 _GSINIT                                    size    8   flags 0
+   5 _GSFINAL                                   size    0   flags 0
+   6 _CABS                                      size    0   flags 0

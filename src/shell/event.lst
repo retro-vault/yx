@@ -1,0 +1,176 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.0 #7066 (Jun 14 2012) (Linux)
+                              4 ; This file was generated Tue Nov 27 20:33:01 2012
+                              5 ;--------------------------------------------------------
+                              6 	.module event
+                              7 	.optsdcc -mz80
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _di
+                             13 	.globl _ei
+                             14 	.globl _lst_find
+                             15 	.globl _lst_delete
+                             16 	.globl _lst_insert
+                             17 	.globl _evt_first
+                             18 	.globl _evt_create
+                             19 	.globl _evt_destroy
+                             20 	.globl _evt_set
+                             21 ;--------------------------------------------------------
+                             22 ; special function registers
+                             23 ;--------------------------------------------------------
+                             24 ;--------------------------------------------------------
+                             25 ;  ram data
+                             26 ;--------------------------------------------------------
+                             27 	.area _DATA
+   0000                      28 _evt_first::
+   0000                      29 	.ds 2
+                             30 ;--------------------------------------------------------
+                             31 ; overlayable items in  ram 
+                             32 ;--------------------------------------------------------
+                             33 	.area _OVERLAY
+                             34 ;--------------------------------------------------------
+                             35 ; external initialized ram data
+                             36 ;--------------------------------------------------------
+                             37 ;--------------------------------------------------------
+                             38 ; global & static initialisations
+                             39 ;--------------------------------------------------------
+                             40 	.area _HOME
+                             41 	.area _GSINIT
+                             42 	.area _GSFINAL
+                             43 	.area _GSINIT
+                             44 ;event.c:9: event_t *evt_first=NULL;
+   0000 FD 21r00s00          45 	ld	iy,#_evt_first
+   0004 FD 36 00 00          46 	ld	0 (iy),#0x00
+   0008 FD 36 01 00          47 	ld	1 (iy),#0x00
+                             48 ;--------------------------------------------------------
+                             49 ; Home
+                             50 ;--------------------------------------------------------
+                             51 	.area _HOME
+                             52 	.area _HOME
+                             53 ;--------------------------------------------------------
+                             54 ; code
+                             55 ;--------------------------------------------------------
+                             56 	.area _CODE
+                             57 ;event.c:14: event_t *evt_create(word owner) {
+                             58 ;	---------------------------------
+                             59 ; Function evt_create
+                             60 ; ---------------------------------
+   0000                      61 _evt_create_start::
+   0000                      62 _evt_create:
+   0000 DD E5                63 	push	ix
+   0002 DD 21 00 00          64 	ld	ix,#0
+   0006 DD 39                65 	add	ix,sp
+                             66 ;event.c:16: di();
+   0008 CDr00s00             67 	call	_di
+                             68 ;event.c:17: e=(event_t *)lst_insert((list_header_t **)&evt_first, sizeof(event_t),owner);
+   000B DD 4E 04             69 	ld	c,4 (ix)
+   000E DD 46 05             70 	ld	b,5 (ix)
+   0011 11r00s00             71 	ld	de,#_evt_first
+   0014 C5                   72 	push	bc
+   0015 21 05 00             73 	ld	hl,#0x0005
+   0018 E5                   74 	push	hl
+   0019 D5                   75 	push	de
+   001A CDr00s00             76 	call	_lst_insert
+   001D F1                   77 	pop	af
+   001E F1                   78 	pop	af
+   001F F1                   79 	pop	af
+   0020 EB                   80 	ex	de,hl
+                             81 ;event.c:18: e->state=nonsignaled;
+   0021 21 04 00             82 	ld	hl,#0x0004
+   0024 19                   83 	add	hl,de
+   0025 36 00                84 	ld	(hl),#0x00
+                             85 ;event.c:19: ei();
+   0027 D5                   86 	push	de
+   0028 CDr00s00             87 	call	_ei
+                             88 ;event.c:20: return e;
+   002B E1                   89 	pop	hl
+   002C DD E1                90 	pop	ix
+   002E C9                   91 	ret
+   002F                      92 _evt_create_end::
+                             93 ;event.c:26: result evt_destroy(event_t *e) {
+                             94 ;	---------------------------------
+                             95 ; Function evt_destroy
+                             96 ; ---------------------------------
+   002F                      97 _evt_destroy_start::
+   002F                      98 _evt_destroy:
+   002F DD E5                99 	push	ix
+   0031 DD 21 00 00         100 	ld	ix,#0
+   0035 DD 39               101 	add	ix,sp
+                            102 ;event.c:28: di();
+   0037 CDr00s00            103 	call	_di
+                            104 ;event.c:29: r=lst_delete((list_header_t **)&evt_first, (list_header_t *)e, 1);
+   003A DD 5E 04            105 	ld	e,4 (ix)
+   003D DD 56 05            106 	ld	d,5 (ix)
+   0040 01r00s00            107 	ld	bc,#_evt_first
+   0043 3E 01               108 	ld	a,#0x01
+   0045 F5                  109 	push	af
+   0046 33                  110 	inc	sp
+   0047 D5                  111 	push	de
+   0048 C5                  112 	push	bc
+   0049 CDr00s00            113 	call	_lst_delete
+   004C F1                  114 	pop	af
+   004D F1                  115 	pop	af
+   004E 33                  116 	inc	sp
+   004F 55                  117 	ld	d,l
+                            118 ;event.c:30: ei();
+   0050 D5                  119 	push	de
+   0051 CDr00s00            120 	call	_ei
+   0054 D1                  121 	pop	de
+                            122 ;event.c:31: return r;
+   0055 6A                  123 	ld	l,d
+   0056 DD E1               124 	pop	ix
+   0058 C9                  125 	ret
+   0059                     126 _evt_destroy_end::
+                            127 ;event.c:37: result evt_set(event_t *e, event_state_t newstate) {
+                            128 ;	---------------------------------
+                            129 ; Function evt_set
+                            130 ; ---------------------------------
+   0059                     131 _evt_set_start::
+   0059                     132 _evt_set:
+   0059 DD E5               133 	push	ix
+   005B DD 21 00 00         134 	ld	ix,#0
+   005F DD 39               135 	add	ix,sp
+   0061 F5                  136 	push	af
+                            137 ;event.c:42: di();
+   0062 CDr00s00            138 	call	_di
+                            139 ;event.c:43: r=lst_find((list_header_t *)evt_first, (list_header_t **)last, (list_header_t *)e);
+   0065 DD 5E 04            140 	ld	e,4 (ix)
+   0068 DD 56 05            141 	ld	d,5 (ix)
+   006B DD 4E FE            142 	ld	c,-2 (ix)
+   006E DD 46 FF            143 	ld	b,-1 (ix)
+   0071 FD 2Ar00s00         144 	ld	iy,(_evt_first)
+   0075 D5                  145 	push	de
+   0076 C5                  146 	push	bc
+   0077 FD E5               147 	push	iy
+   0079 CDr00s00            148 	call	_lst_find
+   007C F1                  149 	pop	af
+   007D F1                  150 	pop	af
+   007E F1                  151 	pop	af
+   007F 55                  152 	ld	d,l
+                            153 ;event.c:44: if (r==RESULT_SUCCESS)
+   0080 7A                  154 	ld	a,d
+   0081 B7                  155 	or	a, a
+   0082 20 0E               156 	jr	NZ,00102$
+                            157 ;event.c:45: e->state=newstate;
+   0084 DD 6E 04            158 	ld	l,4 (ix)
+   0087 DD 66 05            159 	ld	h,5 (ix)
+   008A 01 04 00            160 	ld	bc,#0x0004
+   008D 09                  161 	add	hl,bc
+   008E DD 7E 06            162 	ld	a,6 (ix)
+   0091 77                  163 	ld	(hl),a
+   0092                     164 00102$:
+                            165 ;event.c:46: ei();
+   0092 D5                  166 	push	de
+   0093 CDr00s00            167 	call	_ei
+   0096 D1                  168 	pop	de
+                            169 ;event.c:47: return r;
+   0097 6A                  170 	ld	l,d
+   0098 DD F9               171 	ld	sp,ix
+   009A DD E1               172 	pop	ix
+   009C C9                  173 	ret
+   009D                     174 _evt_set_end::
+                            175 	.area _CODE
+                            176 	.area _CABS

@@ -1,0 +1,47 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 1.
+
+Symbol Table
+
+    .__.ABS.                                                    =  0000 G
+  1 _b1                                                            0000 GR
+  1 _b2                                                            0002 GR
+  0 _ball                                                          0088 GR
+  0 _ball2                                                         01A4 GR
+  0 _ball2_end                                                     029D GR
+  0 _ball2_start                                                   01A4 GR
+  0 _ball3                                                         029D GR
+  0 _ball3_end                                                     0384 GR
+  0 _ball3_start                                                   029D GR
+  0 _ball_end                                                      01A4 GR
+  0 _ball_start                                                    0088 GR
+    _dbg_cls                                                       **** GX
+    _dbg_putc_xy                                                   **** GX
+  1 _done                                                          0004 GR
+    _evt_create                                                    **** GX
+    _evt_set                                                       **** GX
+  0 _init_balls                                                    001C GR
+  0 _init_balls_end                                                006C GR
+  0 _init_balls_start                                              001C GR
+  0 _timer1                                                        0000 GR
+  0 _timer1_end                                                    000E GR
+  0 _timer1_start                                                  0000 GR
+  0 _timer2                                                        000E GR
+  0 _timer2_end                                                    001C GR
+  0 _timer2_start                                                  000E GR
+    _tmr_install                                                   **** GX
+    _tsk_wait4events                                               **** GX
+  0 _wait                                                          006C GR
+  0 _wait_end                                                      0088 GR
+  0 _wait_start                                                    006C GR
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 2.
+
+Area Table
+
+   0 _CODE                                      size  384   flags 0
+   1 _DATA                                      size    6   flags 0
+   2 _OVERLAY                                   size    0   flags 0
+   3 _HOME                                      size    0   flags 0
+   4 _GSINIT                                    size   24   flags 0
+   5 _GSFINAL                                   size    0   flags 0
+   6 _CABS                                      size    0   flags 0

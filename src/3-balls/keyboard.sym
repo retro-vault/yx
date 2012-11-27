@@ -1,0 +1,69 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 1.
+
+Symbol Table
+
+    .__.ABS.                                                    =  0000 G
+  1 _caps_kbd_map                                                  004D GR
+    _evt_set                                                       **** GX
+  1 _kbd_buff_head                                                 0022 GR
+  1 _kbd_buff_tail                                                 0023 GR
+  1 _kbd_buffer                                                    0002 GR
+  0 _kbd_close                                                     0074 GR
+  0 _kbd_close_end                                                 00AF GR
+  0 _kbd_close_start                                               0074 GR
+  1 _kbd_exclusive_handle                                          0000 GR
+  0 _kbd_get_key                                                   0174 GR
+  0 _kbd_get_key_end                                               0199 GR
+  0 _kbd_get_key_start                                             0174 GR
+  1 _kbd_lastkey                                                   0024 GR
+  1 _kbd_map                                                       0025 GR
+  0 _kbd_open                                                      0000 GR
+  0 _kbd_open_end                                                  0074 GR
+  0 _kbd_open_start                                                0000 GR
+  0 _kbd_read_async                                                00AF GR
+  0 _kbd_read_async_end                                            0126 GR
+  0 _kbd_read_async_start                                          00AF GR
+  0 _kbd_scan                                                      0199 GR
+  0 _kbd_scan_end                                                  025E GR
+  0 _kbd_scan_start                                                0199 GR
+  0 _kbd_timer_hook                                                0126 GR
+  0 _kbd_timer_hook_end                                            0174 GR
+  0 _kbd_timer_hook_start                                          0126 GR
+    _last_error                                                    **** GX
+    _mem_allocate                                                  **** GX
+    _mem_free                                                      **** GX
+  1 _sym_kbd_map                                                   0075 GR
+    _tsk_current                                                   **** GX
+  0 caps                                                           0208 R
+  0 endofscan                                                      01E4 R
+  0 endread                                                        0198 R
+  0 ghosting                                                       01E1 R
+  0 gosymbol                                                       021A R
+  0 kbd_process                                                    01EE R
+  0 key_avail                                                      0183 R
+  0 keydown                                                        01D0 R
+  0 keyprocend                                                     025B R
+  0 keytoe                                                         01D9 R
+  0 nextscan                                                       01E6 R
+  0 nokeys                                                         0253 R
+  0 prockey                                                        021F R
+  0 resetbend                                                      024A R
+  0 resetbstart                                                    018D R
+  0 scanline                                                       01A1 R
+  0 sym_                                                           0212 R
+  0 symbole                                                        0219 R
+  0 testbits                                                       01B0 R
+  0 updatebend                                                     024C R
+  0 updatebstart                                                   018F R
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 2.
+
+Area Table
+
+   0 _CODE                                      size  25E   flags 0
+   1 _DATA                                      size   9D   flags 0
+   2 _OVERLAY                                   size    0   flags 0
+   3 _HOME                                      size    0   flags 0
+   4 _GSINIT                                    size  276   flags 0
+   5 _GSFINAL                                   size    0   flags 0
+   6 _CABS                                      size    0   flags 0

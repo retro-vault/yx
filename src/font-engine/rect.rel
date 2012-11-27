@@ -1,0 +1,44 @@
+XL
+H 7 areas 5 global symbols
+M rect
+O -mz80
+S .__.ABS. Def0000
+A _CODE size 43 flags 0 addr 0
+S _rct_intersect Def0000
+S rct_intersect_raw Def0012
+S _rct_intersect_start Def0000
+S _rct_intersect_end Def0043
+A _DATA size 0 flags 0 addr 0
+A _OVERLAY size 0 flags 0 addr 0
+A _HOME size 0 flags 0 addr 0
+A _GSINIT size 0 flags 0 addr 0
+A _GSFINAL size 0 flags 0 addr 0
+A _CABS size 0 flags 0 addr 0
+T 00 00
+R 00 00 00 00
+T 00 00
+R 00 00 00 00
+T 00 00 FD 21 00 00 FD 39 FD 6E 02 FD 66 03 FD 5E
+R 00 00 00 00
+T 0E 00 04 FD 56 05
+R 00 00 00 00
+T 12 00
+R 00 00 00 00
+T 12 00 DD E5 E5 D5 FD E1 DD E1 DD 7E 00 FD BE 02
+R 00 00 00 00
+T 20 00 30 1C DD 7E 02 FD BE 00 38 14 DD 7E 01 FD
+R 00 00 00 00
+T 2E 00 BE 03 30 0C DD 7E 03 FD BE 01 38 04 2E 01
+R 00 00 00 00
+T 3C 00 18 02
+R 00 00 00 00
+T 3E 00
+R 00 00 00 00
+T 3E 00 2E 00
+R 00 00 00 00
+T 40 00
+R 00 00 00 00
+T 40 00 DD E1 C9
+R 00 00 00 00
+T 43 00
+R 00 00 00 00

@@ -1,0 +1,202 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 1.
+
+
+
+                              1 		;; crt0.s
+                              2 		;; zx spectrum rom startup code
+                              3 		;;
+                              4 		;; tomaz stih, sun may 20 2012
+                              5 
+                              6 		.module crt0
+                              7 
+                              8 		.globl	_ei
+                              9 		.globl	_di
+                             10 		.globl	_get_heap
+                             11 		.globl	_set_vector
+                             12 
+                             13 		.area	_HEADER (ABS)
+   0000                      14 		.org	0x0000
+   0000 F3                   15 		di				; disable interrupts
+   0001 C3 6B 00             16 		jp	init			; init
+   0004 00 00 00 00          17 		.db	0,0,0,0			
+                             18 
+                             19 		;; rst 0x08
+   0008 C3 00 00             20 		jp	rst8
+   000B ED 4D                21 rst8ret:	reti
+   000D 00 00 00             22 		.db	0,0,0
+                             23 
+                             24 		;; rst 0x10
+   0010 C3 03 00             25 		jp	rst10
+   0013 ED 4D                26 rst10ret:	reti
+   0015 00 00 00             27 		.db	0,0,0
+                             28 
+                             29 		;; rst 0x18
+   0018 C3 06 00             30 		jp	rst18
+   001B ED 4D                31 rst18ret: 	reti
+   001D 00 00 00             32 		.db	0,0,0
+                             33 
+                             34 		;; rst 0x20
+   0020 C3 09 00             35 		jp	rst20
+   0023 ED 4D                36 rst20ret:	reti
+   0025 00 00 00             37 		.db	0,0,0
+                             38 
+                             39 		;; rst 0x28 
+   0028 C3 0C 00             40 		jp	rst28
+   002B ED 4D                41 rst28ret:	reti
+   002D 00 00 00             42 		.db	0,0,0
+                             43 
+                             44 		;; rst 0x30
+   0030 C3 0F 00             45 		jp	rst30
+   0033 ED 4D                46 rst30ret:	reti
+   0035 00 00 00             47 		.db	0,0,0
+                             48 
+                             49 		;; rst 0x38 - im 1
+   0038 C3 12 00             50 		jp	rst38
+   003B ED 4D                51 rst38ret:	reti
+   003D 00 00 00 00 00 00    52 		.dw	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+        00 00 00 00 00 00
+        00 00 00 00 00 00
+        00 00 00 00 00 00
+        00 00 00 00 00 00
+        00 00 00 00 00 00
+        00 00 00 00
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 2.
+
+
+
+   0065 00                   53 		.db	0
+                             54 	
+                             55 		;; nmi interrupt 0x66
+   0066 C3 15 00             56 		jp	nmi
+   0069 ED 45                57 nmiret:		retn
+                             58 		
+   006B                      59 init:		
+   006B 31 00 01             60 		ld	sp,#osstack		; now sp to OS stack (on bss)		
+   006E CD 00 00             61 		call	gsinit			; init static vars
+                             62 
+                             63 		;; start the os
+   0071 CD 00 00             64 		call	_main			
+                             65 
+                             66 		;; start the scheduler
+   0074 ED 56                67 		im	1			; im 1, 50Hz interrupt on ZX Spectrum
+   0076 FB                   68 		ei				; enable interrupts
+                             69 
+   0077                      70 halt:
+   0077 76                   71 		halt				; halt
+   0078 18 FD                72 		jr	halt			
+                             73 
+   007A                      74 start_vectors:
+   007A C3 0B 00             75 		jp	rst8ret
+   007D C3 13 00             76 		jp	rst10ret
+   0080 C3 1B 00             77 		jp	rst18ret
+   0083 C3 23 00             78 		jp	rst20ret
+   0086 C3 2B 00             79 		jp	rst28ret
+   0089 C3 33 00             80 		jp	rst30ret
+   008C C3 3B 00             81 		jp	rst38ret
+   008F C3 69 00             82 		jp	nmiret
+   0092                      83 end_vectors:
+                             84 
+                             85 		;; disable interrupts with ref counting
+   0092 F3                   86 _di::		di
+   0093 21 18 00             87 		ld	hl,#dicount
+   0096 34                   88 		inc	(hl)
+   0097 C9                   89 		ret
+                             90 
+                             91 		;; enable interrupts with ref counting
+   0098 3A 18 00             92 _ei::		ld	a,(#dicount)
+   009B B7                   93 		or	a
+   009C 20 02                94 		jr	nz,dont_ei
+   009E FB                   95 		ei
+   009F C9                   96 		ret
+   00A0 3D                   97 dont_ei:	dec	a
+   00A1 32 18 00             98 		ld	(#dicount),a
+   00A4 C9                   99 		ret
+                            100 		
+   00A5 FD 21 00 00         101 _set_vector::	ld	iy,#0x0000
+   00A9 FD 39               102 		add	iy,sp			; sp to iy
+   00AB FD 5E 02            103 		ld	e,2(iy)			; vector num to ...
+   00AE 16 00               104 		ld	d,#0			; ... hl
+   00B0 21 00 00            105 		ld	hl,#vec_tbl
+   00B3 19                  106 		add	hl,de			; hl=hl + 3 * de + 1
+   00B4 19                  107 		add	hl,de
+   00B5 19                  108 		add	hl,de
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 3.
+
+
+
+   00B6 23                  109 		inc	hl
+                            110 		;; hl now points to vector address in RAM		
+                            111 		;; so set it to value
+   00B7 FD 7E 03            112 		ld	a,3(iy)
+   00BA 77                  113 		ld	(hl),a
+   00BB 23                  114 		inc	hl
+   00BC FD 7E 04            115 		ld	a,4(iy)
+   00BF 77                  116 		ld	(hl),a
+                            117 		;; and now call init function if provided
+   00C0 FD 6E 05            118 		ld	l,5(iy)
+   00C3 FD 7E 06            119 		ld	a,6(iy)
+   00C6 B5                  120 		or	l			; do we have an init function?
+   00C7 28 03               121 		jr	z,no_init_fn
+   00C9 67                  122 		ld	h,a			; address to hl
+   00CA E5                  123 		push	hl			; make it return address on stack
+   00CB C9                  124 		ret				; and jump to it
+   00CC                     125 no_init_fn:
+   00CC C9                  126 		ret
+                            127 
+   00CD 21 00 00            128 _get_heap::	ld	hl,#osheap
+   00D0 C9                  129 		ret
+                            130 
+                            131 		;; (linker documentation) where specific ordering is desired - 
+                            132 		;; the first linker input  file should  have  the area definitions 
+                            133 		;; in the desired order
+                            134 		.area	_HOME
+                            135 		.area	_CODE
+                            136 	        .area   _GSINIT
+                            137 	        .area   _GSFINAL	
+                            138 		.area	_DATA
+                            139 	        .area   _BSS
+                            140 	        .area   _HEAP
+                            141 
+                            142 		;; this area contains data initialization code -
+                            143 		;; unlike gnu toolchain which generates data, sdcc generates 
+                            144 		;; initialization code for every initialized global 
+                            145 		;; varibale. and it puts this code into _GSINIT area
+                            146         	.area   _GSINIT
+   0000                     147 gsinit:
+                            148 		;; move vector table to RAM
+   0000 21 7A 00            149 		ld	hl,#start_vectors
+   0003 11 00 00            150 		ld	de,#vec_tbl
+   0006 01 18 00            151 		ld	bc,#end_vectors - #start_vectors
+   0009 ED B0               152 		ldir
+                            153 		
+   000B AF                  154 		xor	a			; a=0
+   000C 32 18 00            155 		ld	(#dicount),a		; write to dicount
+                            156 
+                            157         	.area   _GSFINAL
+   0000 C9                  158         	ret
+                            159 
+                            160 		.area	_DATA
+                            161 		;; vector jump table in ram
+   0000                     162 vec_tbl:
+   0000                     163 rst8:		.ds	3
+   0003                     164 rst10:		.ds	3
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 4.
+
+
+
+   0006                     165 rst18:		.ds	3
+   0009                     166 rst20:		.ds	3
+   000C                     167 rst28:		.ds	3
+   000F                     168 rst30:		.ds	3
+   0012                     169 rst38:		.ds	3
+   0015                     170 nmi:		.ds	3
+                            171 
+                            172 		;; enable/disable interrupt
+   0018                     173 dicount:	.ds	1
+                            174 
+                            175 		.area	_BSS
+                            176 		;; 256 bytes of operating system stack
+   0000                     177 		.ds	256
+   0100                     178 osstack:	
+                            179 		.area	_HEAP
+   0000                     180 osheap:	

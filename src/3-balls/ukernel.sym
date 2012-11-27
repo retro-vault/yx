@@ -1,0 +1,36 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 1.
+
+Symbol Table
+
+    .__.ABS.                                                    =  0000 G
+    _ball                                                          **** GX
+    _ball2                                                         **** GX
+    _ball3                                                         **** GX
+    _drv_register                                                  **** GX
+  0 _executive                                                     0000 GR
+  0 _executive_end                                                 0003 GR
+  0 _executive_start                                               0000 GR
+    _init_balls                                                    **** GX
+    _kbd_close                                                     **** GX
+    _kbd_open                                                      **** GX
+    _kbd_read_async                                                **** GX
+    _kbd_timer_hook                                                **** GX
+  0 _main                                                          0003 GR
+  0 _main_end                                                      007A GR
+  0 _main_start                                                    0003 GR
+    _mem_init                                                      **** GX
+    _set_vector                                                    **** GX
+    _tsk_create                                                    **** GX
+    _tsk_switch                                                    **** GX
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 2.
+
+Area Table
+
+   0 _CODE                                      size   7A   flags 0
+   1 _DATA                                      size    0   flags 0
+   2 _OVERLAY                                   size    0   flags 0
+   3 _HOME                                      size    0   flags 0
+   4 _GSINIT                                    size    0   flags 0
+   5 _GSFINAL                                   size    0   flags 0
+   6 _CABS                                      size    0   flags 0

@@ -1,0 +1,85 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 1.
+
+Symbol Table
+
+    .__.ABS.                                                    =  0000 G
+  0 __str_0                                                        0453 R
+  0 __str_1                                                        0461 R
+  0 __str_10                                                       061F R
+  0 __str_11                                                       0621 R
+  0 __str_12                                                       062A R
+  0 __str_13                                                       076D R
+  0 __str_14                                                       0776 R
+  0 __str_15                                                       078C R
+  0 __str_16                                                       07A2 R
+  0 __str_17                                                       07A4 R
+  0 __str_18                                                       089A R
+  0 __str_19                                                       08A3 R
+  0 __str_2                                                        0473 R
+  0 __str_20                                                       08B5 R
+  0 __str_21                                                       08C7 R
+  0 __str_22                                                       08C9 R
+  0 __str_23                                                       08D3 R
+  0 __str_3                                                        0485 R
+  0 __str_4                                                        0487 R
+  0 __str_5                                                        0489 R
+  0 __str_6                                                        04A5 R
+  0 __str_7                                                        05E7 R
+  0 __str_8                                                        05EF R
+  0 __str_9                                                        0606 R
+    _brk_addr                                                      **** GX
+  0 _dbg_cls                                                       0000 GR
+  0 _dbg_cls_end                                                   0018 GR
+  0 _dbg_cls_start                                                 0000 GR
+  0 _dbg_eventdump                                                 07A6 GR
+  0 _dbg_eventdump_end                                             089A GR
+  0 _dbg_eventdump_start                                           07A6 GR
+  0 _dbg_memdump                                                   0242 GR
+  0 _dbg_memdump_end                                               0453 GR
+  0 _dbg_memdump_start                                             0242 GR
+  0 _dbg_putc_xy                                                   0018 GR
+  0 _dbg_putc_xy_end                                               006C GR
+  0 _dbg_putc_xy_start                                             0018 GR
+  0 _dbg_say                                                       00A5 GR
+  0 _dbg_say_end                                                   0128 GR
+  0 _dbg_say_start                                                 00A5 GR
+  0 _dbg_scroll                                                    006C GR
+  0 _dbg_scroll_end                                                00A5 GR
+  0 _dbg_scroll_start                                              006C GR
+  0 _dbg_taskdump                                                  04C1 GR
+  0 _dbg_taskdump_end                                              05E7 GR
+  0 _dbg_taskdump_start                                            04C1 GR
+  0 _dbg_timerdump                                                 0633 GR
+  0 _dbg_timerdump_end                                             076D GR
+  0 _dbg_timerdump_start                                           0633 GR
+  0 _dbg_wtox                                                      0128 GR
+  0 _dbg_wtox_end                                                  0242 GR
+  0 _dbg_wtox_start                                                0128 GR
+    _evt_first                                                     **** GX
+    _mem_first                                                     **** GX
+    _mem_last                                                      **** GX
+    _tmr_first                                                     **** GX
+    _tsk_first_running                                             **** GX
+  1 _x                                                             0000 GR
+  1 _y                                                             0001 GR
+  0 clear_line                                                     009C R
+  0 endscroll                                                      0096 R
+  0 loop                                                           0056 R
+  0 loopscroll                                                     0075 R
+  0 next_line                                                      0069 R
+  0 nl_done                                                        0087 R
+  0 nocarry                                                        0053 R
+  0 scroll_up                                                      006E R
+    sysfont8x8                                                     **** GX
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 2.
+
+Area Table
+
+   0 _CODE                                      size  8E0   flags 0
+   1 _DATA                                      size    2   flags 0
+   2 _OVERLAY                                   size    0   flags 0
+   3 _HOME                                      size    0   flags 0
+   4 _GSINIT                                    size   10   flags 0
+   5 _GSFINAL                                   size    0   flags 0
+   6 _CABS                                      size    0   flags 0

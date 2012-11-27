@@ -1,0 +1,594 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.0 #7066 (Jun 14 2012) (Linux)
+                              4 ; This file was generated Tue Nov 27 20:21:27 2012
+                              5 ;--------------------------------------------------------
+                              6 	.module ball
+                              7 	.optsdcc -mz80
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _wait
+                             13 	.globl _timer2
+                             14 	.globl _timer1
+                             15 	.globl _tsk_wait4events
+                             16 	.globl _evt_set
+                             17 	.globl _evt_create
+                             18 	.globl _tmr_install
+                             19 	.globl _dbg_cls
+                             20 	.globl _dbg_putc_xy
+                             21 	.globl _done
+                             22 	.globl _b2
+                             23 	.globl _b1
+                             24 	.globl _init_balls
+                             25 	.globl _ball
+                             26 	.globl _ball2
+                             27 	.globl _ball3
+                             28 ;--------------------------------------------------------
+                             29 ; special function registers
+                             30 ;--------------------------------------------------------
+                             31 ;--------------------------------------------------------
+                             32 ;  ram data
+                             33 ;--------------------------------------------------------
+                             34 	.area _DATA
+   0000                      35 _b1::
+   0000                      36 	.ds 2
+   0002                      37 _b2::
+   0002                      38 	.ds 2
+   0004                      39 _done::
+   0004                      40 	.ds 2
+                             41 ;--------------------------------------------------------
+                             42 ; overlayable items in  ram 
+                             43 ;--------------------------------------------------------
+                             44 	.area _OVERLAY
+                             45 ;--------------------------------------------------------
+                             46 ; external initialized ram data
+                             47 ;--------------------------------------------------------
+                             48 ;--------------------------------------------------------
+                             49 ; global & static initialisations
+                             50 ;--------------------------------------------------------
+                             51 	.area _HOME
+                             52 	.area _GSINIT
+                             53 	.area _GSFINAL
+                             54 	.area _GSINIT
+                             55 ;ball.c:10: event_t *b1=NULL;
+   0000 FD 21r00s00          56 	ld	iy,#_b1
+   0004 FD 36 00 00          57 	ld	0 (iy),#0x00
+   0008 FD 36 01 00          58 	ld	1 (iy),#0x00
+                             59 ;ball.c:11: event_t *b2=NULL;
+   000C FD 21r02s00          60 	ld	iy,#_b2
+   0010 FD 36 00 00          61 	ld	0 (iy),#0x00
+   0014 FD 36 01 00          62 	ld	1 (iy),#0x00
+                             63 ;ball.c:12: event_t *done=NULL;
+   0018 FD 21r04s00          64 	ld	iy,#_done
+   001C FD 36 00 00          65 	ld	0 (iy),#0x00
+   0020 FD 36 01 00          66 	ld	1 (iy),#0x00
+                             67 ;--------------------------------------------------------
+                             68 ; Home
+                             69 ;--------------------------------------------------------
+                             70 	.area _HOME
+                             71 	.area _HOME
+                             72 ;--------------------------------------------------------
+                             73 ; code
+                             74 ;--------------------------------------------------------
+                             75 	.area _CODE
+                             76 ;ball.c:14: void timer1() {
+                             77 ;	---------------------------------
+                             78 ; Function timer1
+                             79 ; ---------------------------------
+   0000                      80 _timer1_start::
+   0000                      81 _timer1:
+                             82 ;ball.c:15: evt_set(b1,signaled);
+   0000 3E 01                83 	ld	a,#0x01
+   0002 F5                   84 	push	af
+   0003 33                   85 	inc	sp
+   0004 2Ar00s00             86 	ld	hl,(_b1)
+   0007 E5                   87 	push	hl
+   0008 CDr00s00             88 	call	_evt_set
+   000B F1                   89 	pop	af
+   000C 33                   90 	inc	sp
+   000D C9                   91 	ret
+   000E                      92 _timer1_end::
+                             93 ;ball.c:18: void timer2() {
+                             94 ;	---------------------------------
+                             95 ; Function timer2
+                             96 ; ---------------------------------
+   000E                      97 _timer2_start::
+   000E                      98 _timer2:
+                             99 ;ball.c:19: evt_set(b2,signaled);
+   000E 3E 01               100 	ld	a,#0x01
+   0010 F5                  101 	push	af
+   0011 33                  102 	inc	sp
+   0012 2Ar02s00            103 	ld	hl,(_b2)
+   0015 E5                  104 	push	hl
+   0016 CDr00s00            105 	call	_evt_set
+   0019 F1                  106 	pop	af
+   001A 33                  107 	inc	sp
+   001B C9                  108 	ret
+   001C                     109 _timer2_end::
+                            110 ;ball.c:22: void init_balls() {
+                            111 ;	---------------------------------
+                            112 ; Function init_balls
+                            113 ; ---------------------------------
+   001C                     114 _init_balls_start::
+   001C                     115 _init_balls:
+                            116 ;ball.c:24: b1=evt_create(KERNEL);
+   001C 21 00 01            117 	ld	hl,#0x0100
+   001F E5                  118 	push	hl
+   0020 CDr00s00            119 	call	_evt_create
+   0023 F1                  120 	pop	af
+   0024 FD 21r00s00         121 	ld	iy,#_b1
+   0028 FD 75 00            122 	ld	0 (iy),l
+   002B FD 74 01            123 	ld	1 (iy),h
+                            124 ;ball.c:25: b2=evt_create(KERNEL);
+   002E 21 00 01            125 	ld	hl,#0x0100
+   0031 E5                  126 	push	hl
+   0032 CDr00s00            127 	call	_evt_create
+   0035 F1                  128 	pop	af
+   0036 FD 21r02s00         129 	ld	iy,#_b2
+   003A FD 75 00            130 	ld	0 (iy),l
+   003D FD 74 01            131 	ld	1 (iy),h
+                            132 ;ball.c:26: done=evt_create(KERNEL);
+   0040 21 00 01            133 	ld	hl,#0x0100
+   0043 E5                  134 	push	hl
+   0044 CDr00s00            135 	call	_evt_create
+   0047 F1                  136 	pop	af
+   0048 FD 21r04s00         137 	ld	iy,#_done
+   004C FD 75 00            138 	ld	0 (iy),l
+   004F FD 74 01            139 	ld	1 (iy),h
+                            140 ;ball.c:27: tmr_install(timer1,0x05); 
+   0052 21 05 00            141 	ld	hl,#0x0005
+   0055 E5                  142 	push	hl
+   0056 21r00s00            143 	ld	hl,#_timer1
+   0059 E5                  144 	push	hl
+   005A CDr00s00            145 	call	_tmr_install
+   005D F1                  146 	pop	af
+                            147 ;ball.c:28: tmr_install(timer2,0x0a);
+   005E 21 0A 00            148 	ld	hl, #0x000A
+   0061 E3                  149 	ex	(sp),hl
+   0062 21r0Es00            150 	ld	hl,#_timer2
+   0065 E5                  151 	push	hl
+   0066 CDr00s00            152 	call	_tmr_install
+   0069 F1                  153 	pop	af
+   006A F1                  154 	pop	af
+   006B C9                  155 	ret
+   006C                     156 _init_balls_end::
+                            157 ;ball.c:31: void wait(word pause) {
+                            158 ;	---------------------------------
+                            159 ; Function wait
+                            160 ; ---------------------------------
+   006C                     161 _wait_start::
+   006C                     162 _wait:
+   006C DD E5               163 	push	ix
+   006E DD 21 00 00         164 	ld	ix,#0
+   0072 DD 39               165 	add	ix,sp
+                            166 ;ball.c:33: for (n=0;n<pause;n++);
+   0074 21 00 00            167 	ld	hl,#0x0000
+   0077                     168 00101$:
+   0077 7D                  169 	ld	a, l
+   0078 5C                  170 	ld	e, h
+   0079 DD 96 04            171 	sub	a, 4 (ix)
+   007C 7B                  172 	ld	a,e
+   007D DD 9E 05            173 	sbc	a, 5 (ix)
+   0080 30 03               174 	jr	NC,00105$
+   0082 23                  175 	inc	hl
+   0083 18 F2               176 	jr	00101$
+   0085                     177 00105$:
+   0085 DD E1               178 	pop	ix
+   0087 C9                  179 	ret
+   0088                     180 _wait_end::
+                            181 ;ball.c:36: void ball() {
+                            182 ;	---------------------------------
+                            183 ; Function ball
+                            184 ; ---------------------------------
+   0088                     185 _ball_start::
+   0088                     186 _ball:
+   0088 DD E5               187 	push	ix
+   008A DD 21 00 00         188 	ld	ix,#0
+   008E DD 39               189 	add	ix,sp
+   0090 21 F4 FF            190 	ld	hl,#-12
+   0093 39                  191 	add	hl,sp
+   0094 F9                  192 	ld	sp,hl
+                            193 ;ball.c:41: dbg_cls();
+   0095 CDr00s00            194 	call	_dbg_cls
+                            195 ;ball.c:43: x=5;
+   0098 DD 36 FE 05         196 	ld	-2 (ix),#0x05
+   009C DD 36 FF 00         197 	ld	-1 (ix),#0x00
+                            198 ;ball.c:44: y=0;
+   00A0 DD 36 FC 00         199 	ld	-4 (ix),#0x00
+   00A4 DD 36 FD 00         200 	ld	-3 (ix),#0x00
+                            201 ;ball.c:45: dx=dy=1;
+   00A8 DD 36 F4 01         202 	ld	-12 (ix),#0x01
+   00AC DD 36 F5 00         203 	ld	-11 (ix),#0x00
+   00B0 DD 36 F6 01         204 	ld	-10 (ix),#0x01
+   00B4 DD 36 F7 00         205 	ld	-9 (ix),#0x00
+                            206 ;ball.c:47: while (1) {
+   00B8                     207 00110$:
+                            208 ;ball.c:48: dbg_putc_xy('o',x,y);
+   00B8 DD 46 FC            209 	ld	b,-4 (ix)
+   00BB DD 4E FE            210 	ld	c, -2 (ix)
+   00BE C5                  211 	push	bc
+   00BF 3E 6F               212 	ld	a,#0x6F
+   00C1 F5                  213 	push	af
+   00C2 33                  214 	inc	sp
+   00C3 CDr00s00            215 	call	_dbg_putc_xy
+   00C6 F1                  216 	pop	af
+   00C7 33                  217 	inc	sp
+                            218 ;ball.c:49: old_x=x;
+   00C8 DD 7E FE            219 	ld	a,-2 (ix)
+   00CB DD 77 FA            220 	ld	-6 (ix),a
+   00CE DD 7E FF            221 	ld	a,-1 (ix)
+   00D1 DD 77 FB            222 	ld	-5 (ix),a
+                            223 ;ball.c:50: old_y=y;
+   00D4 DD 7E FC            224 	ld	a,-4 (ix)
+   00D7 DD 77 F8            225 	ld	-8 (ix),a
+   00DA DD 7E FD            226 	ld	a,-3 (ix)
+   00DD DD 77 F9            227 	ld	-7 (ix),a
+                            228 ;ball.c:51: x=x+dx;
+   00E0 DD 7E FE            229 	ld	a,-2 (ix)
+   00E3 DD 86 F6            230 	add	a, -10 (ix)
+   00E6 DD 77 FE            231 	ld	-2 (ix),a
+   00E9 DD 7E FF            232 	ld	a,-1 (ix)
+   00EC DD 8E F7            233 	adc	a, -9 (ix)
+   00EF DD 77 FF            234 	ld	-1 (ix),a
+                            235 ;ball.c:52: y=y+dy;
+   00F2 DD 7E FC            236 	ld	a,-4 (ix)
+   00F5 DD 86 F4            237 	add	a, -12 (ix)
+   00F8 DD 77 FC            238 	ld	-4 (ix),a
+   00FB DD 7E FD            239 	ld	a,-3 (ix)
+   00FE DD 8E F5            240 	adc	a, -11 (ix)
+   0101 DD 77 FD            241 	ld	-3 (ix),a
+                            242 ;ball.c:53: if (x>31) { x=31; dx=-1; }
+   0104 3E 1F               243 	ld	a,#0x1F
+   0106 DD 96 FE            244 	sub	a, -2 (ix)
+   0109 3E 00               245 	ld	a,#0x00
+   010B DD 9E FF            246 	sbc	a, -1 (ix)
+   010E E2r13s01            247 	jp	PO, 00119$
+   0111 EE 80               248 	xor	a, #0x80
+   0113                     249 00119$:
+   0113 F2r26s01            250 	jp	P,00102$
+   0116 DD 36 FE 1F         251 	ld	-2 (ix),#0x1F
+   011A DD 36 FF 00         252 	ld	-1 (ix),#0x00
+   011E DD 36 F6 FF         253 	ld	-10 (ix),#0xFF
+   0122 DD 36 F7 FF         254 	ld	-9 (ix),#0xFF
+   0126                     255 00102$:
+                            256 ;ball.c:54: if (x<0) { x=0; dx=1; }
+   0126 DD CB FF 7E         257 	bit	7,-1 (ix)
+   012A 28 10               258 	jr	Z,00104$
+   012C DD 36 FE 00         259 	ld	-2 (ix),#0x00
+   0130 DD 36 FF 00         260 	ld	-1 (ix),#0x00
+   0134 DD 36 F6 01         261 	ld	-10 (ix),#0x01
+   0138 DD 36 F7 00         262 	ld	-9 (ix),#0x00
+   013C                     263 00104$:
+                            264 ;ball.c:55: if (y>23) { y=23; dy=-1; }
+   013C 3E 17               265 	ld	a,#0x17
+   013E DD 96 FC            266 	sub	a, -4 (ix)
+   0141 3E 00               267 	ld	a,#0x00
+   0143 DD 9E FD            268 	sbc	a, -3 (ix)
+   0146 E2r4Bs01            269 	jp	PO, 00120$
+   0149 EE 80               270 	xor	a, #0x80
+   014B                     271 00120$:
+   014B F2r5Es01            272 	jp	P,00106$
+   014E DD 36 FC 17         273 	ld	-4 (ix),#0x17
+   0152 DD 36 FD 00         274 	ld	-3 (ix),#0x00
+   0156 DD 36 F4 FF         275 	ld	-12 (ix),#0xFF
+   015A DD 36 F5 FF         276 	ld	-11 (ix),#0xFF
+   015E                     277 00106$:
+                            278 ;ball.c:56: if (y<0) { y=0; dy=1; }
+   015E DD CB FD 7E         279 	bit	7,-3 (ix)
+   0162 28 10               280 	jr	Z,00108$
+   0164 DD 36 FC 00         281 	ld	-4 (ix),#0x00
+   0168 DD 36 FD 00         282 	ld	-3 (ix),#0x00
+   016C DD 36 F4 01         283 	ld	-12 (ix),#0x01
+   0170 DD 36 F5 00         284 	ld	-11 (ix),#0x00
+   0174                     285 00108$:
+                            286 ;ball.c:57: tsk_wait4events(&b1,1);
+   0174 11r00s00            287 	ld	de,#_b1
+   0177 3E 01               288 	ld	a,#0x01
+   0179 F5                  289 	push	af
+   017A 33                  290 	inc	sp
+   017B D5                  291 	push	de
+   017C CDr00s00            292 	call	_tsk_wait4events
+   017F F1                  293 	pop	af
+   0180 33                  294 	inc	sp
+                            295 ;ball.c:58: evt_set(b1,nonsignaled);
+   0181 3E 00               296 	ld	a,#0x00
+   0183 F5                  297 	push	af
+   0184 33                  298 	inc	sp
+   0185 2Ar00s00            299 	ld	hl,(_b1)
+   0188 E5                  300 	push	hl
+   0189 CDr00s00            301 	call	_evt_set
+   018C F1                  302 	pop	af
+   018D 33                  303 	inc	sp
+                            304 ;ball.c:59: dbg_putc_xy(' ',old_x,old_y);
+   018E DD 56 F8            305 	ld	d,-8 (ix)
+   0191 DD 46 FA            306 	ld	b,-6 (ix)
+   0194 D5                  307 	push	de
+   0195 33                  308 	inc	sp
+   0196 C5                  309 	push	bc
+   0197 33                  310 	inc	sp
+   0198 3E 20               311 	ld	a,#0x20
+   019A F5                  312 	push	af
+   019B 33                  313 	inc	sp
+   019C CDr00s00            314 	call	_dbg_putc_xy
+   019F F1                  315 	pop	af
+   01A0 33                  316 	inc	sp
+   01A1 C3rB8s00            317 	jp	00110$
+   01A4                     318 _ball_end::
+                            319 ;ball.c:63: void ball2() {
+                            320 ;	---------------------------------
+                            321 ; Function ball2
+                            322 ; ---------------------------------
+   01A4                     323 _ball2_start::
+   01A4                     324 _ball2:
+   01A4 DD E5               325 	push	ix
+   01A6 DD 21 00 00         326 	ld	ix,#0
+   01AA DD 39               327 	add	ix,sp
+   01AC 21 F7 FF            328 	ld	hl,#-9
+   01AF 39                  329 	add	hl,sp
+   01B0 F9                  330 	ld	sp,hl
+                            331 ;ball.c:68: dbg_cls();
+   01B1 CDr00s00            332 	call	_dbg_cls
+                            333 ;ball.c:70: x=0;
+   01B4 DD 36 FE 00         334 	ld	-2 (ix),#0x00
+   01B8 DD 36 FF 00         335 	ld	-1 (ix),#0x00
+                            336 ;ball.c:71: y=15;
+   01BC 01 0F 00            337 	ld	bc,#0x000F
+                            338 ;ball.c:72: dx=1;
+   01BF 11 01 00            339 	ld	de,#0x0001
+                            340 ;ball.c:73: dy=-1;
+   01C2 DD 36 F8 FF         341 	ld	-8 (ix),#0xFF
+   01C6 DD 36 F9 FF         342 	ld	-7 (ix),#0xFF
+                            343 ;ball.c:75: while (1) {
+   01CA                     344 00110$:
+                            345 ;ball.c:76: dbg_putc_xy('O',x,y);
+   01CA 61                  346 	ld	h,c
+   01CB DD 7E FE            347 	ld	a,-2 (ix)
+   01CE DD 77 F7            348 	ld	-9 (ix),a
+   01D1 C5                  349 	push	bc
+   01D2 D5                  350 	push	de
+   01D3 E5                  351 	push	hl
+   01D4 33                  352 	inc	sp
+   01D5 DD 56 F7            353 	ld	d, -9 (ix)
+   01D8 1E 4F               354 	ld	e,#0x4F
+   01DA D5                  355 	push	de
+   01DB CDr00s00            356 	call	_dbg_putc_xy
+   01DE F1                  357 	pop	af
+   01DF 33                  358 	inc	sp
+   01E0 D1                  359 	pop	de
+   01E1 C1                  360 	pop	bc
+                            361 ;ball.c:77: old_x=x;
+   01E2 DD 7E FE            362 	ld	a,-2 (ix)
+   01E5 DD 77 FC            363 	ld	-4 (ix),a
+   01E8 DD 7E FF            364 	ld	a,-1 (ix)
+   01EB DD 77 FD            365 	ld	-3 (ix),a
+                            366 ;ball.c:78: old_y=y;
+   01EE DD 71 FA            367 	ld	-6 (ix),c
+   01F1 DD 70 FB            368 	ld	-5 (ix),b
+                            369 ;ball.c:79: x=x+dx;
+   01F4 DD 7E FE            370 	ld	a,-2 (ix)
+   01F7 83                  371 	add	a, e
+   01F8 DD 77 FE            372 	ld	-2 (ix),a
+   01FB DD 7E FF            373 	ld	a,-1 (ix)
+   01FE 8A                  374 	adc	a, d
+   01FF DD 77 FF            375 	ld	-1 (ix),a
+                            376 ;ball.c:80: y=y+dy;
+   0202 79                  377 	ld	a,c
+   0203 DD 86 F8            378 	add	a, -8 (ix)
+   0206 4F                  379 	ld	c,a
+   0207 78                  380 	ld	a,b
+   0208 DD 8E F9            381 	adc	a, -7 (ix)
+   020B 47                  382 	ld	b,a
+                            383 ;ball.c:81: if (x>31) { x=31; dx=-1; }
+   020C 3E 1F               384 	ld	a,#0x1F
+   020E DD 96 FE            385 	sub	a, -2 (ix)
+   0211 3E 00               386 	ld	a,#0x00
+   0213 DD 9E FF            387 	sbc	a, -1 (ix)
+   0216 E2r1Bs02            388 	jp	PO, 00119$
+   0219 EE 80               389 	xor	a, #0x80
+   021B                     390 00119$:
+   021B F2r29s02            391 	jp	P,00102$
+   021E DD 36 FE 1F         392 	ld	-2 (ix),#0x1F
+   0222 DD 36 FF 00         393 	ld	-1 (ix),#0x00
+   0226 11 FF FF            394 	ld	de,#0xFFFFFFFF
+   0229                     395 00102$:
+                            396 ;ball.c:82: if (x<0) { x=0; dx=1; }
+   0229 DD CB FF 7E         397 	bit	7,-1 (ix)
+   022D 28 0B               398 	jr	Z,00104$
+   022F DD 36 FE 00         399 	ld	-2 (ix),#0x00
+   0233 DD 36 FF 00         400 	ld	-1 (ix),#0x00
+   0237 11 01 00            401 	ld	de,#0x0001
+   023A                     402 00104$:
+                            403 ;ball.c:83: if (y>23) { y=23; dy=-1; }
+   023A 3E 17               404 	ld	a,#0x17
+   023C 91                  405 	sub	a, c
+   023D 3E 00               406 	ld	a,#0x00
+   023F 98                  407 	sbc	a, b
+   0240 E2r45s02            408 	jp	PO, 00120$
+   0243 EE 80               409 	xor	a, #0x80
+   0245                     410 00120$:
+   0245 F2r53s02            411 	jp	P,00106$
+   0248 01 17 00            412 	ld	bc,#0x0017
+   024B DD 36 F8 FF         413 	ld	-8 (ix),#0xFF
+   024F DD 36 F9 FF         414 	ld	-7 (ix),#0xFF
+   0253                     415 00106$:
+                            416 ;ball.c:84: if (y<0) { y=0; dy=1; }
+   0253 CB 78               417 	bit	7,b
+   0255 28 0B               418 	jr	Z,00108$
+   0257 01 00 00            419 	ld	bc,#0x0000
+   025A DD 36 F8 01         420 	ld	-8 (ix),#0x01
+   025E DD 36 F9 00         421 	ld	-7 (ix),#0x00
+   0262                     422 00108$:
+                            423 ;ball.c:85: tsk_wait4events(&b2,1);
+   0262 C5                  424 	push	bc
+   0263 D5                  425 	push	de
+   0264 3E 01               426 	ld	a,#0x01
+   0266 F5                  427 	push	af
+   0267 33                  428 	inc	sp
+   0268 21r02s00            429 	ld	hl,#_b2
+   026B E5                  430 	push	hl
+   026C CDr00s00            431 	call	_tsk_wait4events
+   026F F1                  432 	pop	af
+   0270 33                  433 	inc	sp
+   0271 3E 00               434 	ld	a,#0x00
+   0273 F5                  435 	push	af
+   0274 33                  436 	inc	sp
+   0275 2Ar02s00            437 	ld	hl,(_b2)
+   0278 E5                  438 	push	hl
+   0279 CDr00s00            439 	call	_evt_set
+   027C F1                  440 	pop	af
+   027D 33                  441 	inc	sp
+   027E D1                  442 	pop	de
+   027F C1                  443 	pop	bc
+                            444 ;ball.c:87: dbg_putc_xy(' ',old_x,old_y);
+   0280 DD 66 FA            445 	ld	h,-6 (ix)
+   0283 DD 7E FC            446 	ld	a,-4 (ix)
+   0286 DD 77 F7            447 	ld	-9 (ix),a
+   0289 C5                  448 	push	bc
+   028A D5                  449 	push	de
+   028B E5                  450 	push	hl
+   028C 33                  451 	inc	sp
+   028D DD 56 F7            452 	ld	d, -9 (ix)
+   0290 1E 20               453 	ld	e,#0x20
+   0292 D5                  454 	push	de
+   0293 CDr00s00            455 	call	_dbg_putc_xy
+   0296 F1                  456 	pop	af
+   0297 33                  457 	inc	sp
+   0298 D1                  458 	pop	de
+   0299 C1                  459 	pop	bc
+   029A C3rCAs01            460 	jp	00110$
+   029D                     461 _ball2_end::
+                            462 ;ball.c:94: void ball3() {
+                            463 ;	---------------------------------
+                            464 ; Function ball3
+                            465 ; ---------------------------------
+   029D                     466 _ball3_start::
+   029D                     467 _ball3:
+   029D DD E5               468 	push	ix
+   029F DD 21 00 00         469 	ld	ix,#0
+   02A3 DD 39               470 	add	ix,sp
+   02A5 21 F7 FF            471 	ld	hl,#-9
+   02A8 39                  472 	add	hl,sp
+   02A9 F9                  473 	ld	sp,hl
+                            474 ;ball.c:99: dbg_cls();
+   02AA CDr00s00            475 	call	_dbg_cls
+                            476 ;ball.c:101: x=31;
+   02AD DD 36 FE 1F         477 	ld	-2 (ix),#0x1F
+   02B1 DD 36 FF 00         478 	ld	-1 (ix),#0x00
+                            479 ;ball.c:102: y=5;
+   02B5 01 05 00            480 	ld	bc,#0x0005
+                            481 ;ball.c:103: dx=1;
+   02B8 11 01 00            482 	ld	de,#0x0001
+                            483 ;ball.c:104: dy=1;
+   02BB DD 36 F8 01         484 	ld	-8 (ix),#0x01
+   02BF DD 36 F9 00         485 	ld	-7 (ix),#0x00
+                            486 ;ball.c:106: while (1) {
+   02C3                     487 00110$:
+                            488 ;ball.c:107: dbg_putc_xy('0',x,y);
+   02C3 61                  489 	ld	h,c
+   02C4 DD 7E FE            490 	ld	a,-2 (ix)
+   02C7 DD 77 F7            491 	ld	-9 (ix),a
+   02CA C5                  492 	push	bc
+   02CB D5                  493 	push	de
+   02CC E5                  494 	push	hl
+   02CD 33                  495 	inc	sp
+   02CE DD 56 F7            496 	ld	d, -9 (ix)
+   02D1 1E 30               497 	ld	e,#0x30
+   02D3 D5                  498 	push	de
+   02D4 CDr00s00            499 	call	_dbg_putc_xy
+   02D7 F1                  500 	pop	af
+   02D8 33                  501 	inc	sp
+   02D9 D1                  502 	pop	de
+   02DA C1                  503 	pop	bc
+                            504 ;ball.c:108: old_x=x;
+   02DB DD 7E FE            505 	ld	a,-2 (ix)
+   02DE DD 77 FC            506 	ld	-4 (ix),a
+   02E1 DD 7E FF            507 	ld	a,-1 (ix)
+   02E4 DD 77 FD            508 	ld	-3 (ix),a
+                            509 ;ball.c:109: old_y=y;
+   02E7 DD 71 FA            510 	ld	-6 (ix),c
+   02EA DD 70 FB            511 	ld	-5 (ix),b
+                            512 ;ball.c:110: x=x+dx;
+   02ED DD 7E FE            513 	ld	a,-2 (ix)
+   02F0 83                  514 	add	a, e
+   02F1 DD 77 FE            515 	ld	-2 (ix),a
+   02F4 DD 7E FF            516 	ld	a,-1 (ix)
+   02F7 8A                  517 	adc	a, d
+   02F8 DD 77 FF            518 	ld	-1 (ix),a
+                            519 ;ball.c:111: y=y+dy;
+   02FB 79                  520 	ld	a,c
+   02FC DD 86 F8            521 	add	a, -8 (ix)
+   02FF 4F                  522 	ld	c,a
+   0300 78                  523 	ld	a,b
+   0301 DD 8E F9            524 	adc	a, -7 (ix)
+   0304 47                  525 	ld	b,a
+                            526 ;ball.c:112: if (x>31) { x=31; dx=-1; }
+   0305 3E 1F               527 	ld	a,#0x1F
+   0307 DD 96 FE            528 	sub	a, -2 (ix)
+   030A 3E 00               529 	ld	a,#0x00
+   030C DD 9E FF            530 	sbc	a, -1 (ix)
+   030F E2r14s03            531 	jp	PO, 00119$
+   0312 EE 80               532 	xor	a, #0x80
+   0314                     533 00119$:
+   0314 F2r22s03            534 	jp	P,00102$
+   0317 DD 36 FE 1F         535 	ld	-2 (ix),#0x1F
+   031B DD 36 FF 00         536 	ld	-1 (ix),#0x00
+   031F 11 FF FF            537 	ld	de,#0xFFFFFFFF
+   0322                     538 00102$:
+                            539 ;ball.c:113: if (x<0) { x=0; dx=1; }
+   0322 DD CB FF 7E         540 	bit	7,-1 (ix)
+   0326 28 0B               541 	jr	Z,00104$
+   0328 DD 36 FE 00         542 	ld	-2 (ix),#0x00
+   032C DD 36 FF 00         543 	ld	-1 (ix),#0x00
+   0330 11 01 00            544 	ld	de,#0x0001
+   0333                     545 00104$:
+                            546 ;ball.c:114: if (y>23) { y=23; dy=-1; }
+   0333 3E 17               547 	ld	a,#0x17
+   0335 91                  548 	sub	a, c
+   0336 3E 00               549 	ld	a,#0x00
+   0338 98                  550 	sbc	a, b
+   0339 E2r3Es03            551 	jp	PO, 00120$
+   033C EE 80               552 	xor	a, #0x80
+   033E                     553 00120$:
+   033E F2r4Cs03            554 	jp	P,00106$
+   0341 01 17 00            555 	ld	bc,#0x0017
+   0344 DD 36 F8 FF         556 	ld	-8 (ix),#0xFF
+   0348 DD 36 F9 FF         557 	ld	-7 (ix),#0xFF
+   034C                     558 00106$:
+                            559 ;ball.c:115: if (y<0) { y=0; dy=1; }
+   034C CB 78               560 	bit	7,b
+   034E 28 0B               561 	jr	Z,00108$
+   0350 01 00 00            562 	ld	bc,#0x0000
+   0353 DD 36 F8 01         563 	ld	-8 (ix),#0x01
+   0357 DD 36 F9 00         564 	ld	-7 (ix),#0x00
+   035B                     565 00108$:
+                            566 ;ball.c:116: wait(1000);
+   035B C5                  567 	push	bc
+   035C D5                  568 	push	de
+   035D 21 E8 03            569 	ld	hl,#0x03E8
+   0360 E5                  570 	push	hl
+   0361 CDr6Cs00            571 	call	_wait
+   0364 F1                  572 	pop	af
+   0365 D1                  573 	pop	de
+   0366 C1                  574 	pop	bc
+                            575 ;ball.c:117: dbg_putc_xy(' ',old_x,old_y);
+   0367 DD 66 FA            576 	ld	h,-6 (ix)
+   036A DD 7E FC            577 	ld	a,-4 (ix)
+   036D DD 77 F7            578 	ld	-9 (ix),a
+   0370 C5                  579 	push	bc
+   0371 D5                  580 	push	de
+   0372 E5                  581 	push	hl
+   0373 33                  582 	inc	sp
+   0374 DD 56 F7            583 	ld	d, -9 (ix)
+   0377 1E 20               584 	ld	e,#0x20
+   0379 D5                  585 	push	de
+   037A CDr00s00            586 	call	_dbg_putc_xy
+   037D F1                  587 	pop	af
+   037E 33                  588 	inc	sp
+   037F D1                  589 	pop	de
+   0380 C1                  590 	pop	bc
+   0381 C3rC3s02            591 	jp	00110$
+   0384                     592 _ball3_end::
+                            593 	.area _CODE
+                            594 	.area _CABS

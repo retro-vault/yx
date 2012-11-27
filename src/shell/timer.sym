@@ -1,0 +1,33 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 1.
+
+Symbol Table
+
+    .__.ABS.                                                    =  0000 G
+    __sdcc_call_hl                                                 **** GX
+    _di                                                            **** GX
+    _ei                                                            **** GX
+    _last_error                                                    **** GX
+    _lst_delete                                                    **** GX
+    _lst_insert                                                    **** GX
+  0 _tmr_chain                                                     0080 GR
+  0 _tmr_chain_end                                                 013E GR
+  0 _tmr_chain_start                                               0080 GR
+  1 _tmr_first                                                     0000 GR
+  0 _tmr_install                                                   0000 GR
+  0 _tmr_install_end                                               0056 GR
+  0 _tmr_install_start                                             0000 GR
+  0 _tmr_uninstall                                                 0056 GR
+  0 _tmr_uninstall_end                                             0080 GR
+  0 _tmr_uninstall_start                                           0056 GR
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 2.
+
+Area Table
+
+   0 _CODE                                      size  13E   flags 0
+   1 _DATA                                      size    2   flags 0
+   2 _OVERLAY                                   size    0   flags 0
+   3 _HOME                                      size    0   flags 0
+   4 _GSINIT                                    size    C   flags 0
+   5 _GSFINAL                                   size    0   flags 0
+   6 _CABS                                      size    0   flags 0

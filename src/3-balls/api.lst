@@ -1,0 +1,177 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.0 #7066 (Jun 14 2012) (Linux)
+                              4 ; This file was generated Tue Nov 27 20:21:27 2012
+                              5 ;--------------------------------------------------------
+                              6 	.module api
+                              7 	.optsdcc -mz80
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _api_version
+                             13 	.globl _api_query
+                             14 	.globl _strcmp
+                             15 	.globl _fn_table
+                             16 	.globl _api
+                             17 	.globl _api_init
+                             18 ;--------------------------------------------------------
+                             19 ; special function registers
+                             20 ;--------------------------------------------------------
+                             21 ;--------------------------------------------------------
+                             22 ;  ram data
+                             23 ;--------------------------------------------------------
+                             24 	.area _DATA
+   0000                      25 _fn_table::
+   0000                      26 	.ds 4
+                             27 ;--------------------------------------------------------
+                             28 ; overlayable items in  ram 
+                             29 ;--------------------------------------------------------
+                             30 	.area _OVERLAY
+                             31 ;--------------------------------------------------------
+                             32 ; external initialized ram data
+                             33 ;--------------------------------------------------------
+                             34 ;--------------------------------------------------------
+                             35 ; global & static initialisations
+                             36 ;--------------------------------------------------------
+                             37 	.area _HOME
+                             38 	.area _GSINIT
+                             39 	.area _GSFINAL
+                             40 	.area _GSINIT
+                             41 ;--------------------------------------------------------
+                             42 ; Home
+                             43 ;--------------------------------------------------------
+                             44 	.area _HOME
+                             45 	.area _HOME
+                             46 ;--------------------------------------------------------
+                             47 ; code
+                             48 ;--------------------------------------------------------
+                             49 	.area _CODE
+                             50 ;api.c:15: word api() __naked {
+                             51 ;	---------------------------------
+                             52 ; Function api
+                             53 ; ---------------------------------
+   0000                      54 _api_start::
+   0000                      55 _api:
+                             56 ;api.c:19: __endasm;
+   0000 21r00s00             57 	ld	hl,#_fn_table
+   0003 ED 4D                58 	reti
+   0005                      59 _api_end::
+                             60 ;api.c:26: void *api_query(string name) {
+                             61 ;	---------------------------------
+                             62 ; Function api_query
+                             63 ; ---------------------------------
+   0005                      64 _api_query_start::
+   0005                      65 _api_query:
+   0005 DD E5                66 	push	ix
+   0007 DD 21 00 00          67 	ld	ix,#0
+   000B DD 39                68 	add	ix,sp
+                             69 ;api.c:30: if (!strcmp(name,"yeah"))
+   000D 21r72s00             70 	ld	hl,#__str_0
+   0010 E5                   71 	push	hl
+   0011 DD 6E 04             72 	ld	l,4 (ix)
+   0014 DD 66 05             73 	ld	h,5 (ix)
+   0017 E5                   74 	push	hl
+   0018 CDr00s00             75 	call	_strcmp
+   001B F1                   76 	pop	af
+   001C F1                   77 	pop	af
+   001D 7D                   78 	ld	a,l
+   001E B7                   79 	or	a, a
+   001F 20 05                80 	jr	NZ,00110$
+                             81 ;api.c:31: return NULL;
+   0021 21 00 00             82 	ld	hl,#0x0000
+   0024 18 49                83 	jr	00112$
+   0026                      84 00110$:
+                             85 ;api.c:32: else if (!strcmp(name,"buddy"))
+   0026 21r77s00             86 	ld	hl,#__str_1
+   0029 E5                   87 	push	hl
+   002A DD 6E 04             88 	ld	l,4 (ix)
+   002D DD 66 05             89 	ld	h,5 (ix)
+   0030 E5                   90 	push	hl
+   0031 CDr00s00             91 	call	_strcmp
+   0034 F1                   92 	pop	af
+   0035 F1                   93 	pop	af
+   0036 7D                   94 	ld	a,l
+   0037 B7                   95 	or	a, a
+   0038 20 05                96 	jr	NZ,00107$
+                             97 ;api.c:33: return NULL;
+   003A 21 00 00             98 	ld	hl,#0x0000
+   003D 18 30                99 	jr	00112$
+   003F                     100 00107$:
+                            101 ;api.c:34: else if (!strcmp(name,"net"))
+   003F 21r7Ds00            102 	ld	hl,#__str_2
+   0042 E5                  103 	push	hl
+   0043 DD 6E 04            104 	ld	l,4 (ix)
+   0046 DD 66 05            105 	ld	h,5 (ix)
+   0049 E5                  106 	push	hl
+   004A CDr00s00            107 	call	_strcmp
+   004D F1                  108 	pop	af
+   004E F1                  109 	pop	af
+   004F 7D                  110 	ld	a,l
+   0050 B7                  111 	or	a, a
+   0051 20 05               112 	jr	NZ,00104$
+                            113 ;api.c:35: return NULL;
+   0053 21 00 00            114 	ld	hl,#0x0000
+   0056 18 17               115 	jr	00112$
+   0058                     116 00104$:
+                            117 ;api.c:36: else if (!strcmp(name,"filesys"))
+   0058 21r81s00            118 	ld	hl,#__str_3
+   005B E5                  119 	push	hl
+   005C DD 6E 04            120 	ld	l,4 (ix)
+   005F DD 66 05            121 	ld	h,5 (ix)
+   0062 E5                  122 	push	hl
+   0063 CDr00s00            123 	call	_strcmp
+   0066 F1                  124 	pop	af
+   0067 F1                  125 	pop	af
+   0068 7D                  126 	ld	a,l
+   0069 B7                  127 	or	a, a
+   006A 20 03               128 	jr	NZ,00112$
+                            129 ;api.c:37: return NULL;
+   006C 21 00 00            130 	ld	hl,#0x0000
+   006F                     131 00112$:
+   006F DD E1               132 	pop	ix
+   0071 C9                  133 	ret
+   0072                     134 _api_query_end::
+   0072                     135 __str_0:
+   0072 79 65 61 68         136 	.ascii "yeah"
+   0076 00                  137 	.db 0x00
+   0077                     138 __str_1:
+   0077 62 75 64 64 79      139 	.ascii "buddy"
+   007C 00                  140 	.db 0x00
+   007D                     141 __str_2:
+   007D 6E 65 74            142 	.ascii "net"
+   0080 00                  143 	.db 0x00
+   0081                     144 __str_3:
+   0081 66 69 6C 65 73 79   145 	.ascii "filesys"
+        73
+   0088 00                  146 	.db 0x00
+                            147 ;api.c:43: word api_version() {
+                            148 ;	---------------------------------
+                            149 ; Function api_version
+                            150 ; ---------------------------------
+   0089                     151 _api_version_start::
+   0089                     152 _api_version:
+                            153 ;api.c:44: return VERSION; 
+   0089 21 03 00            154 	ld	hl,#0x0003
+   008C C9                  155 	ret
+   008D                     156 _api_version_end::
+                            157 ;api.c:50: void api_init() {
+                            158 ;	---------------------------------
+                            159 ; Function api_init
+                            160 ; ---------------------------------
+   008D                     161 _api_init_start::
+   008D                     162 _api_init:
+                            163 ;api.c:51: fn_table.version=api_version;
+   008D 21r00s00            164 	ld	hl,#_fn_table
+   0090 36r89               165 	ld	(hl),#<(_api_version)
+   0092 23                  166 	inc	hl
+   0093 36s00               167 	ld	(hl),#>(_api_version)
+                            168 ;api.c:52: fn_table.query=api_query;
+   0095 21r02s00            169 	ld	hl,#_fn_table + 2
+   0098 36r05               170 	ld	(hl),#<(_api_query)
+   009A 23                  171 	inc	hl
+   009B 36s00               172 	ld	(hl),#>(_api_query)
+   009D C9                  173 	ret
+   009E                     174 _api_init_end::
+                            175 	.area _CODE
+                            176 	.area _CABS

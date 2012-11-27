@@ -1,0 +1,338 @@
+ASxxxx Linker V02.00 + NoICE + sdld,  page 1.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+.	.ABS.                             00000000    00000000 =           0. bytes (ABS,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+           00000000  .__.ABS.                           
+           00000000  l__CABS                         
+           00000000  l__HEADER                       
+           00000000  l__HEAP                         
+           00000000  l__HOME                         
+           00000000  l__OVERLAY                      
+           00000000  s__HEADER                       
+           00000000  s__HEADER0                      
+           00000001  l__GSFINAL                      
+           000000D1  l__HEADER0                      
+           000000D5  l__DATA                         
+           00000100  l__BSS                          
+           00000200  s__CODE                         
+           00000315  l__GSINIT                       
+           00001E04  l__CODE                         
+           00002004  s__GSINIT                       
+           00002004  s__HOME                         
+           00002319  s__GSFINAL                      
+           00005B00  s__DATA                         
+           00005BD5  s__BSS                          
+           00005CD5  s__CABS                         
+           00005CD5  s__HEAP                         
+           00005CD5  s__OVERLAY                      
+
+ASxxxx Linker V02.00 + NoICE + sdld,  page 2.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               00000200    00001E04 =        7684. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+           00000200  _strcmp                            util
+           00000200  _strcmp_start                      util
+           0000023B  _executive                         ukernel
+           0000023B  _executive_start                   ukernel
+           0000023B  _strcmp_end                        util
+           0000023E  _executive_end                     ukernel
+           0000023E  _main                              ukernel
+           0000023E  _main_start                        ukernel
+           000002B5  _dbg_cls                           debug
+           000002B5  _dbg_cls_start                     debug
+           000002B5  _main_end                          ukernel
+           000002CD  _dbg_cls_end                       debug
+           000002CD  _dbg_putc_xy                       debug
+           000002CD  _dbg_putc_xy_start                 debug
+           00000321  _dbg_putc_xy_end                   debug
+           00000321  _dbg_scroll                        debug
+           00000321  _dbg_scroll_start                  debug
+           0000035A  _dbg_say                           debug
+           0000035A  _dbg_say_start                     debug
+           0000035A  _dbg_scroll_end                    debug
+           000003CA  _dbg_say_end                       debug
+           000003CA  _dbg_wtox                          debug
+           000003CA  _dbg_wtox_start                    debug
+           000004E4  _dbg_memdump                       debug
+           000004E4  _dbg_memdump_start                 debug
+           000004E4  _dbg_wtox_end                      debug
+           000006F5  _dbg_memdump_end                   debug
+           00000763  _dbg_taskdump                      debug
+           00000763  _dbg_taskdump_start                debug
+           00000889  _dbg_taskdump_end                  debug
+           000008D5  _dbg_timerdump                     debug
+           000008D5  _dbg_timerdump_start               debug
+           00000A0F  _dbg_timerdump_end                 debug
+           00000A48  _dbg_eventdump                     debug
+           00000A48  _dbg_eventdump_start               debug
+           00000B3C  _dbg_eventdump_end                 debug
+           00000B82  sysfont8x8                         sysfont
+           00000EAA  _lst_insert                        list
+           00000EAA  _lst_insert_start                  list
+           00000F01  _lst_delete                        list
+           00000F01  _lst_delete_start                  list
+           00000F01  _lst_insert_end                    list
+           00000FA3  _lst_delete_end                    list
+           00000FA3  _lst_match                         list
+           00000FA3  _lst_match_start                   list
+           00000FFC  _lst_find                          list
+           00000FFC  _lst_find_start                    list
+           00000FFC  _lst_match_end                     list
+           00001053  _find_block                        memory
+           00001053  _find_block_start                  memory
+ASxxxx Linker V02.00 + NoICE + sdld,  page 3.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               00000200    00001E04 =        7684. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+           00001053  _lst_find_end                      list
+           0000109A  _find_block_end                    memory
+           0000109A  _sbrk                              memory
+           0000109A  _sbrk_start                        memory
+           000010D3  _brk                               memory
+           000010D3  _brk_start                         memory
+           000010D3  _sbrk_end                          memory
+           000010EE  _brk_end                           memory
+           000010EE  _split                             memory
+           000010EE  _split_start                       memory
+           000011CB  _merge_with_next                   memory
+           000011CB  _merge_with_next_start             memory
+           000011CB  _split_end                         memory
+           00001250  _mem_init                          memory
+           00001250  _mem_init_start                    memory
+           00001250  _merge_with_next_end               memory
+           0000125E  _mem_allocate                      memory
+           0000125E  _mem_allocate_start                memory
+           0000125E  _mem_init_end                      memory
+           0000136B  _mem_allocate_end                  memory
+           0000136B  _mem_free                          memory
+           0000136B  _mem_free_start                    memory
+           00001402  _mem_free_end                      memory
+           00001402  _tsk_create                        task
+           00001402  _tsk_create_start                  task
+           000014B9  _tsk_create_end                    task
+           000014B9  _tsk_wait4events                   task
+           000014B9  _tsk_wait4events_start             task
+           00001527  _tsk_roundrobin                    task
+           00001527  _tsk_roundrobin_start              task
+           00001527  _tsk_wait4events_end               task
+           00001641  _tsk_roundrobin_end                task
+           00001641  _tsk_switch                        task
+           00001641  _tsk_switch_start                  task
+           000016A5  _tmr_install                       timer
+           000016A5  _tmr_install_start                 timer
+           000016A5  _tsk_switch_end                    task
+           000016FB  _tmr_install_end                   timer
+           000016FB  _tmr_uninstall                     timer
+           000016FB  _tmr_uninstall_start               timer
+           00001725  _tmr_chain                         timer
+           00001725  _tmr_chain_start                   timer
+           00001725  _tmr_uninstall_end                 timer
+           000017E3  _evt_create                        event
+           000017E3  _evt_create_start                  event
+           000017E3  _tmr_chain_end                     timer
+           00001812  _evt_create_end                    event
+           00001812  _evt_destroy                       event
+           00001812  _evt_destroy_start                 event
+           0000183C  _evt_destroy_end                   event
+           0000183C  _evt_set                           event
+ASxxxx Linker V02.00 + NoICE + sdld,  page 4.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               00000200    00001E04 =        7684. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+           0000183C  _evt_set_start                     event
+           00001880  _drv_register                      driver
+           00001880  _drv_register_start                driver
+           00001880  _evt_set_end                       event
+           00001935  _drv_query                         driver
+           00001935  _drv_query_start                   driver
+           00001935  _drv_register_end                  driver
+           00001983  _drv_query_end                     driver
+           00001983  _kbd_open                          keyboard
+           00001983  _kbd_open_start                    keyboard
+           000019F7  _kbd_close                         keyboard
+           000019F7  _kbd_close_start                   keyboard
+           000019F7  _kbd_open_end                      keyboard
+           00001A32  _kbd_close_end                     keyboard
+           00001A32  _kbd_read_async                    keyboard
+           00001A32  _kbd_read_async_start              keyboard
+           00001AA9  _kbd_read_async_end                keyboard
+           00001AA9  _kbd_timer_hook                    keyboard
+           00001AA9  _kbd_timer_hook_start              keyboard
+           00001AF7  _kbd_get_key                       keyboard
+           00001AF7  _kbd_get_key_start                 keyboard
+           00001AF7  _kbd_timer_hook_end                keyboard
+           00001B1C  _kbd_get_key_end                   keyboard
+           00001B1C  _kbd_scan                          keyboard
+           00001B1C  _kbd_scan_start                    keyboard
+           00001BE1  _kbd_scan_end                      keyboard
+           00001BE1  _timer1                            ball
+           00001BE1  _timer1_start                      ball
+           00001BEF  _timer1_end                        ball
+           00001BEF  _timer2                            ball
+           00001BEF  _timer2_start                      ball
+           00001BFD  _init_balls                        ball
+           00001BFD  _init_balls_start                  ball
+           00001BFD  _timer2_end                        ball
+           00001C4D  _init_balls_end                    ball
+           00001C4D  _wait                              ball
+           00001C4D  _wait_start                        ball
+           00001C69  _ball                              ball
+           00001C69  _ball_start                        ball
+           00001C69  _wait_end                          ball
+           00001D85  _ball2                             ball
+           00001D85  _ball2_start                       ball
+           00001D85  _ball_end                          ball
+           00001E7E  _ball2_end                         ball
+           00001E7E  _ball3                             ball
+           00001E7E  _ball3_start                       ball
+           00001F65  _api                               api
+           00001F65  _api_start                         api
+           00001F65  _ball3_end                         ball
+           00001F6A  _api_end                           api
+           00001F6A  _api_query                         api
+ASxxxx Linker V02.00 + NoICE + sdld,  page 5.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               00000200    00001E04 =        7684. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+           00001F6A  _api_query_start                   api
+           00001FD7  _api_query_end                     api
+           00001FEE  _api_version                       api
+           00001FEE  _api_version_start                 api
+           00001FF2  _api_init                          api
+           00001FF2  _api_init_start                    api
+           00001FF2  _api_version_end                   api
+           00002003  __sdcc_call_hl                     
+           00002003  _api_init_end                      api
+
+ASxxxx Linker V02.00 + NoICE + sdld,  page 6.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_HEADER0                            00000000    000000D1 =         209. bytes (ABS,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+           00000092  _di                                crt0
+           00000098  _ei                                crt0
+           000000A5  _set_vector                        crt0
+           000000CD  _get_heap                          crt0
+
+ASxxxx Linker V02.00 + NoICE + sdld,  page 7.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_GSINIT                             00002004    00000315 =         789. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V02.00 + NoICE + sdld,  page 8.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_GSFINAL                            00002319    00000001 =           1. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V02.00 + NoICE + sdld,  page 9.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_DATA                               00005B00    000000D5 =         213. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+           00005B19  _last_error                        errors
+           00005B1A  _x                                 debug
+           00005B1B  _y                                 debug
+           00005B1C  _brk_addr                          memory
+           00005B1E  _mem_first                         memory
+           00005B20  _mem_last                          memory
+           00005B22  _tsk_current                       task
+           00005B24  _tsk_first_running                 task
+           00005B26  _tsk_first_waiting                 task
+           00005B28  _tmr_first                         timer
+           00005B2A  _evt_first                         event
+           00005B2C  _drv_first                         driver
+           00005B2E  _kbd_exclusive_handle              keyboard
+           00005B30  _kbd_buffer                        keyboard
+           00005B50  _kbd_buff_head                     keyboard
+           00005B51  _kbd_buff_tail                     keyboard
+           00005B52  _kbd_lastkey                       keyboard
+           00005B53  _kbd_map                           keyboard
+           00005B7B  _caps_kbd_map                      keyboard
+           00005BA3  _sym_kbd_map                       keyboard
+           00005BCB  _b1                                ball
+           00005BCD  _b2                                ball
+           00005BCF  _done                              ball
+           00005BD1  _fn_table                          api
+ASxxxx Linker V02.00 + NoICE + sdld,  page 10.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_BSS                                00005BD5    00000100 =         256. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V02.00 + NoICE + sdld,  page 11.
+
+Files Linked                              [ module(s) ]
+
+crt0.rel                                  [ crt0 ]
+errors.rel                                [ errors ]
+util.rel                                  [ util ]
+ukernel.rel                               [ ukernel ]
+debug.rel                                 [ debug ]
+sysfont.rel                               [ sysfont ]
+list.rel                                  [ list ]
+memory.rel                                [ memory ]
+task.rel                                  [ task ]
+timer.rel                                 [ timer ]
+event.rel                                 [ event ]
+driver.rel                                [ driver ]
+keyboard.rel                              [ keyboard ]
+ball.rel                                  [ ball ]
+api.rel                                   [ api ]
+
+
+Libraries Linked                          [ object file ]
+
+/usr/bin/../share/sdcc/lib/z80/z80.lib    [ crtcall.rel ]
+
+ASxxxx Linker V02.00 + NoICE + sdld,  page 12.
+
+User Base Address Definitions
+
+_CODE = 0x0200
+_DATA = 0x5b00
+
+

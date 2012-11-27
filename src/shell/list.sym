@@ -1,0 +1,33 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 1.
+
+Symbol Table
+
+    .__.ABS.                                                    =  0000 G
+    __sdcc_call_hl                                                 **** GX
+    _last_error                                                    **** GX
+  0 _lst_delete                                                    0057 GR
+  0 _lst_delete_end                                                00F9 GR
+  0 _lst_delete_start                                              0057 GR
+  0 _lst_find                                                      0152 GR
+  0 _lst_find_end                                                  01A9 GR
+  0 _lst_find_start                                                0152 GR
+  0 _lst_insert                                                    0000 GR
+  0 _lst_insert_end                                                0057 GR
+  0 _lst_insert_start                                              0000 GR
+  0 _lst_match                                                     00F9 GR
+  0 _lst_match_end                                                 0152 GR
+  0 _lst_match_start                                               00F9 GR
+    _mem_allocate                                                  **** GX
+    _mem_free                                                      **** GX
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 2.
+
+Area Table
+
+   0 _CODE                                      size  1A9   flags 0
+   1 _DATA                                      size    0   flags 0
+   2 _OVERLAY                                   size    0   flags 0
+   3 _HOME                                      size    0   flags 0
+   4 _GSINIT                                    size    0   flags 0
+   5 _GSFINAL                                   size    0   flags 0
+   6 _CABS                                      size    0   flags 0

@@ -1,0 +1,467 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.1.0 #7066 (Jun 14 2012) (Linux)
+                              4 ; This file was generated Tue Nov 27 20:32:56 2012
+                              5 ;--------------------------------------------------------
+                              6 	.module ukernel
+                              7 	.optsdcc -mz80
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _shell
+                             13 	.globl _supervisor
+                             14 	.globl _set_vector
+                             15 	.globl _kbd_timer_hook
+                             16 	.globl _kbd_read_async
+                             17 	.globl _kbd_close
+                             18 	.globl _kbd_open
+                             19 	.globl _drv_query
+                             20 	.globl _drv_register
+                             21 	.globl _tsk_wait4events
+                             22 	.globl _tsk_create
+                             23 	.globl _evt_set
+                             24 	.globl _evt_create
+                             25 	.globl _dbg_eventdump
+                             26 	.globl _dbg_timerdump
+                             27 	.globl _dbg_taskdump
+                             28 	.globl _dbg_memdump
+                             29 	.globl _dbg_cls
+                             30 	.globl _dbg_say
+                             31 	.globl _executive
+                             32 	.globl _main
+                             33 ;--------------------------------------------------------
+                             34 ; special function registers
+                             35 ;--------------------------------------------------------
+                             36 ;--------------------------------------------------------
+                             37 ;  ram data
+                             38 ;--------------------------------------------------------
+                             39 	.area _DATA
+                             40 ;--------------------------------------------------------
+                             41 ; overlayable items in  ram 
+                             42 ;--------------------------------------------------------
+                             43 	.area _OVERLAY
+                             44 ;--------------------------------------------------------
+                             45 ; external initialized ram data
+                             46 ;--------------------------------------------------------
+                             47 ;--------------------------------------------------------
+                             48 ; global & static initialisations
+                             49 ;--------------------------------------------------------
+                             50 	.area _HOME
+                             51 	.area _GSINIT
+                             52 	.area _GSFINAL
+                             53 	.area _GSINIT
+                             54 ;--------------------------------------------------------
+                             55 ; Home
+                             56 ;--------------------------------------------------------
+                             57 	.area _HOME
+                             58 	.area _HOME
+                             59 ;--------------------------------------------------------
+                             60 ; code
+                             61 ;--------------------------------------------------------
+                             62 	.area _CODE
+                             63 ;ukernel.c:9: void executive() __naked {
+                             64 ;	---------------------------------
+                             65 ; Function executive
+                             66 ; ---------------------------------
+   0000                      67 _executive_start::
+   0000                      68 _executive:
+                             69 ;ukernel.c:16: __endasm;
+   0000 C3r00s00             70 	jp	_tsk_switch
+   0003                      71 _executive_end::
+                             72 ;ukernel.c:19: void supervisor() {
+                             73 ;	---------------------------------
+                             74 ; Function supervisor
+                             75 ; ---------------------------------
+   0003                      76 _supervisor_start::
+   0003                      77 _supervisor:
+                             78 ;ukernel.c:21: while (1==1);
+   0003                      79 00102$:
+   0003 18 FE                80 	jr	00102$
+   0005                      81 _supervisor_end::
+                             82 ;ukernel.c:24: void shell() {
+                             83 ;	---------------------------------
+                             84 ; Function shell
+                             85 ; ---------------------------------
+   0005                      86 _shell_start::
+   0005                      87 _shell:
+   0005 DD E5                88 	push	ix
+   0007 DD 21 00 00          89 	ld	ix,#0
+   000B DD 39                90 	add	ix,sp
+   000D 21 C8 FF             91 	ld	hl,#-56
+   0010 39                   92 	add	hl,sp
+   0011 F9                   93 	ld	sp,hl
+                             94 ;ukernel.c:32: driver_t *d=drv_query('K','B','D');
+   0012 21 42 44             95 	ld	hl,#0x4442
+   0015 E5                   96 	push	hl
+   0016 3E 4B                97 	ld	a,#0x4B
+   0018 F5                   98 	push	af
+   0019 33                   99 	inc	sp
+   001A CDr00s00            100 	call	_drv_query
+   001D F1                  101 	pop	af
+   001E 33                  102 	inc	sp
+                            103 ;ukernel.c:33: handle=d->open(d,NULL,0);
+   001F DD 75 CE            104 	ld	-50 (ix),l
+   0022 DD 74 CF            105 	ld	-49 (ix),h
+   0025 23                  106 	inc	hl
+   0026 23                  107 	inc	hl
+   0027 23                  108 	inc	hl
+   0028 56                  109 	ld	d,(hl)
+   0029 23                  110 	inc	hl
+   002A 5E                  111 	ld	e,(hl)
+   002B 21 00 00            112 	ld	hl,#0x0000
+   002E E5                  113 	push	hl
+   002F 2E 00               114 	ld	l, #0x00
+   0031 E5                  115 	push	hl
+   0032 DD 6E CE            116 	ld	l,-50 (ix)
+   0035 DD 66 CF            117 	ld	h,-49 (ix)
+   0038 E5                  118 	push	hl
+   0039 6A                  119 	ld	l,d
+   003A 63                  120 	ld	h,e
+   003B CDr00s00            121 	call	__sdcc_call_hl
+   003E F1                  122 	pop	af
+   003F F1                  123 	pop	af
+   0040 F1                  124 	pop	af
+   0041 DD 75 D1            125 	ld	-47 (ix),l
+   0044 DD 74 D2            126 	ld	-46 (ix),h
+                            127 ;ukernel.c:34: key_avail=evt_create(KERNEL);
+   0047 21 00 01            128 	ld	hl,#0x0100
+   004A E5                  129 	push	hl
+   004B CDr00s00            130 	call	_evt_create
+   004E F1                  131 	pop	af
+   004F DD 75 FE            132 	ld	-2 (ix),l
+   0052 DD 74 FF            133 	ld	-1 (ix),h
+                            134 ;ukernel.c:36: dbg_cls();
+   0055 CDr00s00            135 	call	_dbg_cls
+                            136 ;ukernel.c:37: dbg_say("welcome to yeah\n");
+   0058 21rFEs01            137 	ld	hl,#__str_0
+   005B E5                  138 	push	hl
+   005C CDr00s00            139 	call	_dbg_say
+                            140 ;ukernel.c:38: dbg_say("ready?\n_\b");
+   005F 21r0Fs02            141 	ld	hl, #__str_1
+   0062 E3                  142 	ex	(sp),hl
+   0063 CDr00s00            143 	call	_dbg_say
+   0066 F1                  144 	pop	af
+                            145 ;ukernel.c:40: while (1==1) { /* endless loop */
+   0067                     146 00129$:
+                            147 ;ukernel.c:43: key=0;
+   0067 DD 36 D0 00         148 	ld	-48 (ix),#0x00
+                            149 ;ukernel.c:45: while (key!=13) {
+   006B DD 7E CE            150 	ld	a,-50 (ix)
+   006E C6 07               151 	add	a, #0x07
+   0070 DD 77 CC            152 	ld	-52 (ix),a
+   0073 DD 7E CF            153 	ld	a,-49 (ix)
+   0076 CE 00               154 	adc	a, #0x00
+   0078 DD 77 CD            155 	ld	-51 (ix),a
+   007B 21 0E 00            156 	ld	hl,#0x000E
+   007E 39                  157 	add	hl,sp
+   007F DD 75 CA            158 	ld	-54 (ix),l
+   0082 DD 74 CB            159 	ld	-53 (ix),h
+   0085 DD 36 D5 00         160 	ld	-43 (ix),#0x00
+   0089                     161 00104$:
+   0089 DD 7E D0            162 	ld	a,-48 (ix)
+   008C D6 0D               163 	sub	a, #0x0D
+   008E CAr33s01            164 	jp	Z,00106$
+                            165 ;ukernel.c:47: d->read_async(handle, &key, 1, key_avail);
+   0091 DD 6E CC            166 	ld	l,-52 (ix)
+   0094 DD 66 CD            167 	ld	h,-51 (ix)
+   0097 56                  168 	ld	d,(hl)
+   0098 23                  169 	inc	hl
+   0099 5E                  170 	ld	e,(hl)
+   009A 21 08 00            171 	ld	hl,#0x0008
+   009D 39                  172 	add	hl,sp
+   009E 4D                  173 	ld	c,l
+   009F 44                  174 	ld	b,h
+   00A0 DD 6E FE            175 	ld	l,-2 (ix)
+   00A3 DD 66 FF            176 	ld	h,-1 (ix)
+   00A6 E5                  177 	push	hl
+   00A7 21 01 00            178 	ld	hl,#0x0001
+   00AA E5                  179 	push	hl
+   00AB C5                  180 	push	bc
+   00AC DD 6E D1            181 	ld	l,-47 (ix)
+   00AF DD 66 D2            182 	ld	h,-46 (ix)
+   00B2 E5                  183 	push	hl
+   00B3 6A                  184 	ld	l,d
+   00B4 63                  185 	ld	h,e
+   00B5 CDr00s00            186 	call	__sdcc_call_hl
+   00B8 F1                  187 	pop	af
+   00B9 F1                  188 	pop	af
+   00BA F1                  189 	pop	af
+   00BB F1                  190 	pop	af
+                            191 ;ukernel.c:48: tsk_wait4events(&key_avail, 1);
+   00BC 21 36 00            192 	ld	hl,#0x0036
+   00BF 39                  193 	add	hl,sp
+   00C0 EB                  194 	ex	de,hl
+   00C1 3E 01               195 	ld	a,#0x01
+   00C3 F5                  196 	push	af
+   00C4 33                  197 	inc	sp
+   00C5 D5                  198 	push	de
+   00C6 CDr00s00            199 	call	_tsk_wait4events
+   00C9 F1                  200 	pop	af
+   00CA 33                  201 	inc	sp
+                            202 ;ukernel.c:50: cmd[cmdndx]=key;
+   00CB DD 7E CA            203 	ld	a,-54 (ix)
+   00CE DD 86 D5            204 	add	a, -43 (ix)
+   00D1 6F                  205 	ld	l,a
+   00D2 DD 7E CB            206 	ld	a,-53 (ix)
+   00D5 CE 00               207 	adc	a, #0x00
+   00D7 67                  208 	ld	h,a
+   00D8 DD 7E D0            209 	ld	a,-48 (ix)
+   00DB 77                  210 	ld	(hl),a
+                            211 ;ukernel.c:51: cmdndx++;
+   00DC DD 34 D5            212 	inc	-43 (ix)
+                            213 ;ukernel.c:53: evt_set(key_avail,nonsignaled);	
+   00DF 3E 00               214 	ld	a,#0x00
+   00E1 F5                  215 	push	af
+   00E2 33                  216 	inc	sp
+   00E3 DD 6E FE            217 	ld	l,-2 (ix)
+   00E6 DD 66 FF            218 	ld	h,-1 (ix)
+   00E9 E5                  219 	push	hl
+   00EA CDr00s00            220 	call	_evt_set
+   00ED F1                  221 	pop	af
+   00EE 33                  222 	inc	sp
+                            223 ;ukernel.c:55: if (key!=13) {
+   00EF DD 7E D0            224 	ld	a,-48 (ix)
+   00F2 D6 0D               225 	sub	a, #0x0D
+   00F4 28 32               226 	jr	Z,00102$
+                            227 ;ukernel.c:56: ch[0]=key; ch[1]=0;
+   00F6 21 0B 00            228 	ld	hl,#0x000B
+   00F9 39                  229 	add	hl,sp
+   00FA DD 75 C8            230 	ld	-56 (ix),l
+   00FD DD 74 C9            231 	ld	-55 (ix),h
+   0100 DD 7E D0            232 	ld	a,-48 (ix)
+   0103 DD 6E C8            233 	ld	l,-56 (ix)
+   0106 DD 66 C9            234 	ld	h,-55 (ix)
+   0109 77                  235 	ld	(hl),a
+   010A DD 6E C8            236 	ld	l,-56 (ix)
+   010D DD 66 C9            237 	ld	h,-55 (ix)
+   0110 23                  238 	inc	hl
+   0111 36 00               239 	ld	(hl),#0x00
+                            240 ;ukernel.c:57: dbg_say(ch);
+   0113 DD 6E C8            241 	ld	l,-56 (ix)
+   0116 DD 66 C9            242 	ld	h,-55 (ix)
+   0119 E5                  243 	push	hl
+   011A CDr00s00            244 	call	_dbg_say
+                            245 ;ukernel.c:58: dbg_say("_\b");
+   011D 21r19s02            246 	ld	hl, #__str_2
+   0120 E3                  247 	ex	(sp),hl
+   0121 CDr00s00            248 	call	_dbg_say
+   0124 F1                  249 	pop	af
+   0125 C3r89s00            250 	jp	00104$
+   0128                     251 00102$:
+                            252 ;ukernel.c:60: dbg_say(" \n");		
+   0128 21r1Cs02            253 	ld	hl,#__str_3
+   012B E5                  254 	push	hl
+   012C CDr00s00            255 	call	_dbg_say
+   012F F1                  256 	pop	af
+   0130 C3r89s00            257 	jp	00104$
+   0133                     258 00106$:
+                            259 ;ukernel.c:63: cmd[cmdndx]=0;
+   0133 DD 7E D5            260 	ld	a,-43 (ix)
+   0136 DD 86 CA            261 	add	a, -54 (ix)
+   0139 6F                  262 	ld	l,a
+   013A 3E 00               263 	ld	a,#0x00
+   013C DD 8E CB            264 	adc	a, -53 (ix)
+   013F 67                  265 	ld	h,a
+   0140 36 00               266 	ld	(hl),#0x00
+                            267 ;ukernel.c:66: if (cmd[0]=='m' && cmd[1]=='e' && cmd[2]=='m')
+   0142 DD 6E CA            268 	ld	l,-54 (ix)
+   0145 DD 66 CB            269 	ld	h,-53 (ix)
+   0148 7E                  270 	ld	a,(hl)
+   0149 D6 6D               271 	sub	a, #0x6D
+   014B 20 2E               272 	jr	NZ,00124$
+   014D DD 7E CA            273 	ld	a,-54 (ix)
+   0150 C6 01               274 	add	a, #0x01
+   0152 DD 77 C8            275 	ld	-56 (ix),a
+   0155 DD 7E CB            276 	ld	a,-53 (ix)
+   0158 CE 00               277 	adc	a, #0x00
+   015A DD 77 C9            278 	ld	-55 (ix),a
+   015D DD 6E C8            279 	ld	l,-56 (ix)
+   0160 DD 66 C9            280 	ld	h,-55 (ix)
+   0163 7E                  281 	ld	a,(hl)
+   0164 D6 65               282 	sub	a, #0x65
+   0166 20 13               283 	jr	NZ,00124$
+   0168 DD 6E CA            284 	ld	l,-54 (ix)
+   016B DD 66 CB            285 	ld	h,-53 (ix)
+   016E 23                  286 	inc	hl
+   016F 23                  287 	inc	hl
+   0170 7E                  288 	ld	a,(hl)
+   0171 D6 6D               289 	sub	a, #0x6D
+   0173 20 06               290 	jr	NZ,00124$
+                            291 ;ukernel.c:67: dbg_memdump();
+   0175 CDr00s00            292 	call	_dbg_memdump
+   0178 C3rF3s01            293 	jp	00125$
+   017B                     294 00124$:
+                            295 ;ukernel.c:68: else if (cmd[0]=='t' && cmd[1]=='a')
+   017B DD 6E CA            296 	ld	l,-54 (ix)
+   017E DD 66 CB            297 	ld	h,-53 (ix)
+   0181 7E                  298 	ld	a,(hl)
+   0182 D6 74               299 	sub	a, #0x74
+   0184 20 11               300 	jr	NZ,00120$
+   0186 DD 6E CA            301 	ld	l,-54 (ix)
+   0189 DD 66 CB            302 	ld	h,-53 (ix)
+   018C 23                  303 	inc	hl
+   018D 7E                  304 	ld	a,(hl)
+   018E D6 61               305 	sub	a, #0x61
+   0190 20 05               306 	jr	NZ,00120$
+                            307 ;ukernel.c:69: dbg_taskdump();
+   0192 CDr00s00            308 	call	_dbg_taskdump
+   0195 18 5C               309 	jr	00125$
+   0197                     310 00120$:
+                            311 ;ukernel.c:70: else if (cmd[0]=='e' && cmd[1]=='v')
+   0197 DD 6E CA            312 	ld	l,-54 (ix)
+   019A DD 66 CB            313 	ld	h,-53 (ix)
+   019D 7E                  314 	ld	a,(hl)
+   019E D6 65               315 	sub	a, #0x65
+   01A0 20 11               316 	jr	NZ,00116$
+   01A2 DD 6E CA            317 	ld	l,-54 (ix)
+   01A5 DD 66 CB            318 	ld	h,-53 (ix)
+   01A8 23                  319 	inc	hl
+   01A9 7E                  320 	ld	a,(hl)
+   01AA D6 76               321 	sub	a, #0x76
+   01AC 20 05               322 	jr	NZ,00116$
+                            323 ;ukernel.c:71: dbg_eventdump();
+   01AE CDr00s00            324 	call	_dbg_eventdump
+   01B1 18 40               325 	jr	00125$
+   01B3                     326 00116$:
+                            327 ;ukernel.c:72: else if (cmd[0]=='t' && cmd[1]=='i')
+   01B3 DD 6E CA            328 	ld	l,-54 (ix)
+   01B6 DD 66 CB            329 	ld	h,-53 (ix)
+   01B9 7E                  330 	ld	a,(hl)
+   01BA D6 74               331 	sub	a, #0x74
+   01BC 20 11               332 	jr	NZ,00112$
+   01BE DD 6E CA            333 	ld	l,-54 (ix)
+   01C1 DD 66 CB            334 	ld	h,-53 (ix)
+   01C4 23                  335 	inc	hl
+   01C5 7E                  336 	ld	a,(hl)
+   01C6 D6 69               337 	sub	a, #0x69
+   01C8 20 05               338 	jr	NZ,00112$
+                            339 ;ukernel.c:73: dbg_timerdump();
+   01CA CDr00s00            340 	call	_dbg_timerdump
+   01CD 18 24               341 	jr	00125$
+   01CF                     342 00112$:
+                            343 ;ukernel.c:74: else if (cmd[0]=='c' && cmd[1]=='l')
+   01CF DD 6E CA            344 	ld	l,-54 (ix)
+   01D2 DD 66 CB            345 	ld	h,-53 (ix)
+   01D5 7E                  346 	ld	a,(hl)
+   01D6 D6 63               347 	sub	a, #0x63
+   01D8 20 11               348 	jr	NZ,00108$
+   01DA DD 6E CA            349 	ld	l,-54 (ix)
+   01DD DD 66 CB            350 	ld	h,-53 (ix)
+   01E0 23                  351 	inc	hl
+   01E1 7E                  352 	ld	a,(hl)
+   01E2 D6 6C               353 	sub	a, #0x6C
+   01E4 20 05               354 	jr	NZ,00108$
+                            355 ;ukernel.c:75: dbg_cls();
+   01E6 CDr00s00            356 	call	_dbg_cls
+   01E9 18 08               357 	jr	00125$
+   01EB                     358 00108$:
+                            359 ;ukernel.c:77: dbg_say("unknown command\n");
+   01EB 21r1Fs02            360 	ld	hl,#__str_4
+   01EE E5                  361 	push	hl
+   01EF CDr00s00            362 	call	_dbg_say
+   01F2 F1                  363 	pop	af
+   01F3                     364 00125$:
+                            365 ;ukernel.c:80: dbg_say("ready?\n_\b");
+   01F3 21r0Fs02            366 	ld	hl,#__str_1
+   01F6 E5                  367 	push	hl
+   01F7 CDr00s00            368 	call	_dbg_say
+   01FA F1                  369 	pop	af
+   01FB C3r67s00            370 	jp	00129$
+   01FE                     371 _shell_end::
+   01FE                     372 __str_0:
+   01FE 77 65 6C 63 6F 6D   373 	.ascii "welcome to yeah"
+        65 20 74 6F 20 79
+        65 61 68
+   020D 0A                  374 	.db 0x0A
+   020E 00                  375 	.db 0x00
+   020F                     376 __str_1:
+   020F 72 65 61 64 79 3F   377 	.ascii "ready?"
+   0215 0A                  378 	.db 0x0A
+   0216 5F                  379 	.ascii "_"
+   0217 08                  380 	.db 0x08
+   0218 00                  381 	.db 0x00
+   0219                     382 __str_2:
+   0219 5F                  383 	.ascii "_"
+   021A 08                  384 	.db 0x08
+   021B 00                  385 	.db 0x00
+   021C                     386 __str_3:
+   021C 20                  387 	.ascii " "
+   021D 0A                  388 	.db 0x0A
+   021E 00                  389 	.db 0x00
+   021F                     390 __str_4:
+   021F 75 6E 6B 6E 6F 77   391 	.ascii "unknown command"
+        6E 20 63 6F 6D 6D
+        61 6E 64
+   022E 0A                  392 	.db 0x0A
+   022F 00                  393 	.db 0x00
+                            394 ;ukernel.c:85: void main() {
+                            395 ;	---------------------------------
+                            396 ; Function main
+                            397 ; ---------------------------------
+   0230                     398 _main_start::
+   0230                     399 _main:
+                            400 ;ukernel.c:90: set_vector(RST38,executive,NULL);
+   0230 21 00 00            401 	ld	hl,#0x0000
+   0233 E5                  402 	push	hl
+   0234 21r00s00            403 	ld	hl,#_executive
+   0237 E5                  404 	push	hl
+   0238 3E 06               405 	ld	a,#0x06
+   023A F5                  406 	push	af
+   023B 33                  407 	inc	sp
+   023C CDr00s00            408 	call	_set_vector
+   023F F1                  409 	pop	af
+   0240 F1                  410 	pop	af
+   0241 33                  411 	inc	sp
+                            412 ;ukernel.c:95: mem_init();
+   0242 CDr00s00            413 	call	_mem_init
+                            414 ;ukernel.c:102: drv_register('K','B','D',	
+   0245 21 00 00            415 	ld	hl,#0x0000
+   0248 E5                  416 	push	hl
+   0249 21r00s00            417 	ld	hl,#_kbd_timer_hook
+   024C E5                  418 	push	hl
+   024D 21 00 00            419 	ld	hl,#0x0000
+   0250 E5                  420 	push	hl
+   0251 2E 00               421 	ld	l, #0x00
+   0253 E5                  422 	push	hl
+   0254 21r00s00            423 	ld	hl,#_kbd_read_async
+   0257 E5                  424 	push	hl
+   0258 21r00s00            425 	ld	hl,#_kbd_close
+   025B E5                  426 	push	hl
+   025C 21r00s00            427 	ld	hl,#_kbd_open
+   025F E5                  428 	push	hl
+   0260 21 42 44            429 	ld	hl,#0x4442
+   0263 E5                  430 	push	hl
+   0264 3E 4B               431 	ld	a,#0x4B
+   0266 F5                  432 	push	af
+   0267 33                  433 	inc	sp
+   0268 CDr00s00            434 	call	_drv_register
+   026B 21 11 00            435 	ld	hl,#0x0011
+   026E 39                  436 	add	hl,sp
+   026F F9                  437 	ld	sp,hl
+                            438 ;ukernel.c:114: tsk_create(supervisor,1024,256);
+   0270 21 00 01            439 	ld	hl,#0x0100
+   0273 E5                  440 	push	hl
+   0274 26 04               441 	ld	h, #0x04
+   0276 E5                  442 	push	hl
+   0277 21r03s00            443 	ld	hl,#_supervisor
+   027A E5                  444 	push	hl
+   027B CDr00s00            445 	call	_tsk_create
+   027E F1                  446 	pop	af
+   027F F1                  447 	pop	af
+   0280 F1                  448 	pop	af
+                            449 ;ukernel.c:115: tsk_create(shell,1024,256);
+   0281 21 00 01            450 	ld	hl,#0x0100
+   0284 E5                  451 	push	hl
+   0285 26 04               452 	ld	h, #0x04
+   0287 E5                  453 	push	hl
+   0288 21r05s00            454 	ld	hl,#_shell
+   028B E5                  455 	push	hl
+   028C CDr00s00            456 	call	_tsk_create
+   028F F1                  457 	pop	af
+   0290 F1                  458 	pop	af
+   0291 F1                  459 	pop	af
+   0292 C9                  460 	ret
+   0293                     461 _main_end::
+                            462 	.area _CODE
+                            463 	.area _CABS

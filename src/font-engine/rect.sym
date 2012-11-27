@@ -1,0 +1,23 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 1.
+
+Symbol Table
+
+    .__.ABS.                                                    =  0000 G
+  0 _rct_intersect                                                 0000 GR
+  0 _rct_intersect_end                                             0043 GR
+  0 _rct_intersect_start                                           0000 GR
+  0 rct_intersect_raw                                              0012 GR
+  0 ri_end                                                         0040 R
+  0 ri_false                                                       003E R
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 2.
+
+Area Table
+
+   0 _CODE                                      size   43   flags 0
+   1 _DATA                                      size    0   flags 0
+   2 _OVERLAY                                   size    0   flags 0
+   3 _HOME                                      size    0   flags 0
+   4 _GSINIT                                    size    0   flags 0
+   5 _GSFINAL                                   size    0   flags 0
+   6 _CABS                                      size    0   flags 0

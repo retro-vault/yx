@@ -1,0 +1,35 @@
+XL
+H 7 areas 4 global symbols
+M util
+O -mz80
+S .__.ABS. Def0000
+A _CODE size 3B flags 0 addr 0
+S _strcmp_start Def0000
+S _strcmp_end Def003B
+S _strcmp Def0000
+A _DATA size 0 flags 0 addr 0
+A _OVERLAY size 0 flags 0 addr 0
+A _HOME size 0 flags 0 addr 0
+A _GSINIT size 0 flags 0 addr 0
+A _GSFINAL size 0 flags 0 addr 0
+A _CABS size 0 flags 0 addr 0
+T 00 00
+R 00 00 00 00
+T 00 00
+R 00 00 00 00
+T 00 00 DD E5 DD 21 00 00 DD 39 F5 DD 4E 04 DD 46
+R 00 00 00 00
+T 0E 00 05 DD 5E 06 DD 56 07
+R 00 00 00 00
+T 15 00
+R 00 00 00 00
+T 15 00 0A DD 77 FF B7 28 11 1A DD 77 FE B7 28 0A
+R 00 00 00 00
+T 23 00 03 13 DD 7E FF DD 96 FE 28 E8
+R 00 00 00 00
+T 2D 00
+R 00 00 00 00
+T 2D 00 0B 0A 47 1B 1A 5F 78 93 6F DD F9 DD E1 C9
+R 00 00 00 00
+T 3B 00
+R 00 00 00 00

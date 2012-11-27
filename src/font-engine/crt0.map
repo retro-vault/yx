@@ -1,0 +1,207 @@
+ASxxxx Linker V02.00 + NoICE + sdld,  page 1.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+.	.ABS.                             00000000    00000000 =           0. bytes (ABS,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+           00000000  .__.ABS.                           
+           00000000  l__CABS                         
+           00000000  l__HEADER                       
+           00000000  l__HEAP                         
+           00000000  l__HOME                         
+           00000000  l__OVERLAY                      
+           00000000  s__HEADER                       
+           00000000  s__HEADER0                      
+           00000001  l__GSFINAL                      
+           00000013  l__GSINIT                       
+           00000023  l__DATA                         
+           00000092  l__HEADER0                      
+           00000100  s__CODE                         
+           00000400  l__BSS                          
+           0000332B  l__CODE                         
+           0000342B  s__GSINIT                       
+           0000342B  s__HOME                         
+           0000343E  s__GSFINAL                      
+           00005B00  s__DATA                         
+           00005B23  s__BSS                          
+           00005F23  s__CABS                         
+           00005F23  s__HEAP                         
+           00005F23  s__OVERLAY                      
+
+ASxxxx Linker V02.00 + NoICE + sdld,  page 2.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               00000100    0000332B =       13099. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+           00000100  _c60s_font                         c60s_font
+           000004D5  _c64_font                          c64_font
+           000004D9  c64_font                           c64_font
+           000008AA  _cour_new_font                     cour_new_font
+           00000C7F  _envy_font                         envy_font
+           00001054  _ocra_font                         ocra_font
+           00001429  _sinserif_font                     sinserif_font
+           0000142D  sinserif_font                      sinserif_font
+           000017FE  _chicago_font                      chicago_font
+           000023CD  _liquid_font                       liquid_font
+           000023D1  liquid_font                        liquid_font
+           000027A2  _main                              test
+           000027A2  _main_start                        test
+           000029D5  _main_end                          test
+           00002AAC  _g_translate_coordinates           test
+           00002AAC  _g_translate_coordinates_start     test
+           00002AEE  _g_clip_margins                    test
+           00002AEE  _g_clip_margins_start              test
+           00002AEE  _g_translate_coordinates_end       test
+           00002B17  g_clip_margins_raw                 test
+           00002B8C  _g_clip_margins_end                test
+           00002B8C  _g_draw_text                       test
+           00002B8C  _g_draw_text_start                 test
+           00002D14  _g_draw_clipped_glyph              test
+           00002D14  _g_draw_clipped_glyph_start        test
+           00002D14  _g_draw_text_end                   test
+           00002FC2  _g_draw_clipped_glyph_end          test
+           00002FC2  _g_init                            test
+           00002FC2  _g_init_start                      test
+           00003032  _directg_realize                   test
+           00003032  _directg_realize_start             test
+           00003032  _g_init_end                        test
+           00003083  _directg_realize_end               test
+           00003083  _mem_copy                          test
+           00003083  _mem_copy_start                    test
+           0000309E  _mem_copy_end                      test
+           0000309E  _string_length                     test
+           0000309E  _string_length_start               test
+           000030B6  _mem_set                           test
+           000030B6  _mem_set_start                     test
+           000030B6  _string_length_end                 test
+           000030CB  mem_set_raw                        test
+           000030D3  _directg_vmem_addr                 test
+           000030D3  _directg_vmem_addr_start           test
+           000030D3  _mem_set_end                       test
+           000030DF  directg_vmem_addr_raw              test
+           000030FD  _directg_vmem_addr_end             test
+           000030FD  _directg_vmem_nextrow_addr         test
+           000030FD  _directg_vmem_nextrow_addr_start   test
+           00003109  directg_vmem_nextrow_addr_raw      test
+ASxxxx Linker V02.00 + NoICE + sdld,  page 3.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               00000100    0000332B =       13099. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+           0000311A  _directg_vmem_nextrow_addr_end     test
+           0000311A  _shift_buffer_right                test
+           0000311A  _shift_buffer_right_start          test
+           0000315A  _directg_aligned_glyph_16x16       test
+           0000315A  _directg_aligned_glyph_16x16_sta   test
+           0000315A  _shift_buffer_right_end            test
+           000031C1  _directg_aligned_glyph_16x16_end   test
+           000031C1  _directg_render_masked_glyph_16x   test
+           000031C1  _directg_render_masked_glyph_16x   test
+           00003232  _directg_render_masked_glyph_16x   test
+           00003232  _fnt_get_font_info                 font
+           00003232  _fnt_get_font_info_start           font
+           00003352  _fnt_get_font_info_end             font
+           00003352  _fnt_measure_string                font
+           00003352  _fnt_measure_string_start          font
+           000033CC  _fnt_measure_string_end            font
+           000033CC  _rct_intersect                     rect
+           000033CC  _rct_intersect_start               rect
+           000033DE  rct_intersect_raw                  rect
+           0000340F  __mulint_rrx_s                     
+           0000340F  _rct_intersect_end                 rect
+           00003415  __mulint_rrx_hds                   
+           00003415  __muluchar_rrx_hds                 
+           00003417  __mul16                            
+
+ASxxxx Linker V02.00 + NoICE + sdld,  page 4.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_HEADER0                            00000000    00000092 =         146. bytes (ABS,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V02.00 + NoICE + sdld,  page 5.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_GSINIT                             0000342B    00000013 =          19. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V02.00 + NoICE + sdld,  page 6.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_GSFINAL                            0000343E    00000001 =           1. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V02.00 + NoICE + sdld,  page 7.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_DATA                               00005B00    00000023 =          35. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+           00005B18  _screen                            test
+           00005B1A  _shadow_screen                     test
+           00005B1C  _screen_rect                       test
+           00005B20  _delta_g                           test
+           00005B22  _last_error                        test
+
+ASxxxx Linker V02.00 + NoICE + sdld,  page 8.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_BSS                                00005B23    00000400 =        1024. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V02.00 + NoICE + sdld,  page 9.
+
+Files Linked                              [ module(s) ]
+
+crt0.rel                                  [ crt0 ]
+c60s.rel                                  [ c60s_font ]
+c64.rel                                   [ c64_font ]
+cour-new.rel                              [ cour_new_font ]
+envy.rel                                  [ envy_font ]
+ocr-a.rel                                 [ ocra_font ]
+sin-serif.rel                             [ sinserif_font ]
+chicago.rel                               [ chicago_font ]
+liquid.rel                                [ liquid_font ]
+test.rel                                  [ test ]
+font.rel                                  [ font ]
+rect.rel                                  [ rect ]
+
+
+Libraries Linked                          [ object file ]
+
+/usr/bin/../share/sdcc/lib/z80/z80.lib    [ mul.rel ]
+
+ASxxxx Linker V02.00 + NoICE + sdld,  page 10.
+
+User Base Address Definitions
+
+_CODE = 0x0100
+_DATA = 0x5b00
+
+
