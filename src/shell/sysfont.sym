@@ -1,10 +1,0 @@
-ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 1.
-
-Symbol Table
-
-    .__.ABS.=  0000 G   |   0 sysfont8   0000 GR
-ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 2.
-
-Area Table
-
-   0 _CODE      size  328   flags 0

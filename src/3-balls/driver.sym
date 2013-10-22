@@ -1,27 +1,0 @@
-ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 1.
-
-Symbol Table
-
-    .__.ABS.                                                    =  0000 G
-    __sdcc_call_hl                                                 **** GX
-  1 _drv_first                                                     0000 GR
-  0 _drv_query                                                     00B5 GR
-  0 _drv_query_end                                                 0103 GR
-  0 _drv_query_start                                               00B5 GR
-  0 _drv_register                                                  0000 GR
-  0 _drv_register_end                                              00B5 GR
-  0 _drv_register_start                                            0000 GR
-    _mem_allocate                                                  **** GX
-    _tmr_install                                                   **** GX
-
-ASxxxx Assembler V02.00 + NoICE + SDCC mods + Flat24  (Zilog Z80 / Hitachi HD64180), page 2.
-
-Area Table
-
-   0 _CODE                                      size  103   flags 0
-   1 _DATA                                      size    2   flags 0
-   2 _OVERLAY                                   size    0   flags 0
-   3 _HOME                                      size    0   flags 0
-   4 _GSINIT                                    size    0   flags 0
-   5 _GSFINAL                                   size    0   flags 0
-   6 _CABS                                      size    0   flags 0
