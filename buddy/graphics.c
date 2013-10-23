@@ -2,6 +2,9 @@
  *	graphics.c
  *	graphics context
  *
+ *	notes:	graphics primitives by Alois Zingl
+ *			http://members.chello.at/easyfilter/bresenham.html
+ *
  *	tomaz stih mon oct 14 2013
  */
 #include "graphics.h"
