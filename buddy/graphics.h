@@ -29,7 +29,11 @@ extern void graphics_set_fill_mask();
 extern void graphics_set_combine_mode();
 
 /* draw functions */
+extern void graphics_draw_pixel(graphics_t* graphics, byte x, byte y);
 extern void graphics_draw_line(graphics_t* graphics, byte x0, byte y0, byte x1, byte y1);
+extern void graphics_draw_circle(graphics_t* graphics, byte xm, byte ym, byte r);
+extern void graphics_draw_ellipse(graphics_t* graphics, rect_t* rect);
+extern void graphics_draw_bezier(graphics_t* graphics, byte x0, byte y0, byte x1, byte y1, byte x2, byte y2);
 extern void graphics_draw_rect(graphics_t* graphics, rect_t* rect);
 
 /* fill functions */
