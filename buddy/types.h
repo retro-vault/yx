@@ -25,9 +25,9 @@ typedef uint16_t	u16;
 typedef uint32_t	u32;
 
 /* usual */
-typedef u8			byte;
-typedef u16			word;
-typedef u8*			string;
-typedef u8			result;
+typedef u8		byte;
+typedef u16		word;
+typedef u8*		string;
+typedef u8		result;
 
 #endif

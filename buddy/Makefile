@@ -1,26 +1,26 @@
-CC		=	gcc
-CFLAGS	=	-I.
-LDFLAGS	=	
+CC	=	gcc
+CFLAGS	=	-DSDL -std=c99 -I. `pkg-config --cflags sdl`
+LDFLAGS	=	`pkg-config --libs sdl`
 SRCS	=	$(wildcard *.c)
 OBJS	=	$(patsubst %.c,%.o,$(SRCS))
 
 .PHONY: all clean 
 
-all:	depend buddy.exe
+all:	depend buddy
 
 depend:	$(SRCS)
-		del .depend 2>NUL
-		$(CC) $(CFLAGS) $(SRCS) -MM >> .depend
+	rm -f .depend
+	$(CC) $(CFLAGS) $(SRCS) -MM >> .depend
 
 -include .depend
 
 %.o:	%.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 	
-buddy.exe:	$(OBJS)
+buddy:	$(OBJS)
 	$(CC) -o $@ $^ $(LDFLAGS)
 	
 clean:
-		del *.o 2>NUL
-		del *.exe 2>NUL
-		del .depend 2>NUL
+	rm -f *.o 
+	rm -f *.exe
+	rm -f .depend
