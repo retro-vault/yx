@@ -8,6 +8,8 @@
 #define _BUDDY_H
 
 #include "types.h"
+#include "rect.h"
+#include "graphics.h"
 
 extern int main(int argn,char **argv);
 

@@ -7,11 +7,6 @@
 #ifndef _GRAPHICS_H
 #define _GRAPHICS_H
 
-#ifdef SDL
-#include <SDL.h>
-#undef NULL /* defined by SDL */ 
-#endif 
-
 #include "types.h"
 #include "rect.h"
 #include "glyph.h"
@@ -26,9 +21,6 @@
 typedef struct graphics_s {
 	rect_t *area;
 	rect_t *clip;
-#ifdef SDL
-	SDL_Surface *screen;	/* for emulation */
-#endif
 } graphics_t;
 
 extern graphics_t* graphics_create(window_t *wnd, byte flags);
