@@ -10,6 +10,8 @@
 #include "types.h"
 
 typedef struct glyph_s {
+	byte bytes_per_glyph_line;
+	byte glyph_lines;
 } glyph_t;
 
 #endif /* _GLYPH_H */
