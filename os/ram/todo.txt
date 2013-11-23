@@ -1,0 +1,9 @@
+TO DO:
+
+***** loader to 49151
+
+***** move console functions to tty driver
+
+***** remove syslist if not needed
+
+***** merge list_insert and list_append

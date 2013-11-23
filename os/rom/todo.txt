@@ -1,0 +1,10 @@
+TO DO:
+
+***** set vector into ei/di block
+
+***** move console functions to tty driver
+
+***** get os heap function
+
+_get_osheap::	ld	hl,#osheap
+		ret

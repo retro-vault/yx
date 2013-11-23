@@ -1,0 +1,10 @@
+{\rtf1\ansi\ansicpg1252
+{\pard\plain tiny sockets library\par}
+{\pard\plain ================\par}
+{\pard\plain extern socket_t* socket();\tab /* always tcp */\par}
+{\pard\plain extern result connect(socket_t* s, sockaddr_t* addr);\par}
+{\pard\plain extern result name2addr(string name, sockaddr_t* addr);\par}
+{\pard\plain extern close(socket_t *s);\par}
+{\pard\plain extern result send(socket_t* s, byte* buffer, word blen);\par}
+{\pard\plain extern result recv(socket_t* s, byte* buffer, word blen);\par}
+}
