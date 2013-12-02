@@ -1,30 +1,30 @@
-OBJS		=	crt0.rel string.rel errors.rel interrupt.rel system.rel \
-			list.rel name.rel handle.rel queue.rel \
-			sysfont.rel hires.rel lores.rel \
-			srecv115k.rel ssend115k.rel serial.rel \
-			memory.rel event.rel timer.rel driver.rel task.rel \
-			debug.rel ball.rel ukernel.rel 
-			
+# Tools.
+GNUC		=	gcc
+GNUCFLAGS	=	-I.
 CC		=	sdcc
-AS		=	sdasz80
-LD		=	sdcc
-LIB		=	ar
-LIBFLAGS	=	-Sq
-CFLAGS		=	-mz80 --no-std-crt0 -D DEBUG \
-			--disable-warning 59 \
-			--disable-warning 60 \
-			--disable-warning 85 \
-			--disable-warning 84 \
-			--disable-warning 112 \
-			--disable-warning 154
+CFLAGS		=	-mz80 --no-std-crt0 -D DEBUG
+AS		=	as-z80
 ASFLAGS		=	-xlos -g
-LDFLAGS		=	-mz80 --no-std-crt0 --code-loc 0xc01f --data-loc 0x5b00 -Wl -b_HEADER=0xbfff -Wl -b_IM2=0xfff0
+LD		=	sdcc
+LDFLAGS		=	-mz80 --no-std-crt0 --code-loc 0xc01f \
+			--data-loc 0x5b00 -Wl -b_HEADER=0xbfff -Wl -b_IM2=0xfff0
+# Deps.
+CSRCS		=	$(wildcard *.c)
+SSRCS		=	$(wildcard *.s)
+OBJS		=	$(patsubst %.c,%.o,$(CSRCS)) $(patsubst %.s,%.o,$(SSRCS))
 
+# Rules.
 .PHONY:		all clean
 
-all:		yx.bin
+all:		depend yx.bin
 
-yx.bin:		$(OBJS)
+depend:		$(CSRCS)
+		rm --force .depend
+		$(GNUC) $(GNUCFLAGS) $(CSRCS) -MM >> .depend
+
+-include 	.depend
+
+yx.bin:		crt0.o $(OBJS)
 		$(LD) $(LDFLAGS) $^
 		makezxbin <crt0.ihx >yx.bin
 		appmake +zx --binfile ./yx.bin --org 49151
@@ -34,11 +34,11 @@ yx.bin:		$(OBJS)
 			--machine 48 --graphics-filter hq2x \
 			#--debugger-command "br 0xD25B"
 
-%.rel:		%.s
-		$(AS) $(ASFLAGS) $(basename $*).rel $*.s
+%.o:		%.s
+		$(AS) $(ASFLAGS) $(basename $*).o $*.s
 
-%.rel: 		%.c
-		$(CC) $(CFLAGS) -c $<
+%.o: 		%.c
+		$(CC) -c -o $@ $< $(CFLAGS)
 
 clean:		
 		rm -f core *~ \#* *.cdb *.rel *.hex *.ihx *.lst *.asm *.map *.o \

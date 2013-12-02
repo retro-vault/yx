@@ -1,0 +1,18 @@
+debug.o: debug.c yx.h types.h vector.h errors.h system.h list.h color.h \
+ hires.h lores.h serial.h memory.h debug.h ukernel.h
+errors.o: errors.c yx.h types.h vector.h errors.h system.h list.h color.h \
+ hires.h lores.h serial.h memory.h debug.h ukernel.h
+hires.o: hires.c yx.h types.h vector.h errors.h system.h list.h color.h \
+ hires.h lores.h serial.h memory.h debug.h ukernel.h
+list.o: list.c yx.h types.h vector.h errors.h system.h list.h color.h \
+ hires.h lores.h serial.h memory.h debug.h ukernel.h
+lores.o: lores.c yx.h types.h vector.h errors.h system.h list.h color.h \
+ hires.h lores.h serial.h memory.h debug.h ukernel.h
+memory.o: memory.c yx.h types.h vector.h errors.h system.h list.h color.h \
+ hires.h lores.h serial.h memory.h debug.h ukernel.h
+serial.o: serial.c yx.h types.h vector.h errors.h system.h list.h color.h \
+ hires.h lores.h serial.h memory.h debug.h ukernel.h
+system.o: system.c yx.h types.h vector.h errors.h system.h list.h color.h \
+ hires.h lores.h serial.h memory.h debug.h ukernel.h
+ukernel.o: ukernel.c yx.h types.h vector.h errors.h system.h list.h \
+ color.h hires.h lores.h serial.h memory.h debug.h ukernel.h

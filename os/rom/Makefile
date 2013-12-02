@@ -1,38 +1,46 @@
-OBJS		=	crt0.rel vector.rel errors.rel system.rel list.rel \
-			sysfont.rel hires.rel lores.rel \
-			srecv115k.rel ssend115k.rel serial.rel \
-			memory.rel debug.rel ukernel.rel 
-			
+# Tools.
+GNUC		=	gcc
+GNUCFLAGS	=	-I.
 CC		=	sdcc
-AS		=	sdasz80
-LD		=	sdcc
-LIB		=	ar
-LIBFLAGS	=	-Sq
-CFLAGS		=	-mz80 --no-std-crt0 -D DEBUG \
-			--disable-warning 59 \
-			--disable-warning 60 \
-			--disable-warning 85 \
-			--disable-warning 84 \
-			--disable-warning 112 \
-			--disable-warning 154
+CFLAGS		=	-mz80 --no-std-crt0 -D DEBUG
+AS		=	as-z80
 ASFLAGS		=	-xlos -g
-LDFLAGS		=	-mz80 --no-std-crt0 --code-loc 0x0092 --data-loc 0x5b00 
+LD		=	sdcc
+LDFLAGS		=	-mz80 --no-std-crt0 --code-loc 0x0092 --data-loc 0x5b00
 
+# Deps.
+CSRCS		=	$(wildcard *.c)
+SSRCS		=	$(wildcard *.s)
+OBJS		=	$(patsubst %.c,%.o,$(CSRCS)) $(patsubst %.s,%.o,$(SSRCS))
+
+# Rules.
 .PHONY:		all clean
 
-all:		48.rom
+all:		depend 48.rom
 
-48.rom:		$(OBJS)
+depend:		$(CSRCS)
+		rm --force .depend
+		$(GNUC) $(GNUCFLAGS) $(CSRCS) -MM >> .depend
+
+-include 	.depend
+
+48.rom:		crt0.o $(OBJS)
 		$(LD) $(LDFLAGS) $^
 		makebin -s 16384 <crt0.ihx >48.rom
+		fuse-gtk --rom48 48.rom \
+			--interface1 --interface2 \
+			--kempston --kempston-mouse \
+			--machine 48 --graphics-filter hq2x \
+			--debugger-command "br 0x0000"
 
-%.rel:		%.s
-		$(AS) $(ASFLAGS) $(basename $*).rel $*.s
+%.o:		%.s
+		$(AS) $(ASFLAGS) $(basename $*).o $*.s
 
-%.rel: 		%.c
-		$(CC) $(CFLAGS) -c $<
+%.o: 		%.c
+		$(CC) -c -o $@ $< $(CFLAGS)
 
 clean:		
-		rm -f core *~ \#* *.cdb *.rel *.hex *.ihx *.lst *.asm *.map *.o \
+		rm 	-f core *~ \#* *.cdb *.rel *.hex *.ihx *.lst *.asm *.map *.o \
 			*.rst *.sym *.lib *.bin *.mem *.lib kernel.s *.rom *.lnk \
 			*.noi *.lk
+

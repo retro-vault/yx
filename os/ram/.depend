@@ -1,0 +1,57 @@
+ball.o: ball.c yx.h types.h string.h errors.h interrupt.h system.h list.h \
+ name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+debug.o: debug.c yx.h types.h string.h errors.h interrupt.h system.h \
+ list.h name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+driver.o: driver.c yx.h types.h string.h errors.h interrupt.h system.h \
+ list.h name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+errors.o: errors.c yx.h types.h string.h errors.h interrupt.h system.h \
+ list.h name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+event.o: event.c yx.h types.h string.h errors.h interrupt.h system.h \
+ list.h name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+handle.o: handle.c yx.h types.h string.h errors.h interrupt.h system.h \
+ list.h name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+hires.o: hires.c yx.h types.h string.h errors.h interrupt.h system.h \
+ list.h name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+interrupt.o: interrupt.c yx.h types.h string.h errors.h interrupt.h \
+ system.h list.h name.h handle.h queue.h color.h hires.h lores.h serial.h \
+ memory.h event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+list.o: list.c yx.h types.h string.h errors.h interrupt.h system.h list.h \
+ name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+lores.o: lores.c yx.h types.h string.h errors.h interrupt.h system.h \
+ list.h name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+memory.o: memory.c yx.h types.h string.h errors.h interrupt.h system.h \
+ list.h name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+name.o: name.c yx.h types.h string.h errors.h interrupt.h system.h list.h \
+ name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+queue.o: queue.c yx.h types.h string.h errors.h interrupt.h system.h \
+ list.h name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+serial.o: serial.c yx.h types.h string.h errors.h interrupt.h system.h \
+ list.h name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+string.o: string.c yx.h types.h string.h errors.h interrupt.h system.h \
+ list.h name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+system.o: system.c yx.h types.h string.h errors.h interrupt.h system.h \
+ list.h name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+task.o: task.c yx.h types.h string.h errors.h interrupt.h system.h list.h \
+ name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+timer.o: timer.c yx.h types.h string.h errors.h interrupt.h system.h \
+ list.h name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
+ukernel.o: ukernel.c yx.h types.h string.h errors.h interrupt.h system.h \
+ list.h name.h handle.h queue.h color.h hires.h lores.h serial.h memory.h \
+ event.h timer.h driver.h task.h debug.h ball.h ukernel.h
