@@ -3,7 +3,7 @@ GNUC		=	gcc
 GNUCFLAGS	=	-I.
 CC		=	sdcc
 CFLAGS		=	-mz80 --no-std-crt0 -D DEBUG
-AS		=	as-z80
+AS		=	sdasz80
 ASFLAGS		=	-xlos -g
 LD		=	sdcc
 LDFLAGS		=	-mz80 --no-std-crt0 --code-loc 0xc01f \
@@ -11,7 +11,7 @@ LDFLAGS		=	-mz80 --no-std-crt0 --code-loc 0xc01f \
 # Deps.
 CSRCS		=	$(wildcard *.c)
 SSRCS		=	$(wildcard *.s)
-OBJS		=	$(patsubst %.c,%.o,$(CSRCS)) $(patsubst %.s,%.o,$(SSRCS))
+OBJS		=	$(patsubst %.c,%.rel,$(CSRCS)) $(patsubst %.s,%.rel,$(SSRCS))
 
 # Rules.
 .PHONY:		all clean
@@ -24,7 +24,7 @@ depend:		$(CSRCS)
 
 -include 	.depend
 
-yx.bin:		crt0.o $(OBJS)
+yx.bin:		crt0.rel $(OBJS)
 		$(LD) $(LDFLAGS) $^
 		makezxbin <crt0.ihx >yx.bin
 		appmake +zx --binfile ./yx.bin --org 49151
@@ -34,13 +34,13 @@ yx.bin:		crt0.o $(OBJS)
 			--machine 48 --graphics-filter hq2x \
 			#--debugger-command "br 0xD25B"
 
-%.o:		%.s
-		$(AS) $(ASFLAGS) $(basename $*).o $*.s
+%.rel:		%.s
+		$(AS) $(ASFLAGS) $(basename $*).rel $*.s
 
-%.o: 		%.c
+%.rel: 		%.c
 		$(CC) -c -o $@ $< $(CFLAGS)
 
 clean:		
-		rm -f core *~ \#* *.cdb *.rel *.hex *.ihx *.lst *.asm *.map *.o \
+		rm -f core *~ \#* *.cdb *.rel *.hex *.ihx *.lst *.asm *.map *.rel \
 			*.rst *.sym *.lib *.bin *.mem *.lib kernel.s *.rom *.lnk \
-			*.noi *.lk *.tap
+			*.noi *.lk *.tap a.out
