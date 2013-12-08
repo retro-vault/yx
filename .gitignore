@@ -1,0 +1,30 @@
+# Binaries.
+*.exe
+*.rel
+*.o
+*.lib
+*.bin
+*.rom
+*.tap
+a.out
+
+# Docs.
+*.pdf
+
+# Backup files.
+*.*~
+*.bak
+
+# Compiler output.
+*.cdb
+*.hex
+*.ihx
+*.lst
+*.asm
+*.map
+*.rst
+*.sym
+*.mem
+*.lnk
+*.noi
+*.lk
