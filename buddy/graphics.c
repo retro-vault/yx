@@ -9,20 +9,42 @@
  */
 #include "graphics.h"
 
+/* TODO: multiple screen graphics contexts */
+graphics_t screen;
+rect_t screen_area;
+rect_t screen_clip;
+
 graphics_t* graphics_create(window_t *wnd, byte flags) {
 
-	graphics_t* g;
-	return g;
+	graphics_t *graphics;
+
+	if (wnd==NULL)  { /* TODO: else */
+		graphics==&screen;
+		screen.area=&screen_area;
+		screen.clip=&screen_clip;
+		screen_area.x=screen_area.y=screen_clip.x=screen_clip.y=0;
+		screen_area.w=screen_clip.w=SCREEN_WIDTH;
+		screen_area.h=screen_clip.h=SCREEN_HEIGHT;
+	}
+
+	return graphics;
 
 }
 
 void graphics_destroy(graphics_t* graphics) {
+	/* TODO: mem_free graphics context */
 }
 
-void graphics_draw_pixel(graphics_t* graphics, byte x, byte y) {	
+void graphics_draw_pixel(graphics_t* graphics, byte x, byte y) {
+
+	/* make sure you are in clipping region */
+	
+	/* now draw */
+	
 }
 
 void graphics_draw_circle(graphics_t* graphics, byte xm, byte ym, byte r) {
+
 	byte x = r;
 	byte y = 0;
 	int e = 0;

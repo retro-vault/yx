@@ -8,6 +8,7 @@
 #define _RECT_H
 
 #include "types.h"
+#include "point.h"
 
 typedef struct rect_s {
 	byte x;
@@ -15,5 +16,8 @@ typedef struct rect_s {
 	byte w;
 	byte h;
 } rect_t;
+
+extern byte rect_intersect(rect_t* r3, rect_t* r1, rect_t* r2);
+extern byte rect_contains_point(rect_t *rect, point_t *point);
 
 #endif /* _RECT_H */

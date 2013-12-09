@@ -7,7 +7,7 @@ AS		=	sdasz80
 ASFLAGS		=	-xlos -g
 LD		=	sdcc
 LDFLAGS		=	-mz80 --no-std-crt0 \
-			--nostdlib --code-loc 0x8100 \
+			--nostdlib --code-loc 0x8032 \
 			--data-loc 0x8200 -Wl -b_HEADER=0x8000
 # Deps.
 CSRCS		=	$(wildcard *.c)
@@ -33,7 +33,7 @@ app.bin:	crt0.rel $(OBJS)
 			--interface1 --interface2 \
 			--kempston --kempston-mouse \
 			--machine 48 --graphics-filter hq2x \
-			#--debugger-command "br 0xD25B"
+			# --debugger-command "br 0x8000"
 
 %.rel:		%.s
 		$(AS) $(ASFLAGS) $(basename $*).rel $*.s

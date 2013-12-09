@@ -9,10 +9,39 @@
 	
 		ld (#store_sp),sp		; store SP
 		ld sp,#stack
+
+		;; store all regs
+		push af
+		push bc
+		push de
+		push hl
+		push ix
+		push iy
+		ex af, af'
+		push af
+		exx
+		push bc
+		push de
+		push hl
+
 		call gsinit			; init static vars (sdcc style)
 
 		;; start the os
 		call _main			
+
+		;; restore all regs
+		pop hl
+		pop de
+		pop bc
+		pop af
+		exx
+		ex af,af'
+		pop iy
+		pop ix
+		pop hl
+		pop de
+		pop bc
+		pop af
 
 		ld sp,(#store_sp)		; restore original SP
 		ret	

@@ -12,9 +12,11 @@ void harvest_events() {
 
 int main(int argn,char **argv)
 {
-	char* screen=16384;
-	int len=6912;
-	while(len--) *screen++=0x55;
+	graphics_t *g=graphics_create(NULL,NONE);
 
+	graphics_draw_circle(g, 100, 100, 50);
+	graphics_draw_rect(g, g->area);
+
+	graphics_destroy(g);
 	return 0;
 }

@@ -1,0 +1,7 @@
+app.o: app.c app.h types.h window.h rect.h point.h
+buddy.o: buddy.c buddy.h types.h rect.h point.h graphics.h glyph.h \
+ window.h
+graphics.o: graphics.c graphics.h types.h rect.h point.h glyph.h window.h
+message.o: message.c message.h types.h window.h rect.h point.h
+rect.o: rect.c rect.h types.h point.h
+window.o: window.c window.h types.h rect.h point.h

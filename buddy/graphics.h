@@ -12,6 +12,7 @@
 #include "glyph.h"
 #include "window.h"
 
+#define NONE		0
 #define WORKSPACE	1	/* just workspace area */
 #define WINDOW		2	/* entire window */
 
@@ -23,6 +24,7 @@ typedef struct graphics_s {
 	rect_t *clip;
 } graphics_t;
 
+/* create graphics */
 extern graphics_t* graphics_create(window_t *wnd, byte flags);
 extern void graphics_destroy(graphics_t* graphics);
 

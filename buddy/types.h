@@ -14,6 +14,9 @@
 
 #define	NULL	(word)0
 
+#define MAX(a,b) (a>b?a:b)
+#define MIN(a,b) (a<b?a:b)
+
 /* signed  */
 typedef int8_t		i8;
 typedef int16_t		i16;
