@@ -1,37 +1,47 @@
-# tools
-CC			=	sdcc
-AS			=	sdasz80
-LD			=	sdcc
-MAKEBIN		=	makezxbin
-CFLAGS		=	--no-std-crt0 -mz80
+# Tools.
+GNUC		=	gcc
+GNUCFLAGS	=	-I.
+CC		=	sdcc
+CFLAGS		=	-mz80 --no-std-crt0 -D DEBUG
+AS		=	sdasz80
 ASFLAGS		=	-xlos -g
-LDFLAGS		=	-mz80 --no-std-crt0 --nostdlib --code-loc 0x8100 --data-loc 0x8200 -Wl -b_HEADER=0x8000
+LD		=	sdcc
+LDFLAGS		=	-mz80 --no-std-crt0 \
+			--nostdlib --code-loc 0x8100 \
+			--data-loc 0x8200 -Wl -b_HEADER=0x8000
+# Deps.
+CSRCS		=	$(wildcard *.c)
+SSRCS		=	$(wildcard *.s)
+OBJS		=	$(patsubst %.c,%.rel,$(CSRCS)) $(patsubst %.s,%.rel,$(SSRCS))
 
+# Rules.
 .PHONY:		all clean
 
-# dependencies
-all:		app.bin
-app.bin:	crt0.rel app.rel
+all:		depend app.bin
 
-# rules
-%.bin:		%.rel
-			$(LD) $(LDFLAGS) $^
-			$(MAKEBIN) <app.ihx >app.bin
+depend:		$(CSRCS)
+		rm --force .depend
+		$(GNUC) $(GNUCFLAGS) $(CSRCS) -MM >> .depend
 
-%.rel: 		%.s
-			$(AS) $(ASFLAGS) -o $@ $<
+-include 	.depend
+
+app.bin:	crt0.rel $(OBJS)
+		$(LD) $(LDFLAGS) $^
+		makezxbin <crt0.ihx >app.bin
+		appmake +zx --binfile ./app.bin --org 32768
+		fuse-gtk --tape ./app.tap \
+			--interface1 --interface2 \
+			--kempston --kempston-mouse \
+			--machine 48 --graphics-filter hq2x \
+			#--debugger-command "br 0xD25B"
+
+%.rel:		%.s
+		$(AS) $(ASFLAGS) $(basename $*).rel $*.s
 
 %.rel: 		%.c
-			$(CC) $(CFLAGS) -c -o $@ $<
+		$(CC) -c -o $@ $< $(CFLAGS)
 
-			
-clean:
-			del *.rel 2>NUL
-			del *.sym 2>NUL
-			del *.lst 2>NUL
-			del *.bin 2>NUL
-			del *.lk 2>NUL
-			del *.noi 2>NUL
-			del *.map 2>NUL
-			del *.ihx 2>NUL
-			del *.asm 2>NUL
+clean:		
+		rm -f core *~ \#* *.cdb *.rel *.hex *.ihx *.lst *.asm *.map *.rel \
+			*.rst *.sym *.lib *.bin *.mem *.lib kernel.s *.rom *.lnk \
+			*.noi *.lk *.tap a.out
