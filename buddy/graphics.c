@@ -47,6 +47,8 @@ void graphics_draw_pixel(graphics_t* graphics, byte x, byte y) __naked {
 		ld	b,4(iy)		/* b=x */
 		ld	c,5(iy)		/* c=y */
 		call	video_addr_raw
+		ld	a,b		/* pixel number to a */
+		and	#0b00000111
 		ld	b,#0b10000000	/* store pixel to b */
 shift_pixel:			
 		or	a

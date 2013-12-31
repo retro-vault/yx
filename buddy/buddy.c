@@ -14,8 +14,9 @@ int main(int argn,char **argv)
 {
 	graphics_t *g;
 	rect_t rect;
-	rect.x=rect.y=100;
-	rect.w=rect.h=50;
+	rect.x=rect.y=0;
+	rect.w=200;
+	rect.h=100;
 
 	video_cls(BLACK,WHITE,BLACK,CM_NONE);
 

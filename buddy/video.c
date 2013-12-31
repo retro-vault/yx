@@ -60,13 +60,6 @@ video_addr_raw::
 		or	l
 		ld	l,a
 
-		/*
-		 * calculate pixel postion 
-		 * and store in A reg.
-		 */
-		ld	a,b
-		and	#0b00000111
-
 		ret
 	__endasm;
 
