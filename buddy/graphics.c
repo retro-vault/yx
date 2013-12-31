@@ -35,12 +35,32 @@ void graphics_destroy(graphics_t* graphics) {
 	/* TODO: mem_free graphics context */
 }
 
-void graphics_draw_pixel(graphics_t* graphics, byte x, byte y) {
+void graphics_draw_pixel(graphics_t* graphics, byte x, byte y) __naked {
 
 	/* make sure you are in clipping region */
 	
 	/* now draw */
-	
+	__asm
+		/* get function parameters from stack */
+		ld	iy,#0x0000
+		add	iy,sp		/* iy=sp */
+		ld	b,4(iy)		/* b=x */
+		ld	c,5(iy)		/* c=y */
+		call	video_addr_raw
+		ld	b,#0b10000000	/* store pixel to b */
+shift_pixel:			
+		or	a
+		jr	z, b_to_screen
+		srl	b
+		dec	a
+		jr	shift_pixel
+
+b_to_screen:
+		ld	a,b
+		or	(hl)		/* or screen contents */
+		ld	(hl),a		/* and push to screen */
+		ret
+	__endasm;
 }
 
 void graphics_draw_circle(graphics_t* graphics, byte xm, byte ym, byte r) {

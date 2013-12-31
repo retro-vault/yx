@@ -8,6 +8,7 @@
 #define _GRAPHICS_H
 
 #include "types.h"
+#include "video.h"
 #include "rect.h"
 #include "glyph.h"
 #include "window.h"
@@ -21,7 +22,7 @@
 
 typedef struct graphics_s {
 	rect_t *area;
-	rect_t *clip;
+	rect_t *clip; /* ...in abs. coord. and reduced to fit area */
 } graphics_t;
 
 /* create graphics */
@@ -29,7 +30,7 @@ extern graphics_t* graphics_create(window_t *wnd, byte flags);
 extern void graphics_destroy(graphics_t* graphics);
 
 /* draw functions */
-extern void graphics_draw_pixel(graphics_t* graphics,byte x, byte y);
+extern void graphics_draw_pixel(graphics_t* graphics,byte x, byte y) __naked;
 extern void graphics_draw_circle(graphics_t* graphics, byte xm, byte ym, byte r);
 extern void graphics_draw_rect(graphics_t* graphics, rect_t* rect);
 
