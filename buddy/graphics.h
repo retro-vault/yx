@@ -10,7 +10,6 @@
 #include "types.h"
 #include "video.h"
 #include "rect.h"
-#include "glyph.h"
 #include "window.h"
 
 #define NONE		0

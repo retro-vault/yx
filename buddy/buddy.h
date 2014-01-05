@@ -10,7 +10,9 @@
 #include "types.h"
 #include "rect.h"
 #include "graphics.h"
+#include "glyph.h"
 
+extern word logo() __naked;
 extern int main(int argn,char **argv);
 
 #endif /* _BUDDY_H */

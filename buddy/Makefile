@@ -12,7 +12,8 @@ LDFLAGS		=	-mz80 --no-std-crt0 \
 # Deps.
 CSRCS		=	$(wildcard *.c)
 SSRCS		=	$(wildcard *.s)
-OBJS		=	$(patsubst %.c,%.rel,$(CSRCS)) $(patsubst %.s,%.rel,$(SSRCS))
+OBJS		=	$(patsubst %.s,%.rel,$(SSRCS))
+OBJS		+=	$(patsubst %.c,%.rel,$(CSRCS)) 
 
 # Rules.
 .PHONY:		all clean
@@ -32,8 +33,10 @@ buddy.bin:	crt0.rel $(OBJS)
 		fuse-gtk --tape ./buddy.tap \
 			--interface1 --interface2 \
 			--kempston --kempston-mouse \
-			--machine 48 --graphics-filter hq2x \
-			--debugger-command "br 0x8000"
+			--machine 48 \
+			--graphics-filter 2x
+			# --graphics-filter hq2x \
+			# --debugger-command "br 0x8000"
 
 %.rel:		%.s
 		$(AS) $(ASFLAGS) $(basename $*).rel $*.s
