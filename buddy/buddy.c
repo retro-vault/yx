@@ -12,18 +12,27 @@ int main(int argn,char **argv)
 {
 	graphics_t *g;
 	rect_t rect;
+	rect_t clip_rect;
 	glyph_t *glyph;
 	byte i;
 
-	rect.x=rect.y=20;
-	rect.w=200;
+	rect.x=0;
+	rect.y=0;
+	rect.w=100;
 	rect.h=100;
 
-	video_cls(BLACK,WHITE,BLACK,CM_NONE);
+	clip_rect.x=0;
+	clip_rect.y=0;
+	clip_rect.w=101;
+	clip_rect.h=101;
+
+	video_cls(BLACK,GREEN,BLACK,CM_NONE);
 
 	g=graphics_create(NULL,NONE);
 
-	graphics_draw_circle(g, 100, 100, 40);
+	graphics_set_clip_rect(g,&clip_rect);
+
+	graphics_draw_circle(g, 100, 100, 50);
 	graphics_draw_rect(g, &rect);
 
 	glyph=(glyph_t *)logo();

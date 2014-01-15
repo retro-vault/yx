@@ -30,11 +30,11 @@ byte rect_intersect(rect_t* r3, rect_t* r1, rect_t* r2)
 	return intersect;
 }
 
-byte rect_contains_point(rect_t *rect, point_t *point) {
+byte rect_contains_point(rect_t *rect, byte x, byte y) {
 	byte contains=
-		point->x >= rect->x && 
-		point->x <= rect->x + rect->w &&
-		point->y >= rect->y && 
-		point->y <= rect->y + rect->h;
+		x >= rect->x && 
+		x <= rect->x + rect->w &&
+		y >= rect->y && 
+		y <= rect->y + rect->h;
 	return contains;		
 }

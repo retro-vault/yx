@@ -19,7 +19,7 @@ graphics_t* graphics_create(window_t *wnd, byte flags) {
 	graphics_t *graphics;
 
 	if (wnd==NULL)  { /* TODO: else */
-		graphics==&screen;
+		graphics=&screen;
 		screen.area=&screen_area;
 		screen.clip=&screen_clip;
 		screen_area.x=screen_area.y=screen_clip.x=screen_clip.y=0;
@@ -35,17 +35,116 @@ void graphics_destroy(graphics_t* graphics) {
 	/* TODO: mem_free graphics context */
 }
 
-void graphics_draw_pixel(graphics_t* graphics, byte x, byte y) __naked {
+void graphics_set_clip_rect(graphics_t* graphics, rect_t *rect) __naked {
+	__asm
+		ld	iy,#0x0000
+		add	iy,sp		/* iy=sp */
 
-	/* make sure you are in clipping region */
-	
-	/* now draw */
+		ld	l,2 (iy)	/* graphics to hl */
+		ld	h,3 (iy)
+		ld	a,(hl)
+		inc	hl
+		ld	d,(hl)
+		ld	e,a		/* de=area pointer */
+		inc	hl
+		ld	a,(hl)
+		inc	hl
+		ld	h,(hl)
+		ld	l,a		/* hl=clip pointer */
+
+		push	hl
+		ld	l,4(iy)
+		ld	h,5(iy)		/* hl=rect */
+		pop	iy		/* iy = clip pointer */		
+
+		ex	de,hl		
+
+		/* at this point:
+		 * iy = clip pointer
+		 * hl = area pointer
+		 * de = rect pointer 
+		 */
+		ld	a,(de)		/* a=rect x */
+		add	(hl)		/* a=rect x + area x */
+		ld	(iy),a		/* clip x = rect x + area x */
+		inc	de
+		inc	hl
+		ld	a,(de)		/* a=rect y */
+		add	(hl)		/* a=rect y + area y */
+		ld	1(iy),a		/* clip y = rect y + area y */
+		inc	de
+		ld	a,(de)		/* a=rect w */	
+		ld	2(iy),a		/* clip w = rect w */
+		inc	de
+		ld	a,(de)		/* a=rect h */
+		ld	3(iy),a		/* clip h = rect h */
+
+		ret
+	__endasm;
+}
+
+void graphics_draw_pixel(graphics_t* graphics, byte x, byte y) __naked {
 	__asm
 		/* get function parameters from stack */
 		ld	iy,#0x0000
 		add	iy,sp		/* iy=sp */
+		
+		/* 
+		 * convert x and y 
+		 * to absolute coordinates 
+		 */	
+		ld	l,2 (iy)	/* graphics to hl */
+		ld	h,3 (iy)
+		push	hl		/* store for later */
+		ld	a,(hl)		/* pointer to area to hl */
+		inc	hl
+		ld	h,(hl)
+		ld	l,a
+
+		/* increase x... */
+		ld	a,(hl)
+		add	4 (iy)
+		ld	4 (iy),a
+		
+		/* ...and y */
+		inc	hl
+		ld	a,(hl)
+		add	5 (iy)
+		ld	5 (iy), a
+		
+		/* handle clipping */
+		pop	hl		/* get hl back */
+		inc	hl
+		inc	hl		/* hl points to clip pointer */		
+		ld	a,(hl)		
+		inc	hl
+		ld	h,(hl)
+		ld	l,a		/* hl points to clip structure */
 		ld	b,4(iy)		/* b=x */
 		ld	c,5(iy)		/* c=y */
+		ld	a,(hl)		/* a=clip x */
+		cp	b		/* compare to x */
+		ret	nc		/* must be larger */
+		inc	hl		
+		ld	e,a		/* store a */
+		ld	a,(hl)		/* a=clip y */
+		ld	d,a		/* store clip y */
+		cp	c		/* compare to y */
+		ret	nc		/* must be larger */
+		ld	a,e		/* a = x */
+		inc	hl
+		add	(hl)		/* a = x + w - 1 = x2 */
+		dec	a		
+		cp	b		/* compare to x */
+		ret	c		/* must be smaller */
+		ld	a,d		/* a=y */
+		inc	hl
+		add	(hl)		/* a = y + h - 1 = y2 */
+		dec	a
+		cp	c		/* compare to y */
+		ret	c		/* must be smaller */
+
+		/* draw point */
 		call	video_addr_raw
 		ld	a,b		/* pixel number to a */
 		and	#0b00000111
