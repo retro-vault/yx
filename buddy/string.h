@@ -4,7 +4,7 @@
  *
  *	tomaz stih wed apr 10 2013
  */
-#include "yx.h"
+#include "types.h"
 
 /* compare two strings */
 byte strcmp(string s1, string s2)
@@ -22,7 +22,7 @@ void strcpy(string dest, string src) {
 /* calc string len */
 word strlen(char *str)
 {
-	const char *s;
+	const byte *s;
         for (s = str; *s; ++s) /* do nothing */;
         return (s - str);
 }
