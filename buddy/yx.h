@@ -20,3 +20,4 @@ extern yx_t yx;
 extern void *query_api(string api);
 
 #endif /* _YX_H */
+

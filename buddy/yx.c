@@ -19,3 +19,4 @@ void *query_api(string api) {
 	else
 		return NULL;
 }
+
