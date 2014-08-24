@@ -1,4 +1,4 @@
-OBJS		=	crt0.rel z80-stub.rel ssend57k.rel srecv57k.rel serial.rel 
+OBJS		=	crt0.rel z80-stub.rel fusesend115k.rel fuserecv115k.rel serial.rel 
 
 CC		=	sdcc 
 LD		=	sdcc
@@ -17,7 +17,8 @@ all:		sdbg
 
 sdbg:		${OBJS}
 		sdcc ${LDFLAGS} ${OBJS}
-		makebin -s 16384 <crt0.ihx >48.rom
+		makebin <crt0.ihx >48.rom
+		truncate --size 16384 48.rom
 		
 
 %.rel: 		%.s
