@@ -84,16 +84,25 @@ end_vectors:
 		;; in the desired order
 		.area	_HOME
 		.area	_CODE
+		.area 	_INITIALIZER
+		.area 	_INITFINAL
 	        .area   _GSINIT
 	        .area   _GSFINAL	
 		.area	_DATA
+		.area 	_INITIALIZED
 	        .area   _BSS
 	        .area   _HEAP
 
+		;; static initialization
+		.area	_INITIALIZER
+init_rom_start:
+		.area	_INITFINAL
+init_rom_end:
+
 		;; this area contains data initialization code -
 		;; unlike gnu toolchain which generates data, sdcc generates 
-		;; initialization code for every initialized global 
-		;; variable. and it puts this code into _GSINIT area
+		;; initialization code for initialized global 
+		;; variables. and it puts this code into _GSINIT area
         	.area   _GSINIT
 gsinit:
 		;; move vector table to RAM
@@ -101,7 +110,20 @@ gsinit:
 		ld	de,#vec_tbl
 		ld	bc,#end_vectors - #start_vectors
 		ldir
-		
+
+		;; init static vars.
+		ld	hl,#init_rom_end
+		ld	de,#init_rom_start
+		sbc	hl,de			; hl=hl-de
+		push 	hl
+		pop	bc			; bc=hl
+		ex	de,hl			; hl=init_rom_start
+		ld	de,#init_ram_start
+		ldir
+
+		;;ld	bc,#end_initializer - #initializer
+		;;ldir
+
         	.area   _GSFINAL
         	ret
 
@@ -116,6 +138,9 @@ rst28:		.ds	3
 rst30:		.ds	3
 rst38:		.ds	3
 nmi:		.ds	3
+
+		.area	_INITIALIZED
+init_ram_start:
 
 		.area	_BSS
 		;; 256 bytes of operating system stack

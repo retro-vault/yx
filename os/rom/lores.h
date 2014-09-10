@@ -7,7 +7,7 @@
 #ifndef _LORES_H
 #define _LORES_H
 
-extern int lores_x, lores_y;
+extern byte lores_x, lores_y;
 
 extern void lores_putc_xy(byte c, byte x, byte y) __naked;
 extern void lores_puts(string s);

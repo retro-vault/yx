@@ -17,9 +17,7 @@
 #include "color.h"
 #include "hires.h"
 #include "lores.h"
-#include "serial.h"
 #include "memory.h"
-#include "debug.h"
 #include "ukernel.h"
 
 #endif

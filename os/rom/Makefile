@@ -26,12 +26,13 @@ depend:		$(CSRCS)
 
 48.rom:		crt0.rel $(OBJS)
 		$(LD) $(LDFLAGS) $^
-		makebin -s 16384 <crt0.ihx >48.rom
+		makebin <crt0.ihx >48.rom
+		truncate --size=16384 48.rom
 		fuse-gtk --rom48 48.rom \
 			--interface1 --interface2 \
 			--kempston --kempston-mouse \
-			--machine 48 --graphics-filter hq2x \
-			--debugger-command "br 0x0000"
+			--machine 48 --graphics-filter tv2x 
+			# --debugger-command "br 0x0000"
 
 %.rel:		%.s
 		$(AS) $(ASFLAGS) $(basename $*).rel $*.s

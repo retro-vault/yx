@@ -6,7 +6,7 @@
  */
 #include "yx.h"
 
-int lores_x=0, lores_y=23;
+byte lores_x=0, lores_y=23;
 
 /*
  * print string
@@ -38,19 +38,25 @@ void lores_puts(string s) {
  */
 void lores_putc_xy(byte c, byte x, byte y) __naked {
 	__asm
-		ld	iy,#0x0000
-		add	iy,sp	
+		/* get args from stack */
+		pop	af		/* return address */
+		pop	bc		/* c=char, b=x */
+		pop	de		/* e=y */
+		push	de
+		push	bc
+		push	af	
 
 		/*
 		 * calculate character inside system font
 		 */
-		ld	a,2(iy)		/* get character */
+		ld	a,c		/* get character */
 		sub	#32		/* a = a-32 */
 		ld	h,#0x00		/* h=0 */
 		ld	l,a		/* hl=a */
 		add	hl,hl		/* hl=hl*2 */
 		add	hl,hl		/* hl=hl*4 */
 		add	hl,hl		/* hl=hl*8 */
+		ld	a,e		/* a=y */
 		ld	de,#sysfont8x8	/* font address */
 		add	hl,de		/* hl=character address */
 		ex	de,hl		/* into de */
@@ -58,8 +64,8 @@ void lores_putc_xy(byte c, byte x, byte y) __naked {
 		/*
 		 * calculate char position in vmem
 		 */
-		ld	b,3(iy)		/* b <- x */
-		ld	c,4(iy)		/* c <- y */
+		ld	c,b		/* c <- x */
+		ld	b,a		/* b <- y */
 					/* vmem address to hl */
 		call	lores_vmem_addr_raw
 
@@ -140,34 +146,34 @@ ls_clrlne_loop:
 word lores_vmem_addr(byte x, byte y) __naked {
 
 	__asm
-		;; get function parameters from stack
-		ld	iy,#0x0000
-		add	iy,sp		/* iy=sp */
-		ld	b,2(iy)		/* b=x */
-		ld	c,3(iy)		/* c=y */
+		/* get function parameters from stack */
+		pop	af
+		pop	bc
+		push	bc
+		push	af
 
 		/*
 		 * directg_vmem_addr_raw
 		 * based on hires x and hires y, calculate vmem address
 		 * input
-		 *	b	hires x
-		 *	c	hires y
+		 *	b	hires y
+		 *	c	hires x
 		 * output
 		 *	hl	cell address in vmem
 		 * effects
 		 *	a, flags, c, hl
 		 */	
 lores_vmem_addr_raw::
-		ld	a,c		/* get y to acc. */
+		ld	a,b		/* get y to acc. */
 		and	#0x18		/* get bits 3 - 4 */
 		add	a,#0x40		/* add start of vmem */
 		ld	h,a		/* to high */
-		ld	a,c		/* y to acc. again */
+		ld	a,b		/* y to acc. again */
 		and	#0x07		/* get bits 0 - 2 */
 		rrca			/* multiply * 32 */
 		rrca
 		rrca
-		add	a,b		/* to high */
+		add	a,c		/* to high */
 		ld	l,a		/* and add x */
 		ret
 		

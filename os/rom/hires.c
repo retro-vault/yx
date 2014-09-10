@@ -11,8 +11,31 @@
  */
 void hires_cls(color_t back, color_t fore, color_t border, color_mask_t cm) __naked {
 	__asm
-		ld	iy,#0x0000	
-		add	iy,sp
+		/*
+		 * get parameters off stack
+		 */
+		pop	af		/* ret address */
+		pop	de		/* e=paper, d=ink */
+		pop	bc		/* c=border, b=mask */
+		
+		/* restore stack */
+		push	bc
+		push	de
+		push	af
+
+		/*
+		 * set the the border
+		 */
+		ld	a,c
+		out	(#0xfe),a	/* set border */
+
+		/* prepare attr in a */
+		ld	a,e		/* paper color to a */
+		rlca			/* bits 3-5 */
+		rlca
+		rlca	
+		or	d		/* ink color to bits 0-2 */
+		or	b		/* or mask */
 
 		/* 
 		 * first graphics 
@@ -23,38 +46,25 @@ void hires_cls(color_t back, color_t fore, color_t border, color_mask_t cm) __na
 		ld	d,h
 		ld	e,#1
 		ldir			/* clear screen */
-
-		/*
-		 * now attributes
-		 */
-		ld	a,2(iy)		/* paper color to */
-		rlca			/* bits 3-5 */
-		rlca
-		rlca	
-		or	3(iy)		/* ink color to bits 0-2 */
-		or	5(iy)		/* or mask */
-		ld	(hl),a
+		ld	(hl),a		/* attr to source */
 		ld	bc,#0x02ff	/* size of attr */
 		ldir
-
-		/*
-		 * and the border
-		 */
-		ld	a,4(iy)
-		out	(#0xfe),a	/* set border */
 
 		ret
 	__endasm;
 }
 
+/* 
+ * calculate next screen row address given address
+ */
 word hires_vmem_nextrow_addr(word addr) __naked {
 
 	__asm
 		/* get current address to hl */
-		ld	iy,#0x0000	
-		add	iy,sp
-		ld	l,2(iy)
-		ld	h,3(iy)
+		pop	af
+		pop	hl
+		push	hl
+		push	af
 
 		/*
 		 * vmem_nextrow_addr_raw
