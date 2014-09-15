@@ -21,4 +21,10 @@
 extern word get_sysheap() __naked;
 extern word get_usrheap() __naked;
 
+/*
+ * system lists
+ */
+extern void *syslist_add(void **first, word size, void *owner);
+extern void *syslist_delete(void **first, void *e);
+
 #endif

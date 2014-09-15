@@ -8,7 +8,6 @@
 #define _UKERNEL_H
 
 /* outputs */
-extern void welcome();
 extern void panic(string s);
 
 #endif

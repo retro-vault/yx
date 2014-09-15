@@ -7,6 +7,7 @@
 		.globl	vec_tbl
 		.globl	sysstack
 		.globl	sysheap
+		.globl	tarpit
 
 		.area	_HEADER (ABS)
 		.org	0x0000
@@ -65,9 +66,9 @@ init:
 		im	1			; im 1, 50Hz interrupt on ZX Spectrum
 		ei				; enable interrupts
 
-halt:
+tarpit:
 		halt				; halt
-		jr	halt			
+		jr	tarpit			
 
 start_vectors:
 		jp	rst8ret

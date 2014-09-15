@@ -20,9 +20,10 @@ typedef unsigned short int      uint16_t;
 typedef unsigned long int       uint32_t;
 
 /* usual */
-typedef uint8_t byte;
-typedef uint16_t word;
-typedef uint8_t * string;
-typedef uint8_t result;
+typedef uint8_t 		byte;
+typedef uint16_t 		word;
+typedef uint8_t* 		string;
+typedef uint8_t 		result;
+typedef uint16_t		handle;
 
 #endif

@@ -6,8 +6,9 @@ CFLAGS		=	-mz80 --no-std-crt0 -D DEBUG
 AS		=	sdasz80
 ASFLAGS		=	-xlos -g
 LD		=	sdcc
-LDFLAGS		=	-mz80 --no-std-crt0 --code-loc 0x0092 --data-loc 0x5b00
-
+LDFLAGS		=	-mz80 --no-std-crt0 \
+			--nostdlib --code-loc 0x8032 \
+			--data-loc 0x8200 -Wl -b_HEADER=0x8000
 # Deps.
 CSRCS		=	$(wildcard *.c)
 SSRCS		=	$(wildcard *.s)
@@ -16,7 +17,7 @@ OBJS		=	$(patsubst %.c,%.rel,$(CSRCS)) $(patsubst %.s,%.rel,$(SSRCS))
 # Rules.
 .PHONY:		all clean
 
-all:		depend 48.rom
+all:		depend app.bin
 
 depend:		$(CSRCS)
 		rm --force .depend
@@ -24,15 +25,15 @@ depend:		$(CSRCS)
 
 -include 	.depend
 
-48.rom:		crt0.rel $(OBJS)
+app.bin:	crt0.rel $(OBJS)
 		$(LD) $(LDFLAGS) $^
-		makebin <crt0.ihx >48.rom
-		truncate --size=16384 48.rom
-		fuse-gtk --rom-48 48.rom \
+		makezxbin <crt0.ihx >app.bin
+		appmake +zx --binfile ./app.bin --org 32768
+		fuse-gtk --tape ./app.tap \
 			--interface1 --interface2 \
 			--kempston --kempston-mouse \
-			--machine 48 --graphics-filter tv2x 
-			# --debugger-command "br 0x0000"
+			--machine 48 --graphics-filter hq2x \
+			# --debugger-command "br 0x8000"
 
 %.rel:		%.s
 		$(AS) $(ASFLAGS) $(basename $*).rel $*.s
@@ -41,7 +42,6 @@ depend:		$(CSRCS)
 		$(CC) -c -o $@ $< $(CFLAGS)
 
 clean:		
-		rm 	-f core *~ \#* *.cdb *.rel *.hex *.ihx *.lst *.asm *.map *.o \
+		rm -f core *~ \#* *.cdb *.rel *.hex *.ihx *.lst *.asm *.map *.rel \
 			*.rst *.sym *.lib *.bin *.mem *.lib kernel.s *.rom *.lnk \
-			*.noi *.lk a.out
-
+			*.noi *.lk *.tap a.out

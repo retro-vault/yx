@@ -31,7 +31,7 @@ list_header_t* list_find(
 	        first=first->next;
 	}
         /* result is in first */
-        return first;
+        return first; 
 }
 
 /*
@@ -40,6 +40,25 @@ list_header_t* list_find(
 list_header_t *list_insert(list_header_t** first, list_header_t *el) {
         el->next=*first;
         *first=el;
+	return el;
+}
+
+/*
+ * insert element into linked list at end
+ */
+list_header_t *list_append(list_header_t** first, list_header_t *el) {
+
+	list_header_t *current;
+
+	el->next=NULL;		/* it's always the last element */
+
+	if (*first==NULL)	/* empty list? */
+        	*first=el;
+	else {
+		current=*first;
+		while (current->next) current=current->next;
+		current->next=el;
+	}
 	return el;
 }
 

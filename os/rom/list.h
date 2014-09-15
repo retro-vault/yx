@@ -23,6 +23,7 @@ extern list_header_t *list_find(
         byte (*match)(list_header_t *p, word arg),
         word the_arg);
 
+/* core functions */
 extern list_header_t *list_insert(list_header_t** first, list_header_t *el);
 extern list_header_t *list_remove(list_header_t **first, list_header_t *el);
 
