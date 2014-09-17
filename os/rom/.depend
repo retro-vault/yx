@@ -1,42 +1,45 @@
+app.o: app.c yx.h types.h string.h vector.h errors.h list.h system.h \
+ name.h color.h hires.h lores.h memory.h timer.h event.h driver.h task.h \
+ app.h shell.h ukernel.h
 driver.o: driver.c yx.h types.h string.h vector.h errors.h list.h \
  system.h name.h color.h hires.h lores.h memory.h timer.h event.h \
- driver.h task.h shell.h ukernel.h
+ driver.h task.h app.h shell.h ukernel.h
 errors.o: errors.c yx.h types.h string.h vector.h errors.h list.h \
  system.h name.h color.h hires.h lores.h memory.h timer.h event.h \
- driver.h task.h shell.h ukernel.h
+ driver.h task.h app.h shell.h ukernel.h
 event.o: event.c yx.h types.h string.h vector.h errors.h list.h system.h \
  name.h color.h hires.h lores.h memory.h timer.h event.h driver.h task.h \
- shell.h ukernel.h
+ app.h shell.h ukernel.h
 hires.o: hires.c yx.h types.h string.h vector.h errors.h list.h system.h \
  name.h color.h hires.h lores.h memory.h timer.h event.h driver.h task.h \
- shell.h ukernel.h
+ app.h shell.h ukernel.h
 list.o: list.c yx.h types.h string.h vector.h errors.h list.h system.h \
  name.h color.h hires.h lores.h memory.h timer.h event.h driver.h task.h \
- shell.h ukernel.h
+ app.h shell.h ukernel.h
 lores.o: lores.c yx.h types.h string.h vector.h errors.h list.h system.h \
  name.h color.h hires.h lores.h memory.h timer.h event.h driver.h task.h \
- shell.h ukernel.h
+ app.h shell.h ukernel.h
 memory.o: memory.c yx.h types.h string.h vector.h errors.h list.h \
  system.h name.h color.h hires.h lores.h memory.h timer.h event.h \
- driver.h task.h shell.h ukernel.h
+ driver.h task.h app.h shell.h ukernel.h
 name.o: name.c yx.h types.h string.h vector.h errors.h list.h system.h \
  name.h color.h hires.h lores.h memory.h timer.h event.h driver.h task.h \
- shell.h ukernel.h
+ app.h shell.h ukernel.h
 shell.o: shell.c yx.h types.h string.h vector.h errors.h list.h system.h \
  name.h color.h hires.h lores.h memory.h timer.h event.h driver.h task.h \
- shell.h ukernel.h
+ app.h shell.h ukernel.h
 string.o: string.c yx.h types.h string.h vector.h errors.h list.h \
  system.h name.h color.h hires.h lores.h memory.h timer.h event.h \
- driver.h task.h shell.h ukernel.h
+ driver.h task.h app.h shell.h ukernel.h
 system.o: system.c yx.h types.h string.h vector.h errors.h list.h \
  system.h name.h color.h hires.h lores.h memory.h timer.h event.h \
- driver.h task.h shell.h ukernel.h
+ driver.h task.h app.h shell.h ukernel.h
 task.o: task.c yx.h types.h string.h vector.h errors.h list.h system.h \
  name.h color.h hires.h lores.h memory.h timer.h event.h driver.h task.h \
- shell.h ukernel.h
+ app.h shell.h ukernel.h
 timer.o: timer.c yx.h types.h string.h vector.h errors.h list.h system.h \
  name.h color.h hires.h lores.h memory.h timer.h event.h driver.h task.h \
- shell.h ukernel.h
+ app.h shell.h ukernel.h
 ukernel.o: ukernel.c yx.h types.h string.h vector.h errors.h list.h \
  system.h name.h color.h hires.h lores.h memory.h timer.h event.h \
- driver.h task.h shell.h ukernel.h
+ driver.h task.h app.h shell.h ukernel.h

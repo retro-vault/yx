@@ -24,6 +24,7 @@
 #include "event.h"
 #include "driver.h"
 #include "task.h"
+#include "app.h"
 #include "shell.h"
 #include "ukernel.h"
 

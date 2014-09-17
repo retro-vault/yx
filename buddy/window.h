@@ -12,7 +12,6 @@
 
 typedef struct window_s {
 	result (*wnd_proc)(byte id, word param1, word param2);
-	
 } window_t;
 
 extern window_t *window_get_screen(); /* screen window */

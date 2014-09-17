@@ -32,8 +32,8 @@ app.bin:	crt0.rel $(OBJS)
 		fuse-gtk --tape ./app.tap \
 			--interface1 --interface2 \
 			--kempston --kempston-mouse \
-			--machine 48 --graphics-filter hq2x \
-			# --debugger-command "br 0x8000"
+			--machine 48 --graphics-filter 2x \
+			--debugger-command "br 0x8075"
 
 %.rel:		%.s
 		$(AS) $(ASFLAGS) $(basename $*).rel $*.s
