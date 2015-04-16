@@ -33,8 +33,7 @@ app.bin:	crt0.rel $(OBJS)
 			--interface1 --interface2 \
 			--kempston --kempston-mouse \
 			--machine 48 --graphics-filter 2x \
-			--no-sound \
-			--debugger-command "br 0xFFFF"
+			--debugger-command "br 0x80A5"
 
 %.rel:		%.s
 		$(AS) $(ASFLAGS) $(basename $*).rel $*.s
