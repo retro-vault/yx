@@ -88,7 +88,7 @@ nextrow_done:
 		
 
 		;; vertical line
-		;; input:	b=y0, c=x, e=y1
+		;; input:	b=y0, c=x, e=y1, d=pattern (i.e. 01010101)
 		;; affects:
 vid_vertline::
 		push	bc
@@ -112,7 +112,7 @@ vl_done:
 
 
 		;; horizontal line
-		;; inputs:	b=y, c=x0, d=x1
+		;; inputs:	b=y, c=x0, d=x1, e=pattern (i.e. 0110110 for dashed)
 vid_horzline::	
 		call	vid_rowaddr	; hl=row address, a=l		
 		ld	b,c		; store x0 to b
@@ -132,17 +132,19 @@ vhorz_lmask:
 		ld	a,b		; a=x0
 		ld	c,#0xff		; c=11111111
 		and	#0x07		; mask 00000111 (scroll counter)
-		jr	z,vh_l_done	; left mask is done
+		jr	z,vh_l_done	; left mask is aligned
 vh_l_shift:	; we need to create the mask
+		rrc	e		; shift mask
 		srl	c		; shift
 		dec	a
 		jr	nz,vh_l_shift
 vh_l_done:	; we have the mask
 		ld	a,c		; to a
+		and	e		; through mask
 		or	(hl)		; merge with background
 		ld	(hl),a		; and to the screen
 vhorz_pad:	; now fill lines
-		ld	c,#0xff
+		ld	c,e		; mask to c
 		pop	af		; a=counter
 vh_p_loop:		
 		dec	a		; one down
@@ -163,29 +165,34 @@ vh_r_shift:	; right shift
 		jr	nz,vh_r_shift
 vh_r_done:	; put to vmem	
 		ld	a,c
+		and	e		; mask it with pattern
 		or	(hl)
 		ld	(hl),a
 		jr	vhorz_done
 vhorz_single:	; b=from, d=to (inside 1 byte at hl)
-		ld	e,c		; store offset x0 to e
-		ld	a,d
-		sub	b		; b=x1-x0
-		inc	a		; b=x1-x0+1
-		ld	c,#0		; c is mask 
+		ld	a,d		; a=x1
+		ld	d,b		; store x0 to d
+		ld	c,#0x80		; c is 10000000
+		sub	b		; a=x1-x0
+		jr	z,vh_single_2	; done?		
 vh_single_loop:	; loop 
 		scf
 		rr	c
 		dec	a
 		jr	nz,vh_single_loop
+vh_single_2:
 		;	now shift x0 more times
-		ld	a,e		; x0 offset
+		ld	a,d		; x0 
+		and	#0x07		; get shift out 
 vh_single_x0lp:	cp	#0		; a==0?
 		jr	z,vh_single_put
 		dec	a
 		srl	c
+		rrc	e		; line pattern too
 		jr	vh_single_x0lp
 vh_single_put:
 		ld	a,c		; mask to a
+		and	e		; line pattern
 		or	(hl)		; or HL
 		ld	(hl),a		; to vmem
 vhorz_done:

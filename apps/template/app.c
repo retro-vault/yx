@@ -43,21 +43,32 @@ loop:
 	__endasm;
 	*/
 
-	/*
+	/* sample 00100111 */
 	__asm
 		ld	b,#191
 		ld	c,#191
+		ld	e,#0x55
 loop:
-		push	bc		
+		push	bc
+		push	de	
 		ld	d,c
-		ld	c,#0		
+		ld	c,#0
 		call	vid_horzline
+		pop	de
 		pop	bc
 		dec	c
 		djnz	loop
-		ld	d,c
-		call	vid_horzline		
-
+	__endasm;
+	
+	
+	/*
+	__asm
+		ld	b,#0
+		ld	c,#2
+		ld	d,#2
+		ld	e,#0xAA
+		call	vid_horzline
 	__endasm;
 	*/
+	
 }
