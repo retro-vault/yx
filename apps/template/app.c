@@ -42,4 +42,22 @@ loop:
 		jr	nz,loop
 	__endasm;
 	*/
+
+	/*
+	__asm
+		ld	b,#191
+		ld	c,#191
+loop:
+		push	bc		
+		ld	d,c
+		ld	c,#0		
+		call	vid_horzline
+		pop	bc
+		dec	c
+		djnz	loop
+		ld	d,c
+		call	vid_horzline		
+
+	__endasm;
+	*/
 }

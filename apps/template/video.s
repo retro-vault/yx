@@ -8,6 +8,7 @@
 		.globl	vid_plotxy
 		.globl	vid_nextrow
 		.globl	vid_vertline
+		.globl 	vid_horzline
 
 		.area	_CODE
 
@@ -65,6 +66,7 @@ vp_shift_done:
 		ld	a,d		; restore a
 		ret
 
+
 		;; given hl get next row address in vmem
 		;; input:	hl=address
 		;; output:	hl=next row address
@@ -84,6 +86,7 @@ vid_nextrow::
 nextrow_done:
 		ret
 		
+
 		;; vertical line
 		;; input:	b=y0, c=x, e=y1
 		;; affects:
@@ -106,3 +109,84 @@ vl_loop:
 		
 vl_done:
 		ret	
+
+
+		;; horizontal line
+		;; inputs:	b=y, c=x0, d=x1
+vid_horzline::	
+		call	vid_rowaddr	; hl=row address, a=l		
+		ld	b,c		; store x0 to b
+		srl	c		; c=x0/8 (byte offset)
+		srl	c
+		srl	c	
+		add	c
+		ld	l,a		; hl is correct vmem byte
+		ld	a,d		; a=x1
+		srl	a		; a=x1/8
+		srl	a
+		srl	a
+		sub	c		; a=x1-x0, a counts bytes until rmask
+		jr	z,vhorz_single
+vhorz_lmask:
+		push	af		; store counter
+		ld	a,b		; a=x0
+		ld	c,#0xff		; c=11111111
+		and	#0x07		; mask 00000111 (scroll counter)
+		jr	z,vh_l_done	; left mask is done
+vh_l_shift:	; we need to create the mask
+		srl	c		; shift
+		dec	a
+		jr	nz,vh_l_shift
+vh_l_done:	; we have the mask
+		ld	a,c		; to a
+		or	(hl)		; merge with background
+		ld	(hl),a		; and to the screen
+vhorz_pad:	; now fill lines
+		ld	c,#0xff
+		pop	af		; a=counter
+vh_p_loop:		
+		dec	a		; one down
+		jr	z,vhorz_rmask
+		inc	hl
+		ld	(hl),c		; entire line
+		jr	vh_p_loop
+vhorz_rmask:	; right rmask
+		inc	hl
+		ld	c,#0xff		; c=11111111 (default mask)		
+		ld	a,d		; a=x1
+		and	#0x07		; lower 3 bits
+		sub	#0x07		; full byte?
+		jr	z,vh_r_done	; don't shift
+vh_r_shift:	; right shift
+		sla	c
+		inc	a
+		jr	nz,vh_r_shift
+vh_r_done:	; put to vmem	
+		ld	a,c
+		or	(hl)
+		ld	(hl),a
+		jr	vhorz_done
+vhorz_single:	; b=from, d=to (inside 1 byte at hl)
+		ld	e,c		; store offset x0 to e
+		ld	a,d
+		sub	b		; b=x1-x0
+		inc	a		; b=x1-x0+1
+		ld	c,#0		; c is mask 
+vh_single_loop:	; loop 
+		scf
+		rr	c
+		dec	a
+		jr	nz,vh_single_loop
+		;	now shift x0 more times
+		ld	a,e		; x0 offset
+vh_single_x0lp:	cp	#0		; a==0?
+		jr	z,vh_single_put
+		dec	a
+		srl	c
+		jr	vh_single_x0lp
+vh_single_put:
+		ld	a,c		; mask to a
+		or	(hl)		; or HL
+		ld	(hl),a		; to vmem
+vhorz_done:
+		ret
