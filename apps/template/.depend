@@ -1,1 +1,2 @@
-app.o: app.c app.h types.h
+app.o: app.c app.h types.h test.h
+test.o: test.c

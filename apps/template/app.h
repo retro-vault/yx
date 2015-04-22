@@ -4,5 +4,10 @@
  *
  *	tomaz stih thu apr 16 2015
  */
-#include "types.h"
+#ifndef _APP_H
+#define _APP_H
 
+#include "types.h"
+#include "test.h"
+
+#endif
