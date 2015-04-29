@@ -1,11 +1,11 @@
 /*
  *	app.h
- *	header for app.c
+ *	application
  *
- *	tomaz stih thu apr 16 2015
+ *	tomaz stih wed apr 29 2015
  */
-#ifndef _APP_H
-#define _APP_H
+#ifndef _BITMAP_H
+#define _BITMAP_H
 
 #include "types.h"
 #include "test.h"

@@ -8,5 +8,5 @@
 #include "test.h"
 
 void main() {
-	test_cursor();
+	test_mouse();
 }

@@ -7,8 +7,8 @@
 #ifndef _TEST_H
 #define _TEST_H
 
+extern void test_mouse();
 extern void test_cursor();
-extern void test_background();
 extern void test_plot();
 extern void test_vline1();
 extern void test_vline2();

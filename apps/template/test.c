@@ -4,8 +4,27 @@
  *
  *	tomaz stih sun apr 19 2015
  */
-void test_background() {
-	
+void test_mouse() {
+	__asm
+		ld	b,#95
+		ld	c,#127
+		push	bc
+		push	bc
+		call	kmp_calib
+		pop	bc
+		call	vid_plotxy
+mouse_loop:	
+		pop	bc
+		call	vid_plotxy
+		call	kmp_scan
+		push	bc
+		cp	#1
+		jr	z,mbtn
+		call	vid_plotxy
+		jr	mouse_loop
+mbtn:
+		pop	bc
+	__endasm;	
 }
 
 

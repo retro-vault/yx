@@ -215,6 +215,5 @@ vh_single_put:
 		ld	(hl),a		; to vmem
 vhorz_done:
 		ret
-
 		
 		
