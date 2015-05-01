@@ -7,6 +7,7 @@
 #ifndef _TEST_H
 #define _TEST_H
 
+extern void test_bitmap();
 extern void test_mouse();
 extern void test_cursor();
 extern void test_plot();

@@ -4,6 +4,21 @@
  *
  *	tomaz stih sun apr 19 2015
  */
+
+void test_bitmap() {
+	__asm
+		ld	hl,#50000
+		ld	bc,#0x0000
+		ld	d,#128
+		ld	e,#24
+		call	bmp_get
+		ld	hl,#50000
+		ld	b,#24
+		ld	c,#9
+		call	bmp_put	
+	__endasm;
+}
+
 void test_mouse() {
 	__asm
 		ld	b,#95

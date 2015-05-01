@@ -71,7 +71,7 @@ bmp_g_s_done:	;;	d,e has shifted data
 		inc	de
 		exx
 		dec	c
-		jr	nc,bmp_g_colloop
+		jp	p,bmp_g_colloop
 		pop	bc		; return col counter
 		pop	hl		; get start of row
 		call	vid_nextrow	; next row addr
@@ -112,13 +112,14 @@ bmp_put::
 		srl	c	
 		add	c
 		ld	l,a		; hl is correct vmem byte, c=byte aligned x0
+		push	hl		; vmem address
 bmp_p_rowloop:	;; row loop
 		push	de		; store counters
 bmp_p_colloop:	
 		;; shifting
 		exx			; alt set
 		ld	d,(hl)		; d'=first
-		inc	hl		; next screen row
+		inc	hl		; next data row
 		ld	e,(hl)		; e'=next
 		ex	af,af'		
 		push	af		; store counter
@@ -137,7 +138,7 @@ bmp_p_s_done:	;;	d,e has shifted data
 		ld	(hl),a		; to video memory
 		inc	hl
 		dec	e		; dec col byte counter
-		jr	nc,bmp_p_colloop
+		jp	p,bmp_p_colloop
 		pop	de		; return col counter
 		pop	hl		; get start of row
 		call	vid_nextrow	; next row addr
