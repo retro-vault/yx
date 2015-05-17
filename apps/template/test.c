@@ -8,13 +8,27 @@
 void test_bitmap() {
 	__asm
 		ld	hl,#50000
-		ld	bc,#0x0000
+		ld	b,#8
+		ld	c,#0
 		ld	d,#128
-		ld	e,#24
+		ld	e,#15
 		call	bmp_get
 		ld	hl,#50000
 		ld	b,#24
-		ld	c,#9
+		ld	c,#42
+		call	bmp_put	
+		ld	hl,#50000
+		ld	b,#32
+		ld	c,#10
+		call	bmp_put	
+		ld	hl,#50000
+		ld	b,#48
+		ld	c,#11
+		call	bmp_put	
+		call	bmp_put	
+		ld	hl,#50000
+		ld	b,#64
+		ld	c,#12
 		call	bmp_put	
 	__endasm;
 }

@@ -84,6 +84,7 @@ bmp_g_s_done:	;;	d,e has shifted data
 		;; inputs:	b=y0, c=x0, hl=bitmap_t*
 		;; output:	
 		;; affects:	flags, af, af', hl, bc, de, de'
+		;; known bug:	passing screen boundary
 bmp_put::	
 		;; 1. how many shifts?
 		ex	af,af'		
@@ -118,6 +119,7 @@ bmp_p_rowloop:	;; row loop
 bmp_p_colloop:	
 		;; shifting
 		exx			; alt set
+		ld	b,#0		; shift mask
 		ld	d,(hl)		; d'=first
 		inc	hl		; next data row
 		ld	e,(hl)		; e'=next
@@ -126,19 +128,35 @@ bmp_p_colloop:
 		cp	#0
 		jr	z,bmp_p_s_done
 bmp_p_shft:	;; do the shift		
-		srl	e
-		rr	d
+		srl	d
+		rr	e
+		scf			; set carry
+		rr	b		; b=mask
 		dec	a
 		jr	nz,bmp_p_shft
 bmp_p_s_done:	;;	d,e has shifted data
 		pop	af		; restore counter
 		ex	af,af'		
-		ld	a,d		; d to a
+		ld	a,b		; mask to a
+		push	bc
+		push	de		; push [i] and [i+1]
 		exx
+		pop	bc		; get de
+		and	(hl)		; a or vid memory		
+		or	b
 		ld	(hl),a		; to video memory
 		inc	hl
+		pop	af		; a=old b
 		dec	e		; dec col byte counter
-		jp	p,bmp_p_colloop
+		jp	p,bmp_p_cont
+		jr	bmp_p_done	
+bmp_p_cont:
+		cpl
+		and	(hl)
+		or	c
+		ld	(hl),a
+		jr	bmp_p_colloop
+bmp_p_done:
 		pop	de		; return col counter
 		pop	hl		; get start of row
 		call	vid_nextrow	; next row addr
