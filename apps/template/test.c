@@ -4,6 +4,20 @@
  *
  *	tomaz stih sun apr 19 2015
  */
+#include "test.h"
+
+void test_graphics() {
+	rect_t rel;
+	rect_t abs;
+	graphics_t *g;
+	rel.x0=200;
+	rel.x1=220; /* error */
+	rel.y0=4;
+	rel.y1=200;
+
+	g=graphics_create(0);
+	rect_rel2abs(g->area,&rel,&abs);
+}
 
 void test_bitmap() {
 	__asm

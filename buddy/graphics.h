@@ -20,7 +20,7 @@
 #define SCREEN_HEIGHT	191
 
 typedef struct graphics_s {
-	rect_t *area;
+	rect_t *area; /* abs coord. */
 	rect_t *clip; /* ...in abs. coord. and reduced to fit area */
 } graphics_t;
 

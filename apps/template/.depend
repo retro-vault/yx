@@ -1,2 +1,4 @@
-app.o: app.c app.h types.h test.h
-test.o: test.c
+app.o: app.c app.h types.h test.h graphics.h rect.h
+graphics.o: graphics.c graphics.h types.h rect.h
+rect.o: rect.c rect.h types.h
+test.o: test.c test.h types.h graphics.h rect.h

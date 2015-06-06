@@ -7,6 +7,10 @@
 #ifndef _TEST_H
 #define _TEST_H
 
+#include "types.h"
+#include "graphics.h"
+
+extern void test_graphics();
 extern void test_bitmap();
 extern void test_mouse();
 extern void test_cursor();
