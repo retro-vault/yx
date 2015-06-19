@@ -61,3 +61,26 @@ void graphics_fill_rect(graphics_t *g, rect_t *rect, byte* mask) {
 		if (mskndx==8) mskndx=0;			
 	}
 }
+
+void graphics_draw_rect(graphics_t *g, rect_t *rect, byte linemask) {
+	rect_t abs_rect;
+	byte x0,y0,x1,y1;
+	
+	/* convert rel to abs coordinates */
+	if (!rect_rel2abs(g->area, rect, &abs_rect)) return;
+
+	/* draw rectangle only if a portion overlaps*/
+	if (rect_overlap(&abs_rect,g->clip)) {
+		/* clip coordinates */
+		x0=MAX(abs_rect.x0,g->clip->x0);
+		x1=MIN(abs_rect.x1,g->clip->x1);
+		y0=MAX(abs_rect.y0,g->clip->y0);
+		y1=MIN(abs_rect.y1,g->clip->y1);
+		
+		/* now clip lines */
+		if (abs_rect.y0 >= g->clip->y0) vector_horzline(y0, x0, x1, linemask);
+		if (abs_rect.y1 <= g->clip->y1) vector_horzline(y1, x0, x1, linemask);
+		if (abs_rect.x0 >= g->clip->x0) vector_vertline(x0, y0, y1, linemask);
+		if (abs_rect.x1 <= g->clip->x1) vector_vertline(x1, y0, y1, linemask);
+	}
+}
