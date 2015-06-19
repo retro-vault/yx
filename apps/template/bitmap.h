@@ -12,8 +12,7 @@
 typedef struct bitmap_s {
 	byte x1;	/* 0..x1 */
 	byte y1;	/* 0..y1 */
-	/* followed by data *
-/
+	/* followed by data */
 } bitmap_t;
 
 #endif

@@ -9,6 +9,8 @@
 
 #include "types.h"
 #include "rect.h"
+#include "vector.h"
+#include "clipping.h"
 
 #define NONE		0
 #define WORKSPACE	1	/* just workspace area */
@@ -26,5 +28,6 @@ typedef struct graphics_s {
 extern graphics_t* graphics_create(byte flags);
 extern void graphics_destroy(graphics_t* g);
 extern void graphics_set_clipping(graphics_t* g, rect_t *clip_rect);
+extern void graphics_fill_rect(graphics_t *g, rect_t *rect, byte* mask);
 
 #endif /* _GRAPHICS_H */

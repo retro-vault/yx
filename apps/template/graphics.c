@@ -40,27 +40,24 @@ void graphics_destroy(graphics_t* g) {
 
 /* notes: clip_rect is in relative coordinates */
 void graphics_set_clipping(graphics_t* g, rect_t *clip_rect) {
-	
-	/* convert relative coordinates to absolute coordinates */
-	int x0 = g->area->x0 + clip_rect->x0;
-	int x1 = g->area->x0 + clip_rect->x1;
-	int y0 = g->area->y0 + clip_rect->y0;
-	int y1 = g->area->y0 + clip_rect->y1;
-
-	/* check overflows */
-	if (x0 > g->area->x1) x0 = g->area->x1;
-	if (x1 > g->area->x1) x1 = g->area->x1;
-	if (y0 > g->area->y1) y0 = g->area->y1;
-	if (y1 > g->area->y1) y1 = g->area->y1;
-
-	/* and set the new abs. clip rect */
-	g->clip->x0=(byte)x0;
-	g->clip->x1=(byte)x1;
-	g->clip->y0=(byte)y0;
-	g->clip->y1=(byte)y1;
+	rect_rel2abs(g->area, clip_rect, g->clip);
 }
 
-void graphics_draw_rect(graphics_t *g, rect_t *rect, byte* mask) {
-	/* convert rect to abs. coordinates */
-	/* get clip_rect intersect */
+void graphics_fill_rect(graphics_t *g, rect_t *rect, byte* mask) {
+	rect_t abs_rect, clipped_rect;
+	byte row, mskndx, ofx, ofy;
+	byte maskout[8];
+	if (!rect_rel2abs(g->area, rect, &abs_rect)) return;
+	if (!rect_intersect(&abs_rect,g->clip,&clipped_rect)) return;
+	/* clip mask */
+	ofx=( clipped_rect.x0 - abs_rect.x0 ) & 0x07;
+	ofy=( clipped_rect.y0 - abs_rect.y0 ) & 0x07;
+	clip_offset(ofx, ofy, mask, maskout);
+	/* just draw the intersect */
+	mskndx=0;
+	for (row=clipped_rect.y0; row<=clipped_rect.y1; row++) {
+		vector_horzline(row,clipped_rect.x0,clipped_rect.x1,maskout[mskndx]);
+		mskndx++;
+		if (mskndx==8) mskndx=0;			
+	}
 }

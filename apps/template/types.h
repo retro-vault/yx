@@ -28,7 +28,7 @@ typedef uint8_t 		result;
 typedef uint16_t		handle;
 
 /* general purpose macros */
-#define MAX(a,b) (a>b?a:b)
-#define MIN(a,b) (a<b?a:b)
+#define MAX(a,b) ( (a>b?a:b) )
+#define MIN(a,b) ( (a<b?a:b) )
 
 #endif

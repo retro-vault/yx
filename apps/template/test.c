@@ -7,16 +7,63 @@
 #include "test.h"
 
 void test_graphics() {
-	rect_t rel;
-	rect_t abs;
-	graphics_t *g;
-	rel.x0=200;
-	rel.x1=220; /* error */
-	rel.y0=4;
-	rel.y1=200;
+	graphics_t *g;	
+	rect_t filled, clip;
+	byte row;
+	//byte mask[]={0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};
+	byte mask[]={0xaa,0x55,0xaa,0x55,0xaa,0x55,0xaa,0x55};
+
+	filled.x0=filled.y0=0;
+	filled.x1=255; filled.y1=191;
 
 	g=graphics_create(0);
-	rect_rel2abs(g->area,&rel,&abs);
+	
+	/*
+	clip.x0=0; clip.y0=0; clip.x1=20; clip.y1=23;
+	graphics_set_clipping(g, &clip);
+	graphics_fill_rect(g,&filled,mask);
+	*/
+
+	clip.x0=17; clip.y0=0; clip.x1=40; clip.y1=20;
+	graphics_set_clipping(g, &clip);
+	graphics_fill_rect(g,&filled,mask);
+
+/*
+	vector_horzline(0, 20, 40, 0xff);
+	vector_vertline(20,0,20,0xff);
+	vector_vertline(40,0,20,0xff);
+	vector_horzline(20,20,40,0xff);
+*/
+
+	clip.x0=0; clip.y0=0; clip.x1=20; clip.y1=23;
+	graphics_set_clipping(g, &clip);
+	graphics_fill_rect(g,&filled,mask);	
+	
+	clip.x0=0; clip.y0=23; clip.x1=20; clip.y1=47;
+	graphics_set_clipping(g, &clip);
+	graphics_fill_rect(g,&filled,mask);
+	
+	clip.x0=0; clip.y0=47; clip.x1=20; clip.y1=80;
+	graphics_set_clipping(g, &clip);
+	graphics_fill_rect(g,&filled,mask);
+	
+	clip.x0=0; clip.y0=80; clip.x1=20; clip.y1=191;
+	graphics_set_clipping(g, &clip);
+	graphics_fill_rect(g,&filled,mask);
+
+	
+	/* third clipping 8,0,32,16 */
+	/*
+	clip.x0=8; clip.y0=0; clip.x1=32; clip.y1=16;
+	graphics_set_clipping(g, &clip);
+	graphics_fill_rect(g,&filled,mask);
+	*/
+	/* fourth clipping 0,8,8,32 FULL SQUARE*/
+	/*	
+	clip.x0=0; clip.y0=8; clip.x1=8; clip.y1=32;
+	graphics_set_clipping(g, &clip);
+	graphics_fill_rect(g,&filled,mask);
+	*/
 }
 
 void test_bitmap() {
@@ -55,15 +102,15 @@ void test_mouse() {
 		push	bc
 		call	kmp_calib
 		pop	bc
-		call	vid_plotxy
+		call	vector_plotxy_raw
 mouse_loop:	
 		pop	bc
-		call	vid_plotxy
+		call	vector_plotxy_raw
 		call	kmp_scan
 		push	bc
 		cp	#1
 		jr	z,mbtn
-		call	vid_plotxy
+		call	vector_plotxy_raw
 		jr	mouse_loop
 mbtn:
 		pop	bc
@@ -111,7 +158,7 @@ void test_plot() {
 		ld 	c,#0
 tploop:
 		push	bc
-		call vid_plotxy
+		call 	vector_plotxy_raw
 		pop	bc
 		inc	c
 		jr	nz,tploop
@@ -125,12 +172,12 @@ void test_vline1() {
 		ld	b,#0
 		ld	e,#191
 		ld	d,#0x27
-		call	vid_vertline
+		call	vector_vertline_raw
 		ld	c,#255
 		ld	b,#0
 		ld	e,#191
 		ld	d,#0xaa
-		call	vid_vertline
+		call	vector_vertline_raw
 	__endasm;
 }
 
@@ -143,7 +190,7 @@ void test_vline2() {
 vlloop:		
 		push	bc
 		push	de
-		call	vid_vertline
+		call	vector_vertline_raw
 		pop	de
 		pop	bc
 		inc	c
@@ -157,7 +204,7 @@ void test_hline1() {
 		ld	c,#2
 		ld	d,#2
 		ld	e,#0xAA
-		call	vid_horzline
+		call	vector_horzline_raw
 	__endasm;
 }
 
@@ -171,7 +218,7 @@ hlloop:
 		push	de	
 		ld	d,c
 		ld	c,#0
-		call	vid_horzline
+		call	vector_horzline_raw
 		pop	de
 		pop	bc
 		dec	c

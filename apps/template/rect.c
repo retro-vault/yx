@@ -7,7 +7,7 @@
 #include "rect.h"
 
 boolean rect_overlap(rect_t *a, rect_t *b) {
-	return !(a->y1 < b->y1 || a->y0 > b->y1 || a->x1 < b->x0 || a->x0 > b->x1);
+	return !(a->y1 < b->y0 || a->y0 > b->y1 || a->x1 < b->x0 || a->x0 > b->x1);
 }
 
 rect_t* rect_intersect(rect_t *a, rect_t *b, rect_t *intersect) {
@@ -16,12 +16,11 @@ rect_t* rect_intersect(rect_t *a, rect_t *b, rect_t *intersect) {
 		intersect->y0=MAX(a->y0,b->y0);
 		intersect->x1=MIN(a->x1,b->x1);
 		intersect->y1=MIN(a->y1,b->y1);
-	}
-	return intersect;
+		return intersect;
+	} else return NULL;
 }
 
 rect_t* rect_rel2abs(rect_t* abs, rect_t* rel, rect_t* out) __naked {
-
 	__asm
 		/* store index regs */
 		push	ix
@@ -97,5 +96,4 @@ r2a_end:
 		pop	ix
 		ret
 	__endasm;
-
 }
