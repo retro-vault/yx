@@ -4,7 +4,6 @@
 		;; tomaz stih, tue jun 9 2015
 		.module	clipping
 
-		.globl	_clip_1d
 		.globl	_clip_offset
 
 		.area	_CODE
@@ -22,6 +21,9 @@ _clip_offset::
 		push	de
 		;; raw clip offset. 
 		;; NOTES: alt reg set on
+		;; this function takes 8x8 bits array and
+		;; shifts it horizontally and vertically
+		;; by ofsx and ofsy arguments
 _clip_offset_raw::
 		ld	a,b		; ofsy
 		cp	#0		; finished?
@@ -90,48 +92,4 @@ _cof_2part:
 _cof_theend:	;; the very end.
 		exx			; back to normal set
 		push	hl		; ret. address
-		ret
-
-
-
-;;void clip_1d(byte l0, byte l1, byte r0, byte r1, byte *c0, byte *c1)
-_clip_1d::
-		pop	hl		; return address
-		pop	bc		; c=l0, b=l1
-		pop	de		; e=r0, d=r1
-		exx			; alt set
-		pop	hl		; hl=*c0
-		pop	de		; de=*c1
-		;; restore stack		
-		push	de
-		push	hl
-		exx
-		push	de
-		push	bc
-		push	hl
-clip_1d_raw::
-		;; is l0 < r0
-		ld	a,c
-		cp	e
-		jr	c,clip_leftout
-		ld	l,c		; l=correct coord 0
-		jr	clip_coord2
-clip_leftout:
-		ld	l,e		; l=correct coord 0		
-clip_coord2:		
-		ld	a,b		
-		cp	d		
-		jr	c,clip_rightin	; l1 < r1
-		ld	h,d		; h=correct coord 1
-		jr	clip_1d_done
-clip_rightin:	
-		ld	h,e		; h=correct coord 1
-clip_1d_done:	;; hl has coorect coords
-		push	hl
-		exx
-		pop	bc		; get results to bc
-		ld	(hl),c
-		ex	de,hl
-		ld	(hl),b
-		exx		
 		ret

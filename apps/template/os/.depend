@@ -1,0 +1,6 @@
+list.o: list.c list.h /home/tomaz/dev/yx/apps/template/include/types.h
+memory.o: memory.c /home/tomaz/dev/yx/apps/template/include/types.h \
+ list.h memory.h
+yx.o: yx.c /home/tomaz/dev/yx/apps/template/include/yx.h \
+ /home/tomaz/dev/yx/apps/template/include/types.h list.h \
+ /home/tomaz/dev/yx/apps/template/include/types.h memory.h

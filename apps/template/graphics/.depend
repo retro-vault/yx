@@ -1,0 +1,9 @@
+graphics.o: graphics.c \
+ /home/tomaz/dev/yx/apps/template/include/graphics.h \
+ /home/tomaz/dev/yx/apps/template/include/types.h \
+ /home/tomaz/dev/yx/apps/template/include/rect.h \
+ /home/tomaz/dev/yx/apps/template/include/bitmap.h \
+ /home/tomaz/dev/yx/apps/template/include/vector.h \
+ /home/tomaz/dev/yx/apps/template/include/clipping.h
+rect.o: rect.c /home/tomaz/dev/yx/apps/template/include/rect.h \
+ /home/tomaz/dev/yx/apps/template/include/types.h

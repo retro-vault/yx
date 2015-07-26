@@ -6,31 +6,34 @@
  */
 #include "graphics.h"
 
-graphics_t g;
-rect_t a;
-rect_t c;
+graphics_t screen_graphics;
+rect_t screen_area;
+rect_t screen_clip;
+
+/* temp */
+static byte data[512];
+
+void graphics_init() {
+	/* initialize screen graphics */
+	screen_graphics.area=&screen_area;
+	screen_graphics.clip=&screen_clip;
+	screen_area.x0=screen_clip.x0=screen_area.y0=screen_clip.y0=0;
+	screen_area.x1=screen_clip.x1=SCREEN_MAXX;
+	screen_area.y1=screen_clip.y1=SCREEN_MAXY;
+}
 
 graphics_t* graphics_create(byte flags) {
-
+	flags;
 	/* TODO: allocate objects 
 	graphics_t *graphics=malloc(sizeof(graphics_t));
 	graphics.area=malloc(sizeof(rect_t));
 	graphics.clip=malloc(sizeof(rect_t));
 	*/
-
-	graphics_t *graphics=&g;
-	graphics->area=&a;
-	graphics->clip=&c;
-
-	/* TODO: initialize */
-	a.x0=c.x0=a.y0=c.y0=0;
-	a.x1=c.x1=SCREEN_MAXX;
-	a.y1=c.y1=SCREEN_MAXY;
-
-	return graphics;
+	return NULL;
 }
 
 void graphics_destroy(graphics_t* g) {
+	g;
 	/* TODO: free objects
 	free(graphics.clip);
 	free(graphics.area);
@@ -83,4 +86,54 @@ void graphics_draw_rect(graphics_t *g, rect_t *rect, byte linemask) {
 		if (abs_rect.x0 >= g->clip->x0) vector_vertline(x0, y0, y1, linemask);
 		if (abs_rect.x1 <= g->clip->x1) vector_vertline(x1, y0, y1, linemask);
 	}
+}
+
+bitmap_t* graphics_get_bitmap(graphics_t *g, rect_t *rect) {
+
+	rect_t abs_rect, clipped_rect;		
+
+	/* convert rel to abs coordinates */
+	if (!rect_rel2abs(g->area, rect, &abs_rect)) return NULL;
+
+	/* and clip it */
+	if (!rect_intersect(&abs_rect,g->clip,&clipped_rect)) return NULL;
+
+	/* we have the correct clip rect */
+	return bmp_get(&clipped_rect, data); /* TODO: allocate data */
+}
+
+void graphics_destroy_bitmap(bitmap_t *bmp) {
+	bmp;
+	/* TODO: destroy data */
+}
+
+void graphics_put_bitmap(graphics_t *g, byte x, byte y, bitmap_t *bmp) {	
+
+	rect_t rel_rect, abs_rect, clipped_rect;
+	byte *bmp_start;
+
+	/* initial rect */
+	rel_rect.x0=x;
+	rel_rect.y0=y;
+	rel_rect.x1=x+bmp->x1;
+	rel_rect.y1=y+bmp->y1;
+
+	/* convert rel to abs coordinates */
+	if (!rect_rel2abs(g->area, &rel_rect, &abs_rect)) return;
+
+	/* and clip it */
+	if (!rect_intersect(&abs_rect,g->clip,&clipped_rect)) return;
+
+	/* calculate clipped start of bitmap */
+	bmp_start=(byte *)bmp;
+	bmp_start+=2; /* skip x,y */
+	/* and draw it */
+	bmp_put(
+		bmp_start,		/* data */
+		clipped_rect.x0,	/* x */
+		clipped_rect.y0,	/* y */
+		bmp->y1,		/* rows */
+		bmp->x1,		/* cols */
+		x%8,			/* shifts */
+		0);			/* skip */
 }

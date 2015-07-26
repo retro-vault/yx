@@ -7,7 +7,9 @@
 #ifndef _TYPES_H
 #define _TYPES_H
 
-#define	NULL	(word)0
+#define	NULL	( (word)0 )
+#define TRUE	( (byte)1 )
+#define FALSE	( (byte)0 )
 
 /* signed  */
 typedef signed char             int8_t;

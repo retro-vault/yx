@@ -1,6 +1,9 @@
 		;; kempston.s
 		;; kempston mouse driver
 		;;
+		;; based on Andrey Rachkin code
+		;; http://8bit.yarek.pl/hardware/zx.mouse/kmouse.html
+		;;
 		;; tomaz stih, tue apr 28 2015
 		.module	kempston
 

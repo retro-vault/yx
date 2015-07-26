@@ -21,6 +21,7 @@ rect_t* rect_intersect(rect_t *a, rect_t *b, rect_t *intersect) {
 }
 
 rect_t* rect_rel2abs(rect_t* abs, rect_t* rel, rect_t* out) __naked {
+	abs, rel, out;
 	__asm
 		/* store index regs */
 		push	ix
