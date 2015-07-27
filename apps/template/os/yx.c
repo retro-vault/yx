@@ -21,11 +21,11 @@ extern word heap_size;
 
 /* wrapper functions */
 void *allocate(word size) {
-	return mem_allocate(heap,size,current_task);
+	return mem_allocate(&heap,size,&current_task);
 }
 
 void free(void *p) {
-	mem_free(heap,p);
+	mem_free(&heap,p);
 }
 
 void *linsert(void **first, void *el) {
@@ -39,7 +39,7 @@ void *lremove(void **first, void *el) {
 /* yx interface */
 void register_interfaces() {
 
-	mem_init(heap,heap_size);
+	mem_init(&heap,heap_size);
 
 	yx_api.linsert=linsert;
 	yx_api.lremove=lremove;

@@ -24,7 +24,6 @@ result desktop_wnd_proc(window_t* wnd, byte id, word param1, word param2) {
 result app_wnd_proc(window_t* wnd, byte id, word param1, word param2) {
 	static byte empty_mask[]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 	static byte lines_mask[]={0x00,0xff,0x00,0xff,0x00,0xff,0x00};
-	rect_t title_rect;
 
 	id, param1, param2;
 

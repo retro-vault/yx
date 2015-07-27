@@ -14,7 +14,7 @@ word heap_size; /* normally calculated inside crt0 */
 yx_t *yx;
 
 void main() {
-	heap_size=0xffff - (word)heap; /* calc heap size */
+	heap_size=0xffff - (word)&heap; /* calc heap size */
 	register_interfaces();
 	yx=(yx_t *)query_interface("yx");
 	window_init();

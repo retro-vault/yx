@@ -27,7 +27,7 @@ typedef struct block_s {
 	byte            data[1];
 } block_t;
 
-extern void* heap;
+extern void *heap;
 
 extern void mem_init(void *heap, word size);
 extern void *mem_allocate(void *heap, word size, void *owner);
