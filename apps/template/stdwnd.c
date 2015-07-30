@@ -14,7 +14,7 @@ result desktop_wnd_proc(window_t* wnd, byte id, word param1, word param2) {
 	switch(id) {
 		case MSG_WND_PAINT:
 		/* clear screen space */
-		graphics_fill_rect(wnd->graphics,wnd->graphics->area,desktop_pattern);
+		graphics_fill_rect(wnd->graphics,wnd->rect,desktop_pattern);
 		break;
 	}
 
@@ -30,10 +30,10 @@ result app_wnd_proc(window_t* wnd, byte id, word param1, word param2) {
 	switch(id) {
 	case MSG_WND_PAINT:	
 		/* clear screen space */
-		graphics_fill_rect(wnd->graphics,wnd->graphics->area,empty_mask);
+		graphics_fill_rect(wnd->graphics,wnd->rect,empty_mask);
 		/* window border */
 		if (wnd->flags & WF_HASBORDER)
-			graphics_draw_rect(wnd->graphics,wnd->graphics->area,0xff);
+			graphics_draw_rect(wnd->graphics,wnd->rect,0xff);
 		/* window title */
 		if (wnd->flags & WF_HASTITLE) {
 		}

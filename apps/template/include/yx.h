@@ -21,6 +21,9 @@ struct yx_s {
 	void* (*allocate)(word size);
 	void free(void *p);
 	void copy(byte *src, byte *dst, word count);
+
+	/* tasks, events */
+	void sleep(word _50);
 };
 
 extern void *query_interface(string api);

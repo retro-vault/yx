@@ -29,11 +29,17 @@ void free(void *p) {
 }
 
 void *linsert(void **first, void *el) {
-	return (void*)list_insert((list_header_t**) first, (list_header_t*) el);
+	return (void*)list_append((list_header_t**) first, (list_header_t*) el);
 }
 
 void *lremove(void **first, void *el) {
 	return (void*)list_remove((list_header_t**) first, (list_header_t*) el);
+}
+
+void sleep(word _50) {
+	int i;
+	while (_50--)
+		for(i=0;i<100;i++);
 }
 
 /* yx interface */
@@ -47,6 +53,8 @@ void register_interfaces() {
 	yx_api.allocate=allocate;
 	yx_api.free=free;
 	yx_api.copy=mem_copy;
+
+	yx_api.sleep=sleep;
 }
 
 void *query_interface(string api) {

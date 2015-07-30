@@ -5,7 +5,7 @@ app.o: app.c app.h /home/tomaz/dev/yx/apps/template/include/yx.h \
  /home/tomaz/dev/yx/apps/template/include/rect.h \
  /home/tomaz/dev/yx/apps/template/include/bitmap.h \
  /home/tomaz/dev/yx/apps/template/include/vector.h \
- /home/tomaz/dev/yx/apps/template/include/clipping.h message.h
+ /home/tomaz/dev/yx/apps/template/include/clipping.h stdwnd.h message.h
 message.o: message.c window.h \
  /home/tomaz/dev/yx/apps/template/include/yx.h \
  /home/tomaz/dev/yx/apps/template/include/types.h \
