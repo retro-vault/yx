@@ -121,6 +121,25 @@ void window_select(window_t *wnd) { /* bring window to the front */
 	yx->linsert((void **)&(wnd->parent->first_child), (void *)wnd);
 }
 
+void window_invalidate(window_t* first, rect_t *area) {
+
+	rect_t intersect;
+	rect_t smaller[4];
+	byte num;
+
+	if (rect_overlap(area, first->rect)) {
+		rect_intersect(area, first->rect, &intersect);
+		message_send(first, MSG_SYS_PAINT, (word)&intersect, 0);
+		first=first->next;
+	}
+	if (first==NULL) return;
+	rect_subtract(area, &intersect, smaller, &num);
+	while(num) {
+		window_invalidate(first, &(smaller[num-1]));
+		num--;
+	}
+}
+
 void window_move(window_t *wnd, byte x, byte y) {
 	wnd,x,y;
 }

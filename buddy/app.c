@@ -23,6 +23,9 @@ void main() {
 	mouse_info_t mi;
 	byte mx,my;
 
+	byte curndx=0;
+	void* cursors[]={ &cur_std, &cur_classic, &cur_hourglass, &cur_caret, &cur_hand };
+
 	heap_size=0xffff - (word)&heap; /* calc heap size */
 	register_interfaces();
 	yx=(yx_t *)query_interface("yx");
@@ -55,13 +58,17 @@ void main() {
 	mx=mi.x;
 	my=mi.y;
 	mouse_show_cursor(mi.x, mi.y, &cur_std);
-	while (!(mi.button_change)) {
+	while (TRUE) {
 		mouse_scan(&mi);
 		if (mx!=mi.x || my!=mi.y) { 
 			mouse_hide_cursor();
-			mouse_show_cursor(mi.x, mi.y, &cur_std);
+			mouse_show_cursor(mi.x, mi.y, cursors[curndx]);
 			mx=mi.x;
 			my=mi.y;
+		}
+		if (mi.button_change) {
+			curndx++;
+			if (curndx==5) curndx=0;
 		}
 	}
 }

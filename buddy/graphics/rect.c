@@ -98,3 +98,40 @@ r2a_end:
 		ret
 	__endasm;
 }
+
+void rect_subtract(
+	rect_t *outer, 		/* outer rect */
+	rect_t *inner, 		/* inner rect */
+	rect_t *result,		/* rect array (4!) */
+	byte *num) {		/* returns actual rects in result */
+
+	*num = 0;		/* assume */
+	if (outer->y1 < inner->y1) {
+		result->x0=outer->x0;
+		result->y0=outer->y0;
+		result->x1=outer->x1;
+		result->y1=inner->y0;
+		result++;	
+	}	
+	if (inner->y1 < outer->y1) {
+		result->x0=outer->x0;
+		result->y0=inner->y1;
+		result->x1=outer->x1;
+		result->y1=outer->y1;
+		result++;		
+	}
+	if (outer->x0 < inner->x0) {
+		result->x0=outer->x0;
+		result->y0=inner->y0;
+		result->x1=inner->x0;
+		result->y1=inner->y1;
+		result++;
+	}
+	if (inner->x1 < outer->x1) {
+		result->x0=inner->x1;
+		result->y0=inner->y0;
+		result->x1=outer->x1;
+		result->y1=inner->y1;
+		result++;
+	}
+}
