@@ -7,13 +7,49 @@
 #ifndef _WINDOW_H
 #define _WINDOW_H
 
-#include "types.h"
+#include "yx.h"
 #include "rect.h"
+#include "graphics.h"
 
-typedef struct window_s {
-	result (*wnd_proc)(byte id, word param1, word param2);
-} window_t;
+/* window flags */
+#define WF_NONE			0x00
+#define	WF_HASTITLE		0x01
+#define	WF_HASBORDER		0x02
+#define WF_DESKTOP		0x04
 
-extern window_t *window_get_screen(); /* screen window */
+/* window sizes */
+#define	WMETR_TITLEHEIGHT	12
+#define WMETR_BORDERWIDTH	1
+
+/* window structure */
+typedef struct window_s window_t;
+struct window_s {
+	window_t	*next;
+	word		reserved;
+	struct window_s	*parent;
+	struct window_s *first_child;
+	byte		flags;
+	rect_t		*rect;
+	graphics_t 	*graphics;
+	result ((*wnd_proc)(window_t* wnd, byte id, word param1, word param2));
+	string		title;
+};
+
+/* window drawing */
+extern window_t *window_desktop;
+extern void window_init();
+extern graphics_t* window_graphics(window_t* wnd);
+extern window_t *window_create(
+	string title,
+	window_t* parent, 
+	byte flags, 
+	result ((*wnd_proc)(window_t* wnd, byte id, word param1, word param2)), 
+	byte x0, 
+	byte y0, 
+	byte x1, 
+	byte y1);
+extern void window_draw(window_t *wnd);
+extern void window_select(window_t *wnd);
+extern void window_move(window_t *wnd, byte to_x0, byte to_y0);
 
 #endif /* _WINDOW_H */

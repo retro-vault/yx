@@ -3,12 +3,16 @@
 		;;
 		;;	tomaz stih sun may 20 2012
 		.module crt0
-		.globl _get_heap
+		.globl __sdcc_call_hl
+		.globl _heap
+		.globl _stack
 
 		.area _HEADER(ABS)
 	
+		di				; no rom anymore
+
 		ld (#store_sp),sp		; store SP
-		ld sp,#stack
+		ld sp,#_stack
 
 		;; store all regs
 		push af
@@ -44,10 +48,12 @@
 		pop af
 
 		ld sp,(#store_sp)		; restore original SP
+		
+		ei				; the rom is back
 		ret	
 
-_get_heap::	ld hl,#heap
-		ret
+__sdcc_call_hl::
+		jp	(hl)
 
 		;;	(linker documentation:) where specific ordering is desired - 
 		;;	the first linker input file should have the area definitions 
@@ -74,8 +80,8 @@ gsinit:
 		.area _BSS
 store_sp:	.word 1
 
-		;; 1024 bytes of operating system stack
-		.ds	1024
-stack:	
+		;; 2048 bytes of operating system stack
+		.ds	2048
+_stack::
 		.area _HEAP
-heap:
+_heap::

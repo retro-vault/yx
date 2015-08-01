@@ -23,6 +23,7 @@ all:		depend os.lib
 depend:		$(CSRCS)
 		rm --force .depend
 		$(GNUC) $(GNUCFLAGS) $(CSRCS) -MM >> .depend
+		sed -i 's/\.o/\.rel/g' .depend
 
 -include 	.depend
 
@@ -40,3 +41,4 @@ clean:
 			*.rst *.sym *.lib *.bin *.mem *.lib kernel.s *.rom *.lnk \
 			*.noi *.lk *.tap a.out
 		rm -f $(OUTDIR)os.lib
+		rm -f .depend

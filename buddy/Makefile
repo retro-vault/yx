@@ -1,42 +1,46 @@
 # Tools.
+DIR		=	$(shell pwd)
 GNUC		=	gcc
-GNUCFLAGS	=	-I.
+GNUCFLAGS	=	-I$(DIR)/include/
 CC		=	sdcc
-CFLAGS		=	-mz80 --no-std-crt0 -D DEBUG
+CFLAGS		=	-mz80 --no-std-crt0 -D DEBUG -I$(DIR)/include/
 AS		=	sdasz80
 ASFLAGS		=	-xlos -g
 LD		=	sdcc
 LDFLAGS		=	-mz80 --no-std-crt0 \
 			--nostdlib --code-loc 0x8032 \
-			--data-loc 0xE000 -Wl -b_HEADER=0x8000
+			--data-loc 0xb000 -Wl -b_HEADER=0x8000
 # Deps.
 CSRCS		=	$(wildcard *.c)
 SSRCS		=	$(wildcard *.s)
-OBJS		=	$(patsubst %.s,%.rel,$(SSRCS))
-OBJS		+=	$(patsubst %.c,%.rel,$(CSRCS)) 
+OBJS		=	$(patsubst %.c,%.rel,$(CSRCS)) $(patsubst %.s,%.rel,$(SSRCS))
 
 # Rules.
 .PHONY:		all clean
 
-all:		depend buddy.bin
+all:		libs graphics depend app.bin
 
 depend:		$(CSRCS)
 		rm --force .depend
 		$(GNUC) $(GNUCFLAGS) $(CSRCS) -MM >> .depend
+		sed -i 's/\.o/\.rel/g' .depend
 
 -include 	.depend
 
-buddy.bin:	crt0.rel $(OBJS)
-		$(LD) $(LDFLAGS) $^
-		makezxbin <crt0.ihx >buddy.bin
-		appmake +zx --binfile ./buddy.bin --org 32768
-		fuse-gtk --tape ./buddy.tap \
-			--interface1 --interface2 \
-			--kempston --kempston-mouse \
-			--machine 48 \
-			--graphics-filter 2x #\
-			#--debugger-command "br 0x82b6" 
-			
+libs:	
+		cd os && $(MAKE) INCLUDE=$(DIR)/include/ OUTDIR=$(DIR)/lib/
+		cd graphics && $(MAKE) INCLUDE=$(DIR)/include/ OUTDIR=$(DIR)/lib/
+
+app.bin:	crt0.rel $(OBJS)
+		$(LD) $(LDFLAGS) $^ -los -lgraphics -Llib
+		makezxbin <crt0.ihx >app.bin
+		appmake +zx --binfile ./app.bin --org 32768
+		fuse-gtk --tape ./app.tap \
+			--interface1 \
+			--kempston-mouse \
+			--machine 48 --graphics-filter 2x \
+			--no-sound \
+			--debugger-command "br 0xffff"
 
 %.rel:		%.s
 		$(AS) $(ASFLAGS) $(basename $*).rel $*.s
@@ -45,6 +49,9 @@ buddy.bin:	crt0.rel $(OBJS)
 		$(CC) -c -o $@ $< $(CFLAGS)
 
 clean:		
+		cd os && $(MAKE) INCLUDE=$(DIR)/include/ OUTDIR=$(DIR)/lib/ clean
+		cd graphics && $(MAKE) INCLUDE=$(DIR)/include/ OUTDIR=$(DIR)/lib/ clean
 		rm -f core *~ \#* *.cdb *.rel *.hex *.ihx *.lst *.asm *.map *.rel \
 			*.rst *.sym *.lib *.bin *.mem *.lib kernel.s *.rom *.lnk \
 			*.noi *.lk *.tap a.out
+		rm -f .depend

@@ -7,8 +7,11 @@
 		;; tomaz stih, tue apr 28 2015
 		.module	kempston
 
-		.globl	kmp_scan
-		.globl	kmp_calib
+		.globl	_mouse_calibrate
+		.globl	_mouse_scan
+
+		.globl	kmp_scan_raw
+		.globl	kmp_calib_raw
 
 		.equ	KMP_BTN_PORT,	0xfadf
 		.equ	KMP_X_PORT,	0xfbdf
@@ -16,10 +19,20 @@
 
 		.area	_CODE
 
+
+		;; extern void mouse_calibrate(byte x, byte y)
+_mouse_calibrate::
+		pop	hl		; return address
+		pop	bc		; c=y, b=y
+
+		;; restore stack		
+		push	bc
+		push	hl
+		
 		;; calibrate
 		;; input:	b=start y, c=start x (hint:center)
 		;; affets:	a, flags, hl, bc
-kmp_calib::
+kmp_calib_raw::
 		ld	hl,#kmp_mcurxy	
 		ld	a,c		; x to a
 		ld	(hl),a		; to low cursor pos
@@ -36,6 +49,28 @@ kmp_calib::
 		ld	(hl),a		; to high hw pos
 		ret
 
+		;; extern void mouse_scan(mouse_info_t *mi)
+_mouse_scan:
+		call	kmp_scan_raw	; scan it
+		ex	af,af'	
+		ld	a,d		; store d to a'
+		ex	af,af'
+		pop	de		; return address
+		pop	hl		; pointer to mi
+		push	hl
+		push	de		; restore it all
+		ex	af,af'
+		ld	d,a
+		ex 	af,af'
+		ld	(hl),c
+		inc	hl
+		ld	(hl),b
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		ld	(hl),d
+		ret
+	
 		;; scan kempston mouse
 		;; input:	
 		;;	(kmp_mcurxy)	... last cursor coords
@@ -46,7 +81,7 @@ kmp_calib::
 		;;	c=x
 		;;	d=button chang flags (1=change, 0=no chg.)
 		;; affects:	flags, a, bc, hl, de
-kmp_scan::
+kmp_scan_raw::
 		;; first scan buttons for changes
 		ld	bc,#KMP_BTN_PORT
 		in	a,(c)		; buttons to a
@@ -105,7 +140,6 @@ kmp_y_done:	ld      (kmp_mcurxy),hl	; store new cursor pos
 		ld	d,a
 		ld	a,(kmp_mhwbtn)	; button state to a
 		ret
-
 
 		.area	_DATA
 

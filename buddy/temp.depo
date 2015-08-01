@@ -1,0 +1,35 @@
+/*	
+
+	window_t* w11;
+	window_t* w21;
+	window_t* wactive;
+
+	w11=window_create(
+		NULL,
+		w1,
+		WF_HASBORDER,
+		control_wnd_proc,
+		20,
+		15,
+		30,
+		35);
+
+	w21=window_create(
+		NULL,
+		w2,
+		WF_HASBORDER,
+		control_wnd_proc,
+		20,
+		20,
+		40,
+		50);
+
+	wactive=w1;
+	while(TRUE) {
+		window_select(wactive);
+		window_draw(window_desktop);
+		if (wactive==w1) wactive=w2; else wactive=w1;
+	}
+
+
+*/
