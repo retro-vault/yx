@@ -13,9 +13,11 @@
 		.globl	kmp_scan_raw
 		.globl	kmp_calib_raw
 
-		.equ	KMP_BTN_PORT,	0xfadf
-		.equ	KMP_X_PORT,	0xfbdf
-		.equ	KMP_Y_PORT,	0xffdf
+			
+
+		KMP_BTN_PORT	= 0xfadf
+		KMP_X_PORT	= 0xfbdf
+		KMP_Y_PORT	= 0xffdf
 
 		.area	_CODE
 
