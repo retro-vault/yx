@@ -50,6 +50,6 @@ extern window_t *window_create(
 	byte y1);
 extern void window_draw(window_t *wnd);
 extern void window_select(window_t *wnd);
-extern void window_move(window_t *wnd, byte to_x0, byte to_y0);
+extern window_t *window_active(window_t *root);
 
 #endif /* _WINDOW_H */

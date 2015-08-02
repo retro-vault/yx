@@ -54,7 +54,7 @@ window_t *window_create(
 	wnd->parent=parent;
 	wnd->first_child=NULL;
 	if (parent)
-		yx->linsert((void **)&(wnd->parent->first_child), (void *)wnd);
+		yx->lappend((void **)&(wnd->parent->first_child), (void *)wnd);
 
 	/* send create message */
 	message_send(wnd, MSG_WND_CREATE, 0, 0);
@@ -118,7 +118,7 @@ void window_draw(window_t *wnd) {
 void window_select(window_t *wnd) { /* bring window to the front */
 	if (wnd->parent==NULL) return; /* nothing to do for desktop */
 	yx->lremove((void**)&(wnd->parent->first_child), (void *)wnd);
-	yx->linsert((void **)&(wnd->parent->first_child), (void *)wnd);
+	yx->lappend((void **)&(wnd->parent->first_child), (void *)wnd);
 }
 
 void window_invalidate(window_t* first, rect_t *area) {
@@ -140,6 +140,10 @@ void window_invalidate(window_t* first, rect_t *area) {
 	}
 }
 
-void window_move(window_t *wnd, byte x, byte y) {
-	wnd,x,y;
+window_t *window_active(window_t *root) {
+	window_t *child=root->first_child;
+	if (child==NULL) return NULL;
+	while ((child->next)!=NULL)
+		child=child->next;
+	return child;
 }

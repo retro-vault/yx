@@ -28,12 +28,16 @@ void free(void *p) {
 	mem_free(&heap,p);
 }
 
-void *linsert(void **first, void *el) {
+void *lappend(void **first, void *el) {
 	return (void*)list_append((list_header_t**) first, (list_header_t*) el);
 }
 
 void *lremove(void **first, void *el) {
 	return (void*)list_remove((list_header_t**) first, (list_header_t*) el);
+}
+
+void *lremfirst(void **first) {
+	return (void*)list_remove_first((list_header_t**) first);
 }
 
 void sleep(word _50) {
@@ -47,8 +51,9 @@ void register_interfaces() {
 
 	mem_init(&heap,heap_size);
 
-	yx_api.linsert=linsert;
+	yx_api.lappend=lappend;
 	yx_api.lremove=lremove;
+	yx_api.lremfirst=lremfirst;
 
 	yx_api.allocate=allocate;
 	yx_api.free=free;

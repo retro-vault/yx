@@ -77,3 +77,14 @@ list_header_t *list_remove(list_header_t **first, list_header_t *el) {
 	}
 	return el;
 }
+
+/*
+ * remove first element from linked list
+ */
+list_header_t *list_remove_first(list_header_t **first) {
+	list_header_t *result;	
+	if (*first==NULL) return NULL; /* empty list */
+	result=*first;
+	*first = (list_header_t*) ((*first)->next);
+	return result;
+}

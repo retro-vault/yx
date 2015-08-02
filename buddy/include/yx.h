@@ -14,16 +14,17 @@ typedef struct yx_s yx_t;
 struct yx_s {
 
 	/* system lists */
-	void *linsert(void **first, void *el);
-	void *lremove(void **first, void *el);
+	void* (*lappend)(void **first, void *el);
+	void* (*lremove)(void **first, void *el);
+	void* (*lremfirst)(void **first);
 
 	/* memory management */
 	void* (*allocate)(word size);
-	void free(void *p);
-	void copy(byte *src, byte *dst, word count);
+	void (*free)(void *p);
+	void (*copy)(byte *src, byte *dst, word count);
 
 	/* tasks, events */
-	void sleep(word _50);
+	void (*sleep)(word _50);
 };
 
 extern void *query_interface(string api);

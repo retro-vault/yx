@@ -19,17 +19,26 @@
 #define MSG_WND_MOVE	6
 #define MSG_WND_SIZE	7 /* param1 ... rect_t* to change */
 #define MSG_WND_PAINT	8 /* user paint */
+#define MSG_MOUSE_MOVE	9
+#define MSG_MOUSE_LDOWN	10
+#define MSG_MOUSE_LUP	11
+#define MSG_MOUSE_RDOWN	12
+#define MSG_MOUSE_RUP	13
 
-
+typedef struct message_s message_t;
 typedef struct message_s {
+	message_t* next;
+	word reserved;
 	window_t *window;
 	byte id;
 	word param1;
 	word param2;	
-} message_t;
+};
+
+extern message_t *message_first;
 
 extern result message_send(window_t *wnd, byte id, word param1, word param2);
 extern result message_post(window_t *wnd, byte id, word param1, word param2);
-extern void message_harvest();
+extern void message_dispatch();
 
 #endif /* _MESSAGE_H */

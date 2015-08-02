@@ -5,6 +5,7 @@
  *	tomaz stih tue jul 20 2015
  */
 #include "stdwnd.h"
+#include "errors.h"
 
 result desktop_wnd_proc(window_t* wnd, byte id, word param1, word param2) {
 	static byte desktop_pattern[]={0x55,0xaa,0x55,0xaa,0x55,0xaa,0x55,0xaa};
@@ -18,7 +19,7 @@ result desktop_wnd_proc(window_t* wnd, byte id, word param1, word param2) {
 		break;
 	}
 
-	return 0;
+	return SUCCESS;
 }
 
 result app_wnd_proc(window_t* wnd, byte id, word param1, word param2) {
@@ -90,7 +91,7 @@ result app_wnd_proc(window_t* wnd, byte id, word param1, word param2) {
 		break;
 	}
 
-	return 0;
+	return SUCCESS;
 }
 
 result control_wnd_proc(window_t* wnd, byte id, word param1, word param2) {
@@ -109,5 +110,5 @@ result control_wnd_proc(window_t* wnd, byte id, word param1, word param2) {
 		break;	
 	}
 
-	return 0;
+	return SUCCESS;
 }

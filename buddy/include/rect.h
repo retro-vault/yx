@@ -16,6 +16,7 @@ typedef struct rect_s {
 	byte y1;
 } rect_t;
 
+extern boolean rect_contains(rect_t *r, byte x, byte y);
 extern boolean rect_overlap(rect_t *a, rect_t *b);
 extern rect_t* rect_intersect(rect_t *a, rect_t *b, rect_t *intersect);
 extern rect_t* rect_rel2abs(rect_t* abs, rect_t* rel, rect_t* out) __naked;

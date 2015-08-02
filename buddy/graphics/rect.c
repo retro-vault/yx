@@ -6,6 +6,10 @@
  */
 #include "rect.h"
 
+boolean rect_contains(rect_t *r, byte x, byte y) {
+	return (r->x0 <= x && r->x1 >= x && r->y0 <= y && r->y1 >=y );
+}
+
 boolean rect_overlap(rect_t *a, rect_t *b) {
 	return !(a->y1 < b->y0 || a->y0 > b->y1 || a->x1 < b->x0 || a->x0 > b->x1);
 }
