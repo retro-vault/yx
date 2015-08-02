@@ -17,9 +17,6 @@ yx_t *yx;
 
 void main() {
 
-	window_t* w1;
-	window_t* w2;
-
 	/* init OS wrapper */	
 	heap_size=0xffff - (word)&heap; /* calc heap size */
 	register_interfaces();
