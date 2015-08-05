@@ -15,6 +15,7 @@ struct yx_s {
 
 	/* system lists */
 	void* (*lappend)(void **first, void *el);
+	void* (*linsert)(void **first, void *el);
 	void* (*lremove)(void **first, void *el);
 	void* (*lremfirst)(void **first);
 

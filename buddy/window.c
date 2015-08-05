@@ -6,6 +6,7 @@
  */
 #include "window.h"
 #include "stdwnd.h"
+#include "mouse.h"
 
 extern yx_t *yx;
 
@@ -54,7 +55,7 @@ window_t *window_create(
 	wnd->parent=parent;
 	wnd->first_child=NULL;
 	if (parent)
-		yx->lappend((void **)&(wnd->parent->first_child), (void *)wnd);
+		yx->linsert((void **)&(wnd->parent->first_child), (void *)wnd);
 
 	/* send create message */
 	message_send(wnd, MSG_WND_CREATE, 0, 0);
@@ -97,6 +98,7 @@ void window_destroy(window_t *wnd) {
 	}
 
 	/* now destroy window */
+	message_send(wnd, MSG_WND_DESTROY, 0, 0);
 	yx->free(wnd->graphics->clip);
 	yx->free(wnd->graphics->area);
 	yx->free(wnd->graphics);
@@ -106,19 +108,25 @@ void window_destroy(window_t *wnd) {
 	yx->free(wnd);
 }
 
+void window_draw_next(window_t *wnd) {
+	if (wnd->next) window_draw_next(wnd->next);
+	window_draw(wnd);
+}
+
 void window_draw(window_t *wnd) {
+	byte hide;
 	window_t *child=wnd->first_child;
+	hide=rect_overlap(wnd->graphics->area,&mouse_rect);
+	if (hide) mouse_hide_cursor();
 	message_send(wnd, MSG_WND_PAINT, 0, 0); /* draw parent */
-	while (child) {
-		window_draw(child);
-		child=child->next;	
-	}
+	if (hide) mouse_show_cursor(mouse_rect.x0, mouse_rect.y0, current_cursor);
+	if (child) window_draw_next(child);
 }
 
 void window_select(window_t *wnd) { /* bring window to the front */
 	if (wnd->parent==NULL) return; /* nothing to do for desktop */
 	yx->lremove((void**)&(wnd->parent->first_child), (void *)wnd);
-	yx->lappend((void **)&(wnd->parent->first_child), (void *)wnd);
+	yx->linsert((void **)&(wnd->parent->first_child), (void *)wnd);
 }
 
 void window_invalidate(window_t* first, rect_t *area) {
@@ -138,12 +146,4 @@ void window_invalidate(window_t* first, rect_t *area) {
 		window_invalidate(first, &(smaller[num-1]));
 		num--;
 	}
-}
-
-window_t *window_active(window_t *root) {
-	window_t *child=root->first_child;
-	if (child==NULL) return NULL;
-	while ((child->next)!=NULL)
-		child=child->next;
-	return child;
 }

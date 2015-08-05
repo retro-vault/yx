@@ -32,6 +32,10 @@ void *lappend(void **first, void *el) {
 	return (void*)list_append((list_header_t**) first, (list_header_t*) el);
 }
 
+void *linsert(void **first, void *el) {
+	return (void*)list_insert((list_header_t**) first, (list_header_t*) el);
+}
+
 void *lremove(void **first, void *el) {
 	return (void*)list_remove((list_header_t**) first, (list_header_t*) el);
 }
@@ -54,6 +58,7 @@ void register_interfaces() {
 	yx_api.lappend=lappend;
 	yx_api.lremove=lremove;
 	yx_api.lremfirst=lremfirst;
+	yx_api.linsert=linsert;
 
 	yx_api.allocate=allocate;
 	yx_api.free=free;

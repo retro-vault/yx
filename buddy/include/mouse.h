@@ -13,6 +13,9 @@
 #define MOUSE_LBUTTON	0x02 /* bit 1 */
 #define MOUSE_MBUTTON	0x04 /* bit 2 */
 
+#define MOUSE_CURSOR_WIDTH	8
+#define MOUSE_CURSOR_HEIGHT	10
+
 typedef struct mouse_info_s mouse_info_t;
 struct mouse_info_s {
 	byte x;
@@ -24,6 +27,7 @@ struct mouse_info_s {
 extern void mouse_init();
 extern void mouse_calibrate(byte x, byte y);
 extern void mouse_scan(mouse_info_t *mi);
+extern void calc_mouse_rect(mouse_info_t *mi);
 extern void mouse_show_cursor(byte x, byte y, void *cursor);
 extern void mouse_hide_cursor();
 
@@ -37,6 +41,6 @@ extern void* cur_caret;
 
 /* mouse global vars */
 extern mouse_info_t mi;
-extern byte mx,my;
+extern rect_t mouse_rect;
 
 #endif /* _MOUSE_H */

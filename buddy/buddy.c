@@ -115,18 +115,17 @@ void buddy_harvest_events() {
 	
 	/* MSG_MOUSE_MOVE */
 	mouse_scan(&mi);
-	if (mx!=mi.x || my!=mi.y) { /* coord changed */
+	if (mouse_rect.x0!=mi.x || mouse_rect.y0!=mi.y) { /* coord changed */
 
 		/* first repaint mouse */ 
 		mouse_hide_cursor();
 		mouse_show_cursor(mi.x, mi.y, current_cursor);
 
 		/* remember new coords */
-		mx=mi.x;
-		my=mi.y;
+		calc_mouse_rect(&mi);
 
 		/* and post message */
-		buddy_dispatch(MSG_MOUSE_MOVE, mx, my);
+		buddy_dispatch(MSG_MOUSE_MOVE, mouse_rect.x0, mouse_rect.y0);
 	}
 
 	if (mi.button_change) { /* is it worth looking at? */
@@ -134,9 +133,9 @@ void buddy_harvest_events() {
 		if (mi.button_change & MOUSE_LBUTTON) {
 			/* is it down? */			
 			if (mi.button & MOUSE_LBUTTON) 
-				buddy_dispatch(MSG_MOUSE_LDOWN, mx, my);
+				buddy_dispatch(MSG_MOUSE_LDOWN, mouse_rect.x0, mouse_rect.y0);
 			else
-				buddy_dispatch(MSG_MOUSE_LUP, mx, my);
+				buddy_dispatch(MSG_MOUSE_LUP, mouse_rect.x0, mouse_rect.y0);
 		}
 	}
 }
@@ -152,7 +151,7 @@ void buddy_dispatch(byte id, word param1, word param2) {
 				(byte)param1,
 				(byte)param2)) {
 
-				if (id!=MSG_MOUSE_MOVE && w!=window_active(window_desktop)) {
+				if (w!=window_desktop && w!=window_desktop->first_child) {
 					window_select(w);
 					window_draw(w);
 				}
@@ -169,12 +168,14 @@ window_t *buddy_get_window_xy(window_t* root, byte absx, byte absy) {
 
 	child=root->first_child;
 	while (child) { 
-		if (rect_contains(child->graphics->area,absx,absy)) result=child;
-		child=child->next;
+		if (!(result=buddy_get_window_xy(child, absx, absy)))
+			child=child->next;
+		else
+			return result;
 	}
-
-	if (!result && rect_contains(root->graphics->area,absx,absy))
-		result=root;
-
-	return result;
+	/* not found */
+	if (rect_contains(root->graphics->area, absx, absy))
+		return root;
+	else
+		return NULL;
 }
