@@ -46,7 +46,7 @@ void graphics_set_clipping(graphics_t* g, rect_t *clip_rect) {
 	rect_rel2abs(g->area, clip_rect, g->clip);
 }
 
-void graphics_fill_rect(graphics_t *g, rect_t *rect, byte* mask) {
+void graphics_fill_rect(graphics_t *g, rect_t *rect, byte* mask, byte mode) {
 	rect_t abs_rect, clipped_rect;
 	byte row, mskndx, ofx, ofy;
 	byte maskout[8];
@@ -59,13 +59,13 @@ void graphics_fill_rect(graphics_t *g, rect_t *rect, byte* mask) {
 	/* just draw the intersect */
 	mskndx=0;
 	for (row=clipped_rect.y0; row<=clipped_rect.y1; row++) {
-		vector_horzline(row,clipped_rect.x0,clipped_rect.x1,maskout[mskndx]);
+		vector_horzline(row,clipped_rect.x0,clipped_rect.x1,maskout[mskndx],mode);
 		mskndx++;
 		if (mskndx==8) mskndx=0;			
 	}
 }
 
-void graphics_draw_rect(graphics_t *g, rect_t *rect, byte linemask) {
+void graphics_draw_rect(graphics_t *g, rect_t *rect, byte linemask, byte mode) {
 	rect_t abs_rect;
 	byte x0,y0,x1,y1;
 	
@@ -81,10 +81,10 @@ void graphics_draw_rect(graphics_t *g, rect_t *rect, byte linemask) {
 		y1=MIN(abs_rect.y1,g->clip->y1);
 		
 		/* now clip lines */
-		if (abs_rect.y0 >= g->clip->y0) vector_horzline(y0, x0, x1, linemask);
-		if (abs_rect.y1 <= g->clip->y1) vector_horzline(y1, x0, x1, linemask);
-		if (abs_rect.x0 >= g->clip->x0) vector_vertline(x0, y0, y1, linemask);
-		if (abs_rect.x1 <= g->clip->x1) vector_vertline(x1, y0, y1, linemask);
+		if (abs_rect.y0 >= g->clip->y0) vector_horzline(y0, x0, x1, linemask, mode);
+		if (abs_rect.y1 <= g->clip->y1) vector_horzline(y1, x0, x1, linemask, mode);
+		if (abs_rect.x0 >= g->clip->x0) vector_vertline(x0, y0, y1, linemask, mode);
+		if (abs_rect.x1 <= g->clip->x1) vector_vertline(x1, y0, y1, linemask, mode);
 	}
 }
 

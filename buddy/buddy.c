@@ -146,8 +146,6 @@ void buddy_dispatch(byte id, word param1, word param2) {
 	window_t *w;
 
 	switch (id) {
-		case MSG_MOUSE_MOVE:
-		case MSG_MOUSE_LDOWN:
 		case MSG_MOUSE_LUP:
 			if (w=buddy_get_window_xy(
 				window_desktop,
@@ -167,17 +165,16 @@ void buddy_dispatch(byte id, word param1, word param2) {
 window_t *buddy_get_window_xy(window_t* root, byte absx, byte absy) {
 
 	window_t *child; 
-	window_t *result;
+	window_t *result=NULL;
 
 	child=root->first_child;
-	while (child) 
-		if (!(result=buddy_get_window_xy(child,absx,absy)))
-			child=child->next;
-		else
-			return result;
+	while (child) { 
+		if (rect_contains(child->graphics->area,absx,absy)) result=child;
+		child=child->next;
+	}
 
-	if (rect_contains(root->graphics->area,absx,absy))
-		return root;
-	else
-		return NULL;	
+	if (!result && rect_contains(root->graphics->area,absx,absy))
+		result=root;
+
+	return result;
 }

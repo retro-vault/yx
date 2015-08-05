@@ -41,8 +41,8 @@ extern void graphics_destroy(graphics_t* g);
 extern void graphics_set_clipping(graphics_t* g, rect_t *clip_rect);
 
 /* rectangle */
-extern void graphics_fill_rect(graphics_t *g, rect_t *rect, byte* mask);
-extern void graphics_draw_rect(graphics_t *g, rect_t *rect, byte linemask);
+extern void graphics_fill_rect(graphics_t *g, rect_t *rect, byte* mask, byte mode);
+extern void graphics_draw_rect(graphics_t *g, rect_t *rect, byte linemask, byte mode);
 
 /* bitmaps */
 extern bitmap_t* graphics_get_bitmap(graphics_t *g, rect_t *rect);
