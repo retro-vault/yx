@@ -16,6 +16,7 @@
 #define MOUSE_CURSOR_WIDTH	8
 #define MOUSE_CURSOR_HEIGHT	10
 
+/* mouse info */
 typedef struct mouse_info_s mouse_info_t;
 struct mouse_info_s {
 	byte x;

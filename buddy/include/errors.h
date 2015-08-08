@@ -10,11 +10,12 @@
 #include "types.h"
 
 #define SUCCESS			00
-#define DONT_OWN		01
-#define OUT_OF_MEMORY		02
-#define CANT_LOCK		03
-#define INVALID_PARAMETER	04
-#define NOT_FOUND		05
+#define NOT_PROCESSED		01
+#define DONT_OWN		02
+#define OUT_OF_MEMORY		03
+#define CANT_LOCK		04
+#define INVALID_PARAMETER	05
+#define NOT_FOUND		06
 
 extern result last_error; /* last error, 0 = success */
 

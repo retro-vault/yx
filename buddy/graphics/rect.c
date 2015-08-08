@@ -24,6 +24,39 @@ rect_t* rect_intersect(rect_t *a, rect_t *b, rect_t *intersect) {
 	} else return NULL;
 }
 
+rect_t* rect_inflate(rect_t* rect, sbyte dx, sbyte dy) __naked {
+	__asm
+		pop	de		/* ret address */
+		pop	hl		/* rect */
+		pop	bc		/* c=dx, b=dy */
+		/* restore stack */
+		push	bc
+		push	hl
+		push	de
+
+		push	hl		/* store ptr to rect */
+		ld	a,(hl)		/* a=x0 */
+		sub	c		/* x0=x0-dx */
+		ld	(hl),a
+		inc	hl
+		ld	a,(hl)		/* a=y0 */
+		sub	b		/* y0=y0-dy */
+		ld	(hl),a
+		inc	hl
+		ld	a,(hl)		/* a=x1 */
+		add	c		/* x1=x1+dx */
+		ld	(hl),a
+		inc	hl
+		ld	a,(hl)		/* a=y1 */
+		add	b		/* y1=y1+dy */
+		ld	(hl),a
+		
+		pop	hl		/* hl back to rect_t* */
+		ret
+	__endasm;
+}
+
+
 rect_t* rect_rel2abs(rect_t* abs, rect_t* rel, rect_t* out) __naked {
 	abs, rel, out;
 	__asm
@@ -137,5 +170,24 @@ void rect_subtract(
 		result->x1=outer->x1;
 		result->y1=inner->y1;
 		result++;
+	}
+}
+
+/* TODO: careful at scren edges */
+void rect_delta_offset(rect_t *rect, byte oldx, byte newx, byte oldy, byte newy) {
+	if (oldx > newx) { /* move left */
+		rect->x0 = rect->x0 - (oldx-newx);
+		rect->x1 = rect->x1 - (oldx-newx);
+	} else { /* move right */
+		rect->x0 = rect->x0 + (newx-oldx);
+		rect->x1 = rect->x1 + (newx-oldx);
+	}
+
+	if (oldy > newy) { /* move up */
+		rect->y0 = rect->y0 - (oldy-newy);
+		rect->y1 = rect->y1 - (oldy-newy);
+	} else { /* move down */
+		rect->y0 = rect->y0 + (newy-oldy);
+		rect->y1 = rect->y1 + (newy-oldy);
 	}
 }

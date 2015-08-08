@@ -58,7 +58,7 @@ void message_dispatch() {
 	if (message_first==NULL) return; 
 	m = yx->lremfirst((void **)&message_first);
 	if (m!=NULL) {
-		message_send(m->window,m->id,m->param1,m->param2);	
+		message_send(m->window,m->id,m->param1,m->param2);
 		message_destroy(m);
 	}
 }

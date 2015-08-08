@@ -24,7 +24,9 @@ typedef unsigned long int       uint32_t;
 /* usual */
 typedef uint8_t			boolean;
 typedef uint8_t 		byte;
+typedef int8_t			sbyte;
 typedef uint16_t 		word;
+typedef int16_t			sword;
 typedef uint8_t* 		string;
 typedef uint8_t 		result;
 typedef uint16_t		handle;

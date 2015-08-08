@@ -97,12 +97,16 @@ vl_shift_done:	; we have correct mask in a
 		ld	b,e		; b=counter
 		ld	c,a		; store a (mask)
 vl_loop:	; to screen	
-		and	d		; line pattern
 		ex	af,af'	
 		cp	#MODE_XOR	; xor mode?
 		jr	z,vl_xor	; indeed!
 		ex	af,af'
-		or	(hl)
+		cpl			; 0 where there is 1
+		and	(hl)		; clear screen
+		ld	(hl),a		; to screen
+		ld	a,c		; mask back
+		and	d		; line pattern
+		or	(hl)		; screen
 		jr	vl_tovmem
 vl_xor:		
 		ex	af,af'

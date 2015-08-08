@@ -20,10 +20,18 @@
 #define MSG_WND_SIZE	7 /* param1 ... rect_t* to change */
 #define MSG_WND_PAINT	8 /* user paint */
 #define MSG_MOUSE_MOVE	9
-#define MSG_MOUSE_LDOWN	10
-#define MSG_MOUSE_LUP	11
-#define MSG_MOUSE_RDOWN	12
-#define MSG_MOUSE_RUP	13
+#define MSG_MOUSE_LDOWN	10 /* param1 ... x, param2 ... y */
+#define MSG_MOUSE_LUP	11 /* param1 ... x, param2 ... y */
+#define MSG_MOUSE_RDOWN	12 /* param1 ... x, param2 ... y */
+#define MSG_MOUSE_RUP	13 /* param1 ... x, param2 ... y */
+#define MSG_WND_CREATED	14 /* window successfully created */
+#define MSG_MOUSE_CLICK	15 /* param1 ... x, param2 ... y */
+#define MSG_WND_HITTEST	16 /* hit test for system areas, param1=byte* result */
+
+#define WND_HIT_NONE	0
+#define WND_HIT_TITLE	1
+#define WND_HIT_CLOSE	2
+#define WND_HIT_RESIZE	3
 
 typedef struct message_s message_t;
 typedef struct message_s {
