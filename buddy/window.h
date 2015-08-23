@@ -48,10 +48,12 @@ extern window_t *window_create(
 	byte y0, 
 	byte x1, 
 	byte y1);
+extern void window_destroy(window_t *wnd);
 extern void window_draw(window_t *wnd);
 extern void window_select(window_t *wnd);
 extern window_t* window_get_app_wnd(window_t *wnd);
 extern window_t *window_find_xy(window_t* root, byte absx, byte absy);
 extern void window_move(window_t *wnd, byte dx, boolean lr, byte dy, boolean ud);
+extern void window_invalidate(rect_t *area, window_t *root, window_t *first);
 
 #endif /* _WINDOW_H */

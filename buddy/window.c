@@ -7,6 +7,7 @@
 #include "window.h"
 #include "stdwnd.h"
 #include "mouse.h"
+#include "masks.h"
 
 extern yx_t *yx;
 
@@ -132,24 +133,32 @@ void window_select(window_t *wnd) { /* bring window to the front */
 	yx->linsert((void **)&(wnd->parent->first_child), (void *)wnd);
 }
 
-void window_invalidate(window_t* first, rect_t *area) {
-
+void window_invalidate(rect_t *area, window_t *root, window_t *first) {
 	rect_t intersect;
 	rect_t smaller[4];
 	byte num;
 
-	if (rect_overlap(area, first->rect)) {
-		rect_intersect(area, first->rect, &intersect);
-		message_send(first, MSG_SYS_PAINT, (word)&intersect, 0);
-		first=first->next;
+	while (first) {
+		if (rect_overlap(area, first->graphics->area)) {
+			rect_intersect(area, first->graphics->area, &intersect);
+			
+			/* repaint just the affected part */			
+			message_send(first, MSG_SYS_PAINT, (word)&intersect, 0);
+			
+			/* now children */
+			rect_subtract(area, &intersect, smaller, &num);
+			while(num) {
+				window_invalidate(&(smaller[num-1]), root, first->next); 
+				num--;
+			}
+			return;
+		} else
+			first=first->next;
 	}
-	if (first==NULL) return;
-	rect_subtract(area, &intersect, smaller, &num);
-	while(num) {
-		window_invalidate(first, &(smaller[num-1]));
-		num--;
-	}
-}
+
+	/* now handle root */
+	window_invalidate(area, root->parent, root);
+}	
 
 window_t* window_get_app_wnd(window_t *wnd) {
 	if (wnd==window_desktop) return NULL; /* desktop has no app wnd */

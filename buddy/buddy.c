@@ -37,6 +37,7 @@ void temp_shit() {
 		35,
 		213,
 		160);
+	
 	w3=window_create(
 		"Window 3",
 		window_desktop,
@@ -46,6 +47,7 @@ void temp_shit() {
 		80,
 		60,
 		132);
+	
 	w4=window_create(
 		"Window 4",
 		window_desktop,
@@ -91,7 +93,6 @@ void temp_shit() {
 		150,
 		250,
 		180);
-
 }
 
 void buddy_init() {
@@ -124,7 +125,7 @@ void buddy_harvest_events() {
 	if (mouse_rect.x0!=mi.x || mouse_rect.y0!=mi.y) { /* coord changed */
 
 		/* operation in progress? */
-		if (buddy_op.op==BUDDY_OP_MOVING)
+		if (buddy_op.op==BUDDY_OP_MOVING || buddy_op.op==BUDDY_OP_SIZING)
 			buddy_xor_op_rect(); /* del old rect */
 		
 		/* first repaint mouse */ 
@@ -156,6 +157,10 @@ void buddy_dispatch(byte id, word param1, word param2) {
 	boolean lr,ud;
 	byte dx,dy;
 	byte hit=WND_HIT_NONE;
+	rect_t affectedrect;
+	rect_t client;
+	byte num;
+	rect_t smaller[4];
 
 	switch (id) {
 
@@ -175,7 +180,7 @@ void buddy_dispatch(byte id, word param1, word param2) {
 				}
 		
 				/* hit test window for system areas? */
-				message_send(affectedwnd,MSG_WND_HITTEST,(word)&hit,0); 
+				message_send(affectedwnd,MSG_WND_HITTEST,(word)&hit,(word)param1<<8|(word)param2);
 
 				/* store mouse to current operation (whatever) */
 				buddy_op.mx=(byte)param1;
@@ -196,6 +201,34 @@ void buddy_dispatch(byte id, word param1, word param2) {
 							sizeof(rect_t)
 						);
 						break;
+					case WND_HIT_RESIZE: /* start window resize operation */
+						buddy_op.op=BUDDY_OP_SIZE;
+						buddy_op.wnd=appwnd;
+						buddy_op.ix=buddy_op.mx;
+						buddy_op.iy=buddy_op.my;
+						yx->copy(
+							(void*)affectedwnd->graphics->area,
+							(void*)&(buddy_op.rect),
+							sizeof(rect_t)
+						);
+						break;
+					case WND_HIT_CLOSE:
+						/* hide mouse */
+						mouse_hide_cursor();
+
+						/* remember the rectangle */
+						yx->copy(
+							(void*)appwnd->graphics->area,
+							(void*)&(affectedrect),
+							sizeof(rect_t)
+						);
+						message_send(appwnd,MSG_WND_CLOSE,0,0);
+						window_destroy(appwnd);			
+						window_invalidate(&affectedrect, window_desktop, window_desktop->first_child);
+						
+						/* show mouse */
+						mouse_show_cursor(mi.x, mi.y, current_cursor);
+						break;
 				}
 			}
 			break;
@@ -205,6 +238,13 @@ void buddy_dispatch(byte id, word param1, word param2) {
 
 				/* clean last drag */
 				buddy_xor_op_rect(); 
+
+				/* store affected rect */
+				yx->copy(
+					(void*)((buddy_op.wnd)->graphics->area),
+					(void*)&affectedrect,
+					sizeof(rect_t)
+				);
 
 				/* move window */
 				if (lr=(buddy_op.ix > (byte)param1)) 
@@ -217,8 +257,26 @@ void buddy_dispatch(byte id, word param1, word param2) {
 					dy=(byte)param2 - buddy_op.iy;
 				window_move(buddy_op.wnd, dx, lr, dy, ud);
 
-				/* redraw all for now */
-				window_draw(window_desktop);
+				/* invalidate affected rect */
+				window_invalidate(&affectedrect, window_desktop, window_desktop->first_child);
+
+				/* redraw window at new position */
+				window_draw(buddy_op.wnd);
+
+			} else if (buddy_op.op==BUDDY_OP_SIZING) {
+
+				/* clean last drag */
+				buddy_xor_op_rect(); 
+
+				/* get difference between xor rect and window rect */
+				rect_intersect(&(buddy_op.rect), (buddy_op.wnd)->graphics->area, &affectedrect);
+				rect_subtract((buddy_op.wnd)->graphics->area, &affectedrect, smaller, &num);
+						
+				/* and invalidate "the difference" */
+				while(num) {
+					window_invalidate(&(smaller[num-1]), window_desktop, window_desktop->first_child); 
+					num--;
+				}
 
 			} else {
 				/* find affected window */
@@ -242,9 +300,12 @@ void buddy_dispatch(byte id, word param1, word param2) {
 			if (buddy_op.op==BUDDY_OP_MOVE) /* initial move */
 				buddy_op.op=BUDDY_OP_MOVING;
 
+			if (buddy_op.op==BUDDY_OP_SIZE) /* initial resize */
+				buddy_op.op=BUDDY_OP_SIZING;
+
 			if (buddy_op.op==BUDDY_OP_MOVING) {
 				/* calculate new position */
-				rect_delta_offset(&(buddy_op.rect), buddy_op.mx, (byte)param1, buddy_op.my, (byte)param2);
+				rect_delta_offset(&(buddy_op.rect), buddy_op.mx, (byte)param1, buddy_op.my, (byte)param2, FALSE);
 
 				/* store new coords */
 				buddy_op.mx=(byte)param1;
@@ -253,6 +314,19 @@ void buddy_dispatch(byte id, word param1, word param2) {
 				/* and draw */
 				buddy_xor_op_rect();
 			}
+
+			if (buddy_op.op==BUDDY_OP_SIZING) {
+				/* calculate new size */
+				rect_delta_offset(&(buddy_op.rect), buddy_op.mx, (byte)param1, buddy_op.my, (byte)param2, TRUE);
+
+				/* store new coords */
+				buddy_op.mx=(byte)param1;
+				buddy_op.my=(byte)param2;
+
+				/* and draw */
+				buddy_xor_op_rect();
+			}
+
 			break;
 	}
 }

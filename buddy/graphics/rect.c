@@ -143,51 +143,55 @@ void rect_subtract(
 	byte *num) {		/* returns actual rects in result */
 
 	*num = 0;		/* assume */
-	if (outer->y1 < inner->y1) {
+	if (outer->y0 < inner->y0) {
 		result->x0=outer->x0;
 		result->y0=outer->y0;
 		result->x1=outer->x1;
-		result->y1=inner->y0;
+		result->y1=inner->y0-1;
+		(*num)++;
 		result++;	
 	}	
 	if (inner->y1 < outer->y1) {
 		result->x0=outer->x0;
-		result->y0=inner->y1;
+		result->y0=inner->y1+1;
 		result->x1=outer->x1;
 		result->y1=outer->y1;
+		(*num)++;
 		result++;		
 	}
 	if (outer->x0 < inner->x0) {
 		result->x0=outer->x0;
 		result->y0=inner->y0;
-		result->x1=inner->x0;
+		result->x1=inner->x0-1;
 		result->y1=inner->y1;
+		(*num)++;
 		result++;
 	}
 	if (inner->x1 < outer->x1) {
-		result->x0=inner->x1;
+		result->x0=inner->x1+1;
 		result->y0=inner->y0;
 		result->x1=outer->x1;
 		result->y1=inner->y1;
+		(*num)++;
 		result++;
 	}
 }
 
 /* TODO: careful at scren edges */
-void rect_delta_offset(rect_t *rect, byte oldx, byte newx, byte oldy, byte newy) {
+void rect_delta_offset(rect_t *rect, byte oldx, byte newx, byte oldy, byte newy, byte size_only) {
 	if (oldx > newx) { /* move left */
-		rect->x0 = rect->x0 - (oldx-newx);
+		if (!size_only) rect->x0 = rect->x0 - (oldx-newx);
 		rect->x1 = rect->x1 - (oldx-newx);
 	} else { /* move right */
-		rect->x0 = rect->x0 + (newx-oldx);
+		if (!size_only) rect->x0 = rect->x0 + (newx-oldx);
 		rect->x1 = rect->x1 + (newx-oldx);
 	}
 
 	if (oldy > newy) { /* move up */
-		rect->y0 = rect->y0 - (oldy-newy);
+		if (!size_only) rect->y0 = rect->y0 - (oldy-newy);
 		rect->y1 = rect->y1 - (oldy-newy);
 	} else { /* move down */
-		rect->y0 = rect->y0 + (newy-oldy);
+		if (!size_only) rect->y0 = rect->y0 + (newy-oldy);
 		rect->y1 = rect->y1 + (newy-oldy);
 	}
 }

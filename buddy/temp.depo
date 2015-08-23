@@ -1,3 +1,42 @@
+
+private int FindAffected(Rectangle rect, int i) 
+        { 
+            while (i>=0) 
+            { // Still rects to test? 
+                if (rect.IntersectsWith(_rects[i])) 
+                { 
+                    // First get the intersect. 
+                    Rectangle intersect; 
+                    intersect = new Rectangle(rect.Left, rect.Top, rect.Width, rect.Height); 
+                    intersect.Intersect(_rects[i]);
+ 
+                    if (_inters.Count == _interCount) return -1; 
+                    _inters.Add(new InterRect() { Rectangle = intersect, Brush = _interBrushes[i] }); 
+
+                    if (i > 0) // Not last rect? 
+                    { 
+                        // Now get all subrects. 
+                        int n = 0; 
+                        List<Rectangle> subrects = new List<Rectangle>(); 
+                        SubRects(rect, intersect, subrects, ref n); 
+                        if (n == 0) return i; 
+
+                        // Remove rect that we already tested. 
+                        int minDepth = i - 1; 
+                        for (int j = 0; j < n; j++) minDepth = Math.Min(minDepth, FindAffected(subrects[j], i - 1)); 
+                        i = minDepth; 
+                    } 
+                    else 
+                    { 
+                        return -1; 
+                    } 
+                } 
+                else i--; // Test next rect. 
+            } 
+            return i; 
+        } 
+
+
 /*
 
 	w1=window_create(
