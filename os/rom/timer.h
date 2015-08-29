@@ -7,6 +7,9 @@
 #ifndef _TIMER_H
 #define _TIMER_H
 
+#include "types.h"
+#include "list.h"
+
 #define EVERYTIME 0
 
 /*

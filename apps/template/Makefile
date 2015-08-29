@@ -28,7 +28,7 @@ depend:		$(CSRCS)
 -include 	.depend
 
 app.bin:	crt0.rel $(OBJS)
-		$(LD) $(LDFLAGS) $^ -los -lgraphics -Llib
+		$(LD) $(LDFLAGS) $^
 		makezxbin <crt0.ihx >app.bin
 		appmake +zx --binfile ./app.bin --org 32768
 		fuse-gtk --tape ./app.tap \

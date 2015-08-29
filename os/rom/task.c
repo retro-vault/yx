@@ -4,7 +4,13 @@
  *
  *	tomaz stih sat may 26 2012
  */
-#include "yx.h"
+#include "types.h"
+#include "list.h"
+#include "memory.h"
+#include "syslist.h"
+#include "event.h"
+#include "system.h"
+#include "task.h"
 
 /* current task */
 task_t *tsk_current=NULL;
@@ -31,10 +37,7 @@ byte has_signaled_events(task_t *t) {
  * find next task to switch to and set tsk_current to it
  */
 void select_next() {
-
-	byte n;
 	task_t *curr, *t;
-
 	/* 
 	 * release all waiting tasks 
          */
@@ -84,7 +87,7 @@ task_t * tsk_create(void (*entry_point)(), uint16_t stack_size) {
 
 	if ( t = (task_t *)syslist_add((void **)&tsk_first_running, sizeof(task_t), SYS) ) {
 		/* allocate stack for the task */
-		stack=mem_allocate(get_usrheap(), stack_size, (void *)t); 
+		stack=mem_allocate((void*)USR_HEAP_START, stack_size, (void *)t); 
 		if (!stack) {
 			/* was allocated - so free it */
 			syslist_delete((void **)&tsk_first_running, (void *)t);
@@ -95,7 +98,7 @@ task_t * tsk_create(void (*entry_point)(), uint16_t stack_size) {
 			/* prepare stack */
 			t->sp=(word)stack + stack_size - CONTEXT_SIZE;
 			/* top two bytes are the return address */
-			ret_addr=t->sp + CONTEXT_SIZE - 2;
+			ret_addr=(word *)(t->sp + CONTEXT_SIZE - 2);
 			(*ret_addr)=(word)entry_point;	 
 		} 
 	}
@@ -157,7 +160,7 @@ store_current_task:
 		push	bc
 		push	ix
 		push	iy
-		ex	af,af'
+		ex	af,af
 		exx
 		push	af
 		push	bc
@@ -195,7 +198,7 @@ restore_task:
 		pop	de
 		pop	bc
 		pop	af
-		ex	af,af' 
+		ex	af,af
 		exx
 		pop	iy
 		pop	ix
@@ -209,8 +212,8 @@ restore_task:
 		reti
 
 no_next_task:
-		ld	sp,#sysstack		/* use sys stack */
-		ld	hl,#tarpit
+		ld	sp,#_sys_stack		/* use sys stack */
+		ld	hl,#_sys_tarpit
 		push	hl			/* jump to tar pit */
 		ei
 		reti
@@ -228,7 +231,5 @@ no_current_task:
 
 		/* we have current task, restore it */
 		jr	restore_task
-
 	__endasm;
-
 }

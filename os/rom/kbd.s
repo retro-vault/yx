@@ -1,4 +1,4 @@
-		;;	kbc.c
+		;;	kbd.s
 		;;	zx spectrum kbd scanning code
 		;;
 		;;	tomaz stih wed sep 17 2014
@@ -13,17 +13,17 @@
 _kbd_init::
 		ld	hl,#0x1f1f
 		ld	a,l
-		ld	(#_prev_scan),hl
-		ld	(#_prev_scan + 2),hl
-		ld	(#_prev_scan + 4),hl
-		ld	(#_prev_scan + 6),hl
+		ld	(#_kbd_prev_scan),hl
+		ld	(#_kbd_prev_scan + 2),hl
+		ld	(#_kbd_prev_scan + 4),hl
+		ld	(#_kbd_prev_scan + 6),hl
 		ld	hl,#0x0001		; head=1, tail=0
 		ld	(#_kbd_buff),hl
 		ret
 
 		.area _CODE
 _kbd_scan::		
-		ld	hl,#_prev_scan
+		ld	hl,#_kbd_prev_scan
 		
 		ld	d,#0			; scan lines counter 
 		ld	bc,#0xf7fe		; first scan line

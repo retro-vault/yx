@@ -4,7 +4,9 @@
  *
  *	tomaz stih tue may 29 2012
  */
-#include "yx.h"
+#include "types.h"
+#include "syslist.h"
+#include "timer.h"
 
 timer_t *tmr_first=NULL;
 
@@ -12,7 +14,6 @@ timer_t *tmr_first=NULL;
  * install timer hook 
  */
 timer_t *tmr_install(void (*hook)(), word ticks, void *owner) {
-
 	timer_t *t;
 
 	if ( t = (timer_t *)syslist_add((void **)&tmr_first, sizeof(timer_t), owner) ) {
@@ -44,5 +45,4 @@ void tmr_chain() {
 		} else t->_tick_count--;
 		t=t->hdr.next;
 	}
-	last_error=RESULT_SUCCESS;
 }

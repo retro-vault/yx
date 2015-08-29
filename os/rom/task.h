@@ -6,7 +6,11 @@
  */
 #ifndef _TASK_H
 #define _TASK_H
- 
+
+#include "types.h"
+#include "list.h"
+#include "event.h"
+
 #define TASK_STATE_RUNNING		0
 #define TASK_STATE_WAITING		1
 
@@ -27,7 +31,7 @@ extern task_t *tsk_first_running;
 extern task_t *tsk_first_waiting;
 
 extern task_t * tsk_create(void (*entry_point)(), word stack_size);
-extern void tsk_wait4events(struct event_s **events, byte num_events);
+extern void tsk_wait4events(event_t **events, byte num_events);
 extern void tsk_switch() __naked;
 
 #endif

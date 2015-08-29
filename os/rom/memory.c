@@ -4,13 +4,17 @@
  *
  *	tomaz stih fri may 25 2012
  */
-#include "yx.h"
+#include "types.h"
+#include "list.h"
+#include "memory.h"
+
+static int i=0;
 
 /*
  * ---------- private (helpers) ----------
  */
 
- byte match_free_block(list_header_t *p, word size) {
+byte match_free_block(list_header_t *p, word size) {
         block_t *b = (block_t *)p;
         return !(b->stat&ALLOCATED) && b->size >= size;
 }
@@ -23,7 +27,7 @@ void merge_with_next (block_t *b) {
 
 void split ( block_t *b, word size) {
 	block_t *nw;
-	nw = (word)(b->data) + size;
+	nw = (block_t *)((word)(b->data) + size);
 	nw->hdr.next=b->hdr.next;
 	nw->size = b->size - (size + BLK_SIZE);
 	nw->hdr.owner=b->hdr.owner;
@@ -48,7 +52,7 @@ void mem_init(void *heap, word size) {
         block_t *first = (block_t *)heap;
         first->hdr.next = NULL;
 	first->size = size - BLK_SIZE; 
-        first->hdr.owner = SYS;
+        first->hdr.owner = NONE; /* no owner */
         first->stat = NEW;
 }
 
@@ -74,9 +78,7 @@ void *mem_allocate(void *heap, word size, void *owner) {
 
 /*
  * free memory block
- * TODO: should check ownership one day
  */ 
-
 void *mem_free(void *heap, void *p) {
 
         block_t *prev;
@@ -87,7 +89,7 @@ void *mem_free(void *heap, void *p) {
 
         /* make sure it is a valid memory block by finding it */
         if (list_find((list_header_t *)heap, (list_header_t **)&prev, list_match_eq, (word)b)) {
-                b->hdr.owner=SYS; /* reclaim for the heap */
+                b->hdr.owner=NONE; /* reclaim for the heap */
                 b->stat=NEW;
                 /*
                  * merge 3 blocks if possible
@@ -102,4 +104,25 @@ void *mem_free(void *heap, void *p) {
                 return b->data;
         } else
                 return NULL;
+}
+
+void mem_copy(byte *src, byte *dest, word count) __naked {
+	src, dest, count; /* to prevent unreferenced function argument */
+	__asm
+		exx			/* alt set for ret. addr */
+		pop	hl		/* return address */		
+		exx		
+		pop	hl		/* hl=src */
+		pop	de		/* de=dest */
+		pop	bc		/* bc=count */
+		push	bc
+		push	de
+		push	hl
+		exx
+		push	hl
+		exx		
+		/* stack is restored*/
+		ldir
+		ret
+	__endasm;	
 }

@@ -4,7 +4,8 @@
  *
  *	tomaz stih tue jun 5 2012
  */
-#include "yx.h"
+#include "types.h"
+#include "list.h"
 
 /*
  * check if arg and pointer are equal
@@ -76,4 +77,15 @@ list_header_t *list_remove(list_header_t **first, list_header_t *el) {
 			prev->next=el->next;
 	}
 	return el;
+}
+
+/*
+ * remove first element from linked list
+ */
+list_header_t *list_remove_first(list_header_t **first) {
+	list_header_t *result;	
+	if (*first==NULL) return NULL; /* empty list */
+	result=*first;
+	*first = (list_header_t*) ((*first)->next);
+	return result;
 }

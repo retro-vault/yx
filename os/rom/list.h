@@ -7,6 +7,8 @@
 #ifndef _LIST_H
 #define _LIST_H
 
+#include "types.h"
+
 /* each linked list must start with list_header */
 typedef struct list_header_s {
 	void *next;
@@ -25,6 +27,8 @@ extern list_header_t *list_find(
 
 /* core functions */
 extern list_header_t *list_insert(list_header_t** first, list_header_t *el);
+extern list_header_t *list_append(list_header_t** first, list_header_t *el);
 extern list_header_t *list_remove(list_header_t **first, list_header_t *el);
+extern list_header_t *list_remove_first(list_header_t **first);
 
 #endif

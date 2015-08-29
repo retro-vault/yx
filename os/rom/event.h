@@ -7,6 +7,9 @@
 #ifndef _EVENT_H
 #define _EVENT_H
 
+#include "types.h"
+#include "list.h"
+
 typedef enum event_state_e {
 	nonsignaled,
 	signaled

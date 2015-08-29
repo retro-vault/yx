@@ -4,7 +4,10 @@
  *
  *	tomaz stih tue may 29 2012
  */
-#include "yx.h"
+#include "types.h"
+#include "list.h"
+#include "syslist.h"
+#include "event.h"
 
 event_t *evt_first=NULL;
 
@@ -22,8 +25,7 @@ event_t *evt_create(void *owner) {
  * destroys existing event, removes from the list of events
  */
 event_t *evt_destroy(event_t *e) {
-	return (event_t *)syslist_delete((void **)&evt_first, (void *)e);
-	
+	return (event_t *)syslist_delete((void **)&evt_first, (void *)e);	
 }
 
 /*

@@ -4,10 +4,10 @@
 		;; tomaz stih, sun may 20 2012
 		.module crt0
 
-		.globl	vec_tbl
-		.globl	sysstack
-		.globl	sysheap
-		.globl	tarpit
+		.globl	_sys_vec_tbl
+		.globl	_sys_stack
+		.globl	_sys_heap
+		.globl	_sys_tarpit
 
 		.area	_HEADER (ABS)
 		.org	0x0000
@@ -56,7 +56,7 @@ rst38ret:	reti
 nmiret:		retn
 		
 init:		
-		ld	sp,#sysstack		; now sp to OS stack (on bss)		
+		ld	sp,#_sys_stack		; now sp to OS stack (on bss)		
 		call	gsinit			; init static vars
 
 		;; start the os
@@ -66,9 +66,9 @@ init:
 		im	1			; im 1, 50Hz interrupt on ZX Spectrum
 		ei				; enable interrupts
 
-tarpit:
+_sys_tarpit::
 		halt				; halt
-		jr	tarpit			
+		jr	_sys_tarpit
 
 start_vectors:
 		jp	rst8ret
@@ -108,29 +108,29 @@ init_rom_end:
 gsinit:
 		;; move vector table to RAM
 		ld	hl,#start_vectors
-		ld	de,#vec_tbl
+		ld	de,#_sys_vec_tbl
 		ld	bc,#end_vectors - #start_vectors
 		ldir
 
-		;; init static vars.
+		;; init static vars
 		ld	hl,#init_rom_end
 		ld	de,#init_rom_start
 		sbc	hl,de			; hl=hl-de
+		ld	a,h
+		or	l
+		jr	z,no_statics		; no static vars!
 		push 	hl
 		pop	bc			; bc=hl
 		ex	de,hl			; hl=init_rom_start
 		ld	de,#init_ram_start
 		ldir
-
-		;;ld	bc,#end_initializer - #initializer
-		;;ldir
-
+no_statics:
         	.area   _GSFINAL
         	ret
 
 		.area	_DATA
 		;; vector jump table in ram
-vec_tbl::
+_sys_vec_tbl::
 rst8:		.ds	3
 rst10:		.ds	3
 rst18:		.ds	3
@@ -144,8 +144,8 @@ nmi:		.ds	3
 init_ram_start:
 
 		.area	_BSS
-		;; 256 bytes of operating system stack
-		.ds	256
-sysstack::	
+		;; 512 bytes of operating system stack
+		.ds	512
+_sys_stack::	
 		.area	_HEAP
-sysheap::	
+_sys_heap::	
