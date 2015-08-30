@@ -10,21 +10,8 @@
 #include "interrupts.h"
 #include "task.h"
 #include "timer.h"
-#include "keyboard.h"
-#include "console.h"
-
-void shell() {
-	con_clrscr();
-	con_puts("YX OS 1.0 FOR SINCLAIR ZX SPECTRUM 48K\nREADY?\n_");
-	while(TRUE);
-}
-
-void fire() {
-	if (kbd_buff.head>kbd_buff.tail+1) {
-		con_putcharxy(100,100,kbd_buff.buffer[kbd_buff.tail]);
-		kbd_buff.tail=kbd_buff.tail+1;
-	}
-}
+#include "kbd.h"
+#include "shell.h"
 
 void main() {
 
@@ -42,12 +29,10 @@ void main() {
 	/*
 	 * initialize devices
 	 */
-	kbd_init();
 	tmr_install(kbd_scan, EVERYTIME, SYS);
 
 	/*
 	 * shell, stack size=512
 	 */
-	tmr_install(fire, 20, SYS);
 	tsk_create(shell, 512); 
 }

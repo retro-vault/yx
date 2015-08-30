@@ -17,5 +17,6 @@ extern void con_putcharxy(byte x, byte y, byte ascii);
 extern void con_clrscr();
 extern void con_scroll_up();
 extern void con_puts(string s);
+extern void con_back();
 
 #endif /* _CONSOLE_H */

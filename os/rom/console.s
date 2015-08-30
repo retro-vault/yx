@@ -8,6 +8,7 @@
 		.globl	_con_puts
 		.globl	_con_clrscr
 		.globl	_con_scroll_up
+		.globl	_con_back
 		.globl	_con_x
 		.globl	_con_y
 		
@@ -322,6 +323,24 @@ nl_update:
 		ex	af,af'
 		ret
 		
+
+		;; -----------------------
+		;; extern void con_back();
+		;; -----------------------
+_con_back::	
+		ld	a,(#_con_x)	; get x
+		cp	#0		; is it 0?
+		ret	z		; sorry, not possible to move back...
+		sub	#WIDTH		; a=a-width
+		ld	(#_con_x),a	; store new coord.
+		ld	c,a		; c=x
+		ld	a,(#_con_y)	; a=y
+		ld	b,a		; b=y
+		ld	e,#' '		; delete 1 back
+		call	putcharxy	; draw char
+		ret			; and we're done...
+
+
 
 		.area _INITIALIZED
 _con_x:		.ds	1

@@ -16,6 +16,6 @@
 extern void *sys_stack;
 extern void *sys_heap;
 
-extern void sys_tarpit(); /* the tar pit */
+extern void sys_tarpit(); /* the tar pit, primordial soup */
 
 #endif /* _SYSTEM_H */
