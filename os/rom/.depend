@@ -1,0 +1,10 @@
+event.rel: event.c types.h list.h syslist.h event.h
+list.rel: list.c types.h list.h
+memory.rel: memory.c types.h list.h memory.h
+net.rel: net.c types.h rs232.h net.h list.h
+shell.rel: shell.c types.h kbd.h console.h
+syslist.rel: syslist.c types.h list.h memory.h system.h
+system.rel: system.c types.h system.h memory.h list.h interrupts.h task.h \
+ event.h timer.h kbd.h net.h shell.h
+task.rel: task.c types.h list.h memory.h syslist.h event.h system.h task.h
+timer.rel: timer.c types.h syslist.h timer.h list.h
