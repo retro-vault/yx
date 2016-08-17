@@ -11,6 +11,7 @@
 #include "task.h"
 #include "timer.h"
 #include "kbd.h"
+#include "net.h"
 #include "shell.h"
 
 void main() {
@@ -27,9 +28,14 @@ void main() {
 	intr_set_vect(tsk_switch, RST38);
 
 	/*
-	 * initialize devices
+	 * install keyboard scanner
 	 */
 	tmr_install(kbd_scan, EVERYTIME, SYS);
+
+	/*
+	 * install network listener
+	 */
+	tmr_install(net_burst, EVERYTIME, SYS);
 
 	/*
 	 * shell, stack size=512
