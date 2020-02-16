@@ -1,7 +1,7 @@
 # Tools.
 DIR		=	$(shell pwd)
 GNUC		=	gcc
-GNUCFLAGS	=	-I$(DIR)/include/
+GNUCFLAGS	=	-I$(DIR)/include
 CC		=	sdcc
 CFLAGS		=	-mz80 --no-std-crt0 -D DEBUG -I$(DIR)/include/
 AS		=	sdasz80
